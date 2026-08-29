@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0",
+  "suite_id": "model-routing-m0-v1",
+  "generated_at": "2026-08-29T07:25:37.816469+00:00",
+  "profile": {
+    "provider": "ollama",
+    "model": "qwen3:8b",
+    "model_id": "500a1f067a9f",
+    "quantization": "Q4_K_M",
+    "context_window": 40960,
+    "request_context_window": 4096
+  },
+  "summary": {
+    "structured_success_rate": 1.0,
+    "semantic_rule_pass_rate": 1.0,
+    "unsupported_critical_claim_rate": 0.0,
+    "p95_latency_seconds": 8.466,
+    "api_cost_cny": 0.0,
+    "gpu_time_status": "not_measured_separately_from_wall_time"
+  },
+  "thresholds": {
+    "structured_success_rate": 1.0,
+    "semantic_rule_pass_rate": 1.0,
+    "unsupported_critical_claim_rate": 0.0,
+    "max_p95_latency_seconds": 120.0,
+    "max_cost_cny_per_case": 0.5
+  },
+  "cases": [
+    {
+      "case_id": "query-rewrite-01",
+      "node": "query_rewrite",
+      "structured_success": true,
+      "semantic_rule_passed": true,
+      "metrics": {
+        "elapsed_seconds": 8.477,
+        "total_duration_seconds": 8.46,
+        "load_duration_seconds": 6.764,
+        "prompt_eval_count": 63,
+        "eval_count": 71
+      },
+      "error": null
+    },
+    {
+      "case_id": "claim-binding-01",
+      "node": "claim_extraction",
+      "structured_success": true,
+      "semantic_rule_passed": true,
+      "metrics": {
+        "elapsed_seconds": 8.103,
+        "total_duration_seconds": 8.101,
+        "load_duration_seconds": 6.722,
+        "prompt_eval_count": 95,
+        "eval_count": 51
+      },
+      "error": null
+    },
+    {
+      "case_id": "abstract-screening-01",
+      "node": "abstract_screening",
+      "structured_success": true,
+      "semantic_rule_passed": true,
+      "metrics": {
+        "elapsed_seconds": 8.371,
+        "total_duration_seconds": 8.354,
+        "load_duration_seconds": 6.709,
+        "prompt_eval_count": 80,
+        "eval_count": 63
+      },
+      "error": null
+    }
+  ],
+  "passed": true,
+  "notes": [
+    "No raw model responses are stored.",
+    "This is a three-case local smoke, not a provider capacity or quality benchmark.",
+    "GPU time requires separate instrumentation in later benchmark runs."
+  ]
+}

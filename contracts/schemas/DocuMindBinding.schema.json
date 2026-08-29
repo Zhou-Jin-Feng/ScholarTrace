@@ -1,0 +1,53 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "canonical_paper_id": {
+      "maxLength": 160,
+      "minLength": 3,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+      "title": "Canonical Paper Id",
+      "type": "string"
+    },
+    "document_key": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Document Key",
+      "type": "string"
+    },
+    "documind_version": {
+      "pattern": "^2\\.[1-9][0-9]*\\.[0-9]+$",
+      "title": "Documind Version",
+      "type": "string"
+    },
+    "index_id": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Index Id",
+      "type": "string"
+    },
+    "retrieval_schema_version": {
+      "const": "1.0",
+      "title": "Retrieval Schema Version",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Source Sha256",
+      "type": "string"
+    }
+  },
+  "required": [
+    "canonical_paper_id",
+    "document_key",
+    "index_id",
+    "source_sha256",
+    "documind_version",
+    "retrieval_schema_version"
+  ],
+  "title": "DocuMindBinding",
+  "type": "object"
+}

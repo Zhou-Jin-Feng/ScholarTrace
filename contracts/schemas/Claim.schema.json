@@ -1,0 +1,83 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "claim_id": {
+      "maxLength": 160,
+      "minLength": 3,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+      "title": "Claim Id",
+      "type": "string"
+    },
+    "claim_type": {
+      "enum": [
+        "fact",
+        "result",
+        "comparison",
+        "causal",
+        "inference"
+      ],
+      "title": "Claim Type",
+      "type": "string"
+    },
+    "counter_evidence_ids": {
+      "items": {
+        "maxLength": 160,
+        "minLength": 3,
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+        "type": "string"
+      },
+      "maxItems": 100,
+      "title": "Counter Evidence Ids",
+      "type": "array"
+    },
+    "evidence_ids": {
+      "items": {
+        "maxLength": 160,
+        "minLength": 3,
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+        "type": "string"
+      },
+      "maxItems": 100,
+      "title": "Evidence Ids",
+      "type": "array"
+    },
+    "importance": {
+      "default": "supporting",
+      "enum": [
+        "critical",
+        "supporting"
+      ],
+      "title": "Importance",
+      "type": "string"
+    },
+    "origin": {
+      "enum": [
+        "author_stated",
+        "cross_paper_synthesis",
+        "system_inferred"
+      ],
+      "title": "Origin",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "text": {
+      "maxLength": 8000,
+      "minLength": 1,
+      "title": "Text",
+      "type": "string"
+    }
+  },
+  "required": [
+    "claim_id",
+    "text",
+    "claim_type",
+    "origin"
+  ],
+  "title": "Claim",
+  "type": "object"
+}

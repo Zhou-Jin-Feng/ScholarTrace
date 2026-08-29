@@ -1,0 +1,199 @@
+{
+  "schema_version": "1.0",
+  "retrieval_cutoff": "2026-08-29",
+  "human_review_status": "pending_user_approval",
+  "topics": [
+    {
+      "topic_id": "DEV-01",
+      "split": "development",
+      "title": "Adaptive retrieval and corrective RAG",
+      "research_question": "How do adaptive retrieval, retrieval-quality assessment, and evidence verification improve RAG faithfulness, and what are their costs and failure boundaries?",
+      "critical_papers": [
+        {
+          "title": "Corrective Retrieval Augmented Generation",
+          "arxiv_id": "2401.15884",
+          "openalex_id": "W4391418506",
+          "doi": "10.48550/arxiv.2401.15884",
+          "identity_status": "verified"
+        },
+        {
+          "title": "Retrieval-Augmented Generation for Large Language Models: A Survey",
+          "arxiv_id": "2312.10997",
+          "openalex_id": "W4389984066",
+          "doi": "10.48550/arxiv.2312.10997",
+          "identity_status": "verified"
+        },
+        {
+          "title": "Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection",
+          "arxiv_id": "2310.11511",
+          "openalex_id": null,
+          "doi": "10.48550/arxiv.2310.11511",
+          "identity_status": "conflicted_in_scholargraph_snapshot"
+        },
+        {
+          "title": "Adaptive-RAG: Learning to Adapt Retrieval-Augmented Large Language Models through Question Complexity",
+          "arxiv_id": "2403.14403",
+          "openalex_id": null,
+          "doi": "10.48550/arxiv.2403.14403",
+          "identity_status": "pending_multisource_check"
+        }
+      ],
+      "questions": [
+        "Which signals trigger retrieval, correction, or stopping?",
+        "Does each corrective action address retrieval relevance, generation faithfulness, or both?",
+        "Which datasets, models, metrics, and ablations support the reported improvements?",
+        "What latency and tool-call cost accompanies the quality improvement over standard RAG?",
+        "Which failure cases show that evidence quality cannot be judged reliably?"
+      ],
+      "exclusions": [
+        "Prompt-only methods without external retrieval.",
+        "Product marketing without a citable technical artifact.",
+        "Secondary summaries without verifiable experiments.",
+        "Private-only settings that omit datasets, metrics, and evaluation protocol."
+      ]
+    },
+    {
+      "topic_id": "EVAL-01",
+      "split": "evaluation",
+      "title": "GraphRAG for global and multi-hop questions",
+      "research_question": "Do graph-enhanced RAG methods provide reproducible gains over vector RAG for global synthesis and multi-hop questions?",
+      "critical_papers": [
+        {
+          "title": "From Local to Global: A Graph RAG Approach to Query-Focused Summarization",
+          "arxiv_id": "2404.16130",
+          "openalex_id": null,
+          "doi": "10.48550/arxiv.2404.16130",
+          "identity_status": "pending_multisource_check"
+        },
+        {
+          "title": "HippoRAG: Neurobiologically Inspired Long-Term Memory for Large Language Models",
+          "arxiv_id": "2405.14831",
+          "openalex_id": null,
+          "doi": "10.48550/arxiv.2405.14831",
+          "identity_status": "pending_multisource_check"
+        },
+        {
+          "title": "LightRAG: Simple and Fast Retrieval-Augmented Generation",
+          "arxiv_id": "2410.05779",
+          "openalex_id": null,
+          "doi": "10.48550/arxiv.2410.05779",
+          "identity_status": "pending_multisource_check"
+        }
+      ],
+      "questions": [
+        "How are graph nodes, edges, and indexes constructed?",
+        "How does each work define local, global, or multi-hop questions?",
+        "Do graph and vector baselines share models, corpora, prompts, and budgets?",
+        "Are index cost, query latency, and failure rate reported alongside quality?",
+        "Which claims rely only on abstracts or model judges?"
+      ],
+      "exclusions": [
+        "Concept papers without a vector baseline.",
+        "Materials that conflate citation graphs with generated semantic graphs.",
+        "Demos that omit model, corpus, or evaluation settings."
+      ]
+    },
+    {
+      "topic_id": "EVAL-02",
+      "split": "evaluation",
+      "title": "Reliability of RAG evaluation",
+      "research_question": "How do RAG evaluation frameworks measure retrieval quality, faithfulness, and answer relevance, and when can their results be misleading?",
+      "critical_papers": [
+        {
+          "title": "RAGAs: Automated Evaluation of Retrieval Augmented Generation",
+          "arxiv_id": null,
+          "openalex_id": "W4411630045",
+          "doi": "10.18653/v1/2024.eacl-demo.16",
+          "identity_status": "verified"
+        },
+        {
+          "title": "ARES: An Automated Evaluation Framework for Retrieval-Augmented Generation Systems",
+          "arxiv_id": "2311.09476",
+          "openalex_id": null,
+          "doi": "10.48550/arxiv.2311.09476",
+          "identity_status": "pending_multisource_check"
+        },
+        {
+          "title": "Benchmarking Large Language Models in Retrieval-Augmented Generation",
+          "arxiv_id": "2309.01431",
+          "openalex_id": null,
+          "doi": "10.48550/arxiv.2309.01431",
+          "identity_status": "pending_multisource_check"
+        }
+      ],
+      "questions": [
+        "Does each metric require gold answers, gold contexts, or an LLM judge?",
+        "Can retrieval and generation metrics localize the failing layer?",
+        "What bias arises when judge and generator use the same model family?",
+        "How is agreement with human judgment established?",
+        "How should quality, latency, tokens, and cost be combined in a fair comparison?"
+      ],
+      "exclusions": [
+        "Studies reporting only one aggregate automatic score.",
+        "LLM-judge studies that omit prompts or scoring scales.",
+        "Experiments that tune and report final results on the same development set."
+      ]
+    },
+    {
+      "topic_id": "EVAL-03",
+      "split": "evaluation",
+      "title": "RAG security and corpus poisoning",
+      "research_question": "How can malicious documents, indirect prompt injection, or retrieval manipulation control RAG outputs, and which defenses have reproducible evidence?",
+      "critical_papers": [
+        {
+          "title": "PoisonedRAG: Knowledge Corruption Attacks to Retrieval-Augmented Generation of Large Language Models",
+          "arxiv_id": "2402.07867",
+          "openalex_id": null,
+          "doi": "10.48550/arxiv.2402.07867",
+          "identity_status": "pending_multisource_check"
+        },
+        {
+          "title": "Benchmarking and Defending Against Indirect Prompt Injection Attacks on Large Language Models",
+          "arxiv_id": null,
+          "openalex_id": null,
+          "doi": null,
+          "identity_status": "pending_multisource_check"
+        },
+        {
+          "title": "RAG security survey or benchmark seed",
+          "arxiv_id": null,
+          "openalex_id": null,
+          "doi": null,
+          "identity_status": "discovery_required"
+        }
+      ],
+      "questions": [
+        "Which layer does the attacker control: corpus, query, ranker, or generation context?",
+        "How is attack success defined, and what happens to normal-query quality?",
+        "Does the defense rely on document trust, retrieval anomaly detection, or generation constraints?",
+        "Does the defense survive adaptive attacks and model transfer?",
+        "How can logs retain audit evidence without reproducing malicious content?"
+      ],
+      "exclusions": [
+        "Single jailbreak conversations without an attack model and success criterion.",
+        "Materials that require executing embedded malicious instructions.",
+        "Private test sets that cannot be audited or legally accessed."
+      ]
+    }
+  ],
+  "claim_evidence_examples": [
+    {
+      "paper_id": "doi:10.48550/arxiv.2401.15884",
+      "evidence_level": "abstract",
+      "evidence": "Specifically, a lightweight retrieval evaluator is designed to assess the overall quality of retrieved documents for a query, returning a confidence degree based on which different knowledge retrieval actions can be triggered.",
+      "claim": "CRAG uses a lightweight retrieval evaluator to assess retrieved-document quality and trigger different retrieval actions from its confidence signal.",
+      "verification": "supported",
+      "limitation": "This evidence does not establish perfect evaluator accuracy or a universal hallucination reduction."
+    }
+  ],
+  "known_identity_conflicts": [
+    {
+      "source": "ScholarGraph formal snapshot",
+      "source_record": "openalex_W4387800173",
+      "identifier": "arXiv:2310.11511",
+      "observed_title": "CareerX: A Retrieval-Augmented Generation Framework for Personalized AI-Driven Career Guidance",
+      "observed_authors": "Akari Asai; Zeqiu Wu; Yizhong Wang; Avirup Sil; Hannaneh Hajishirzi",
+      "resolution": "Do not auto-merge or silently rewrite. Re-query multiple sources in M1 and send the conflict to human review."
+    }
+  ]
+}

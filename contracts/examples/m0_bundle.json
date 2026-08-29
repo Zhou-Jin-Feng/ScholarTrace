@@ -1,0 +1,345 @@
+{
+  "ArtifactRef": {
+    "schema_version": "1.0",
+    "artifact_id": "artifact:plan:dev-adaptive-rag:v1",
+    "artifact_type": "research_plan",
+    "content_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "storage_uri": "artifact://research-plans/dev-adaptive-rag/v1.json",
+    "created_at": "2026-08-29T08:00:00Z"
+  },
+  "Budget": {
+    "schema_version": "1.0",
+    "limits": {
+      "max_rounds": 2,
+      "max_queries": 12,
+      "max_candidate_papers": 50,
+      "max_fulltext_papers": 15,
+      "max_rag_calls_per_paper": 6,
+      "max_concurrency": 4,
+      "max_llm_input_tokens": 160000,
+      "max_llm_output_tokens": 40000,
+      "max_total_tokens": 200000,
+      "max_api_calls": 16,
+      "max_model_calls": 60,
+      "max_cost_cny": 10.0,
+      "max_duration_seconds": 1800
+    },
+    "usage": {
+      "queries": 0,
+      "candidate_papers": 0,
+      "fulltext_papers": 0,
+      "rag_calls": 0,
+      "llm_input_tokens": 0,
+      "llm_output_tokens": 0,
+      "api_calls": 0,
+      "model_calls": 0,
+      "external_cost_cny": 0.0,
+      "local_gpu_seconds": 0.0,
+      "elapsed_seconds": 0.0
+    }
+  },
+  "ResearchPlan": {
+    "schema_version": "1.0",
+    "task_id": "task:dev-adaptive-rag",
+    "title": "Adaptive retrieval and evidence verification in RAG",
+    "question": "How do adaptive retrieval and evidence verification improve RAG faithfulness?",
+    "objective": "Compare mechanisms, evidence, limitations, latency, and evaluation methods.",
+    "subquestions": [
+      {
+        "subquestion_id": "sq:mechanisms",
+        "question": "Which signals trigger retrieval, correction, or stopping?",
+        "evidence_required": "fulltext",
+        "priority": "critical"
+      },
+      {
+        "subquestion_id": "sq:evaluation",
+        "question": "Which datasets and metrics support the reported improvements?",
+        "evidence_required": "fulltext",
+        "priority": "critical"
+      }
+    ],
+    "inclusion_criteria": [
+      "Paper proposes or evaluates an adaptive, corrective, or verification-aware RAG method.",
+      "Paper reports reproducible datasets, metrics, or ablations."
+    ],
+    "exclusion_criteria": [
+      "Pure prompt-only method without external retrieval.",
+      "Marketing material without a citable technical artifact."
+    ],
+    "sources": ["arxiv", "openalex", "crossref"],
+    "retrieval_cutoff": "2026-08-29",
+    "budget": {
+      "schema_version": "1.0",
+      "limits": {
+        "max_rounds": 2,
+        "max_queries": 12,
+        "max_candidate_papers": 50,
+        "max_fulltext_papers": 15,
+        "max_rag_calls_per_paper": 6,
+        "max_concurrency": 4,
+        "max_llm_input_tokens": 160000,
+        "max_llm_output_tokens": 40000,
+        "max_total_tokens": 200000,
+        "max_api_calls": 16,
+        "max_model_calls": 60,
+        "max_cost_cny": 10.0,
+        "max_duration_seconds": 1800
+      },
+      "usage": {
+        "queries": 0,
+        "candidate_papers": 0,
+        "fulltext_papers": 0,
+        "rag_calls": 0,
+        "llm_input_tokens": 0,
+        "llm_output_tokens": 0,
+        "api_calls": 0,
+        "model_calls": 0,
+        "external_cost_cny": 0.0,
+        "local_gpu_seconds": 0.0,
+        "elapsed_seconds": 0.0
+      }
+    },
+    "status": "waiting_approval"
+  },
+  "Paper": {
+    "schema_version": "1.0",
+    "canonical_paper_id": "doi:10.48550/arxiv.2401.15884",
+    "title": "Corrective Retrieval Augmented Generation",
+    "normalized_title": "corrective retrieval augmented generation",
+    "authors": ["Shi-Qi Yan", "Jia-Chen Gu", "Yun Zhu", "Zhen-Hua Ling"],
+    "publication_year": 2024,
+    "doi": "10.48550/arxiv.2401.15884",
+    "arxiv_id": "2401.15884",
+    "openalex_id": "W4391418506",
+    "semantic_scholar_id": null,
+    "abstract": null,
+    "access_level": "metadata",
+    "version_of": null,
+    "sources": [
+      {
+        "source": "openalex",
+        "source_id": "https://openalex.org/W4391418506",
+        "retrieved_at": "2026-08-29T08:00:00Z",
+        "record_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      }
+    ]
+  },
+  "DocuMindBinding": {
+    "schema_version": "1.0",
+    "canonical_paper_id": "doi:10.48550/arxiv.2401.15884",
+    "document_key": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "index_id": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "source_sha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "documind_version": "2.1.0",
+    "retrieval_schema_version": "1.0"
+  },
+  "Evidence": {
+    "schema_version": "1.0",
+    "evidence_id": "evidence:crag:method:01",
+    "canonical_paper_id": "doi:10.48550/arxiv.2401.15884",
+    "quote": "Specifically, a lightweight retrieval evaluator is designed to assess the overall quality of retrieved documents for a query, returning a confidence degree based on which different knowledge retrieval actions can be triggered.",
+    "evidence_level": "abstract",
+    "content_sha256": "c37b3fc884fdf66a18392e0c0926c34d5cae74db0b7733f3ed69a3a0cdaa4658",
+    "document_key": null,
+    "index_id": null,
+    "section": "Abstract",
+    "page_number": null,
+    "chunk_id": null,
+    "char_start": null,
+    "char_end": null,
+    "source_url": "https://arxiv.org/abs/2401.15884",
+    "source_sha256": null,
+    "parser_version": null,
+    "retrieval_run_id": null
+  },
+  "Claim": {
+    "schema_version": "1.0",
+    "claim_id": "claim:crag:retrieval-evaluator",
+    "text": "CRAG uses a lightweight retrieval evaluator to assess retrieved-document quality and trigger different retrieval actions from its confidence signal.",
+    "claim_type": "fact",
+    "evidence_ids": ["evidence:crag:method:01"],
+    "counter_evidence_ids": [],
+    "origin": "author_stated",
+    "importance": "critical"
+  },
+  "Verification": {
+    "schema_version": "1.0",
+    "verification_id": "verification:crag:retrieval-evaluator:v1",
+    "claim_id": "claim:crag:retrieval-evaluator",
+    "status": "supported",
+    "checked_evidence_ids": ["evidence:crag:method:01"],
+    "reason": "The public abstract directly states the evaluator purpose, confidence signal, and action-triggering role.",
+    "recommended_action": "keep",
+    "verifier": "human",
+    "verified_at": "2026-08-29T08:30:00Z"
+  },
+  "ModelRoutingPolicy": {
+    "schema_version": "1.0",
+    "policy_id": "model-policy:m0:v1",
+    "profiles": [
+      {
+        "profile_id": "deterministic",
+        "kind": "deterministic",
+        "provider": "python",
+        "model_name": "none",
+        "model_version": "3.11.15",
+        "model_digest": null,
+        "quantization": null,
+        "context_window": null,
+        "enabled": true
+      },
+      {
+        "profile_id": "local-qwen3-8b",
+        "kind": "local",
+        "provider": "ollama",
+        "model_name": "qwen3:8b",
+        "model_version": "500a1f067a9f",
+        "model_digest": "500a1f067a9f",
+        "quantization": "Q4_K_M",
+        "context_window": 40960,
+        "enabled": true
+      },
+      {
+        "profile_id": "api-strong",
+        "kind": "api",
+        "provider": "unconfigured",
+        "model_name": "user-selection-required",
+        "model_version": "unconfigured",
+        "model_digest": null,
+        "quantization": null,
+        "context_window": null,
+        "enabled": false
+      }
+    ],
+    "routes": [
+      {
+        "node": "query_rewrite",
+        "default_profile_id": "local-qwen3-8b",
+        "fallback_profile_id": "api-strong",
+        "max_attempts": 2,
+        "fallback_reason_allowlist": ["invalid_structured_output"]
+      },
+      {
+        "node": "abstract_screening",
+        "default_profile_id": "local-qwen3-8b",
+        "fallback_profile_id": null,
+        "max_attempts": 2,
+        "fallback_reason_allowlist": []
+      },
+      {
+        "node": "paper_card",
+        "default_profile_id": "local-qwen3-8b",
+        "fallback_profile_id": "api-strong",
+        "max_attempts": 2,
+        "fallback_reason_allowlist": ["invalid_structured_output"]
+      },
+      {
+        "node": "claim_extraction",
+        "default_profile_id": "local-qwen3-8b",
+        "fallback_profile_id": "api-strong",
+        "max_attempts": 2,
+        "fallback_reason_allowlist": ["invalid_structured_output", "critical_claim"]
+      },
+      {
+        "node": "coordinator",
+        "default_profile_id": "api-strong",
+        "fallback_profile_id": null,
+        "max_attempts": 2,
+        "fallback_reason_allowlist": []
+      },
+      {
+        "node": "critical_verifier",
+        "default_profile_id": "api-strong",
+        "fallback_profile_id": null,
+        "max_attempts": 2,
+        "fallback_reason_allowlist": []
+      },
+      {
+        "node": "synthesis",
+        "default_profile_id": "api-strong",
+        "fallback_profile_id": null,
+        "max_attempts": 2,
+        "fallback_reason_allowlist": []
+      },
+      {
+        "node": "scholargraph",
+        "default_profile_id": "local-qwen3-8b",
+        "fallback_profile_id": null,
+        "max_attempts": 1,
+        "fallback_reason_allowlist": []
+      }
+    ],
+    "paid_routes_enabled": false,
+    "no_automatic_price_tier_upgrade": true
+  },
+  "RunManifest": {
+    "schema_version": "1.0",
+    "run_id": "run:m0:contract-example",
+    "task_id": "task:dev-adaptive-rag",
+    "started_at": "2026-08-29T08:00:00Z",
+    "completed_at": null,
+    "retrieval_cutoff": "2026-08-29",
+    "service_baselines": [
+      {
+        "service": "documind",
+        "version": "2.1.0",
+        "git_commit": "32c5eb8d755065c7e8db9dae80973263aa77f196",
+        "contract_version": "retrieve-1.0",
+        "capability_id": "single-document-dense-retrieval"
+      },
+      {
+        "service": "scholargraph",
+        "version": "1.0.0",
+        "git_commit": "953e40b155fe4d2e15002afcddc0e628f1524bf9",
+        "contract_version": "http-draft-1.0",
+        "capability_id": "rag-openalex-2020-2025-198-v1"
+      }
+    ],
+    "model_policy_ref": {
+      "schema_version": "1.0",
+      "artifact_id": "artifact:model-policy:m0:v1",
+      "artifact_type": "tool_run",
+      "content_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+      "storage_uri": "artifact://model-policies/m0-v1.json",
+      "created_at": "2026-08-29T08:00:00Z"
+    },
+    "model_usage": [],
+    "price_snapshot_at": null,
+    "price_snapshot_sha256": null,
+    "prompt_set_sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+    "evaluation_seed_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+    "data_snapshot_refs": [],
+    "budget": {
+      "schema_version": "1.0",
+      "limits": {
+        "max_rounds": 2,
+        "max_queries": 12,
+        "max_candidate_papers": 50,
+        "max_fulltext_papers": 15,
+        "max_rag_calls_per_paper": 6,
+        "max_concurrency": 4,
+        "max_llm_input_tokens": 160000,
+        "max_llm_output_tokens": 40000,
+        "max_total_tokens": 200000,
+        "max_api_calls": 16,
+        "max_model_calls": 60,
+        "max_cost_cny": 10.0,
+        "max_duration_seconds": 1800
+      },
+      "usage": {
+        "queries": 0,
+        "candidate_papers": 0,
+        "fulltext_papers": 0,
+        "rag_calls": 0,
+        "llm_input_tokens": 0,
+        "llm_output_tokens": 0,
+        "api_calls": 0,
+        "model_calls": 0,
+        "external_cost_cny": 0.0,
+        "local_gpu_seconds": 0.0,
+        "elapsed_seconds": 0.0
+      }
+    },
+    "outcome": "running"
+  }
+}

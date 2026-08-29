@@ -1,0 +1,199 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "canonical_paper_id": {
+      "maxLength": 160,
+      "minLength": 3,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+      "title": "Canonical Paper Id",
+      "type": "string"
+    },
+    "char_end": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Char End"
+    },
+    "char_start": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Char Start"
+    },
+    "chunk_id": {
+      "anyOf": [
+        {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Chunk Id"
+    },
+    "content_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Content Sha256",
+      "type": "string"
+    },
+    "document_key": {
+      "anyOf": [
+        {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Document Key"
+    },
+    "evidence_id": {
+      "maxLength": 160,
+      "minLength": 3,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+      "title": "Evidence Id",
+      "type": "string"
+    },
+    "evidence_level": {
+      "enum": [
+        "fulltext",
+        "abstract",
+        "metadata"
+      ],
+      "title": "Evidence Level",
+      "type": "string"
+    },
+    "index_id": {
+      "anyOf": [
+        {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Index Id"
+    },
+    "page_number": {
+      "anyOf": [
+        {
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Page Number"
+    },
+    "parser_version": {
+      "anyOf": [
+        {
+          "maxLength": 100,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Parser Version"
+    },
+    "quote": {
+      "maxLength": 8000,
+      "minLength": 1,
+      "title": "Quote",
+      "type": "string"
+    },
+    "retrieval_run_id": {
+      "anyOf": [
+        {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Retrieval Run Id"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "section": {
+      "anyOf": [
+        {
+          "maxLength": 500,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Section"
+    },
+    "source_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Sha256"
+    },
+    "source_url": {
+      "anyOf": [
+        {
+          "maxLength": 2048,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source Url"
+    }
+  },
+  "required": [
+    "evidence_id",
+    "canonical_paper_id",
+    "quote",
+    "evidence_level",
+    "content_sha256"
+  ],
+  "title": "Evidence",
+  "type": "object"
+}

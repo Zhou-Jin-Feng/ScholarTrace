@@ -1,0 +1,353 @@
+{
+  "$defs": {
+    "Budget": {
+      "additionalProperties": false,
+      "properties": {
+        "limits": {
+          "$ref": "#/$defs/BudgetLimits"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "usage": {
+          "$ref": "#/$defs/BudgetUsage"
+        }
+      },
+      "title": "Budget",
+      "type": "object"
+    },
+    "BudgetLimits": {
+      "additionalProperties": false,
+      "properties": {
+        "max_api_calls": {
+          "default": 16,
+          "maximum": 200,
+          "minimum": 0,
+          "title": "Max Api Calls",
+          "type": "integer"
+        },
+        "max_candidate_papers": {
+          "default": 50,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Max Candidate Papers",
+          "type": "integer"
+        },
+        "max_concurrency": {
+          "default": 4,
+          "maximum": 16,
+          "minimum": 1,
+          "title": "Max Concurrency",
+          "type": "integer"
+        },
+        "max_cost_cny": {
+          "default": 10.0,
+          "minimum": 0,
+          "title": "Max Cost Cny",
+          "type": "number"
+        },
+        "max_duration_seconds": {
+          "default": 900,
+          "maximum": 86400,
+          "minimum": 30,
+          "title": "Max Duration Seconds",
+          "type": "integer"
+        },
+        "max_fulltext_papers": {
+          "default": 15,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Max Fulltext Papers",
+          "type": "integer"
+        },
+        "max_llm_input_tokens": {
+          "default": 160000,
+          "minimum": 1,
+          "title": "Max Llm Input Tokens",
+          "type": "integer"
+        },
+        "max_llm_output_tokens": {
+          "default": 40000,
+          "minimum": 1,
+          "title": "Max Llm Output Tokens",
+          "type": "integer"
+        },
+        "max_model_calls": {
+          "default": 60,
+          "maximum": 500,
+          "minimum": 0,
+          "title": "Max Model Calls",
+          "type": "integer"
+        },
+        "max_queries": {
+          "default": 12,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Max Queries",
+          "type": "integer"
+        },
+        "max_rag_calls_per_paper": {
+          "default": 6,
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Max Rag Calls Per Paper",
+          "type": "integer"
+        },
+        "max_rounds": {
+          "default": 2,
+          "maximum": 5,
+          "minimum": 1,
+          "title": "Max Rounds",
+          "type": "integer"
+        },
+        "max_total_tokens": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Total Tokens"
+        }
+      },
+      "title": "BudgetLimits",
+      "type": "object"
+    },
+    "BudgetUsage": {
+      "additionalProperties": false,
+      "properties": {
+        "api_calls": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Api Calls",
+          "type": "integer"
+        },
+        "candidate_papers": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Candidate Papers",
+          "type": "integer"
+        },
+        "elapsed_seconds": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Elapsed Seconds",
+          "type": "number"
+        },
+        "external_cost_cny": {
+          "default": 0,
+          "minimum": 0,
+          "title": "External Cost Cny",
+          "type": "number"
+        },
+        "fulltext_papers": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Fulltext Papers",
+          "type": "integer"
+        },
+        "llm_input_tokens": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Llm Input Tokens",
+          "type": "integer"
+        },
+        "llm_output_tokens": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Llm Output Tokens",
+          "type": "integer"
+        },
+        "local_gpu_seconds": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Local Gpu Seconds",
+          "type": "number"
+        },
+        "model_calls": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Model Calls",
+          "type": "integer"
+        },
+        "queries": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Queries",
+          "type": "integer"
+        },
+        "rag_calls": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Rag Calls",
+          "type": "integer"
+        }
+      },
+      "title": "BudgetUsage",
+      "type": "object"
+    },
+    "ResearchSubquestion": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence_required": {
+          "enum": [
+            "fulltext",
+            "abstract",
+            "metadata"
+          ],
+          "title": "Evidence Required",
+          "type": "string"
+        },
+        "priority": {
+          "default": "normal",
+          "enum": [
+            "critical",
+            "high",
+            "normal"
+          ],
+          "title": "Priority",
+          "type": "string"
+        },
+        "question": {
+          "maxLength": 8000,
+          "minLength": 1,
+          "title": "Question",
+          "type": "string"
+        },
+        "subquestion_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Subquestion Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "subquestion_id",
+        "question",
+        "evidence_required"
+      ],
+      "title": "ResearchSubquestion",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "budget": {
+      "$ref": "#/$defs/Budget"
+    },
+    "exclusion_criteria": {
+      "items": {
+        "maxLength": 8000,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 20,
+      "minItems": 1,
+      "title": "Exclusion Criteria",
+      "type": "array"
+    },
+    "inclusion_criteria": {
+      "items": {
+        "maxLength": 8000,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 20,
+      "minItems": 1,
+      "title": "Inclusion Criteria",
+      "type": "array"
+    },
+    "objective": {
+      "maxLength": 8000,
+      "minLength": 1,
+      "title": "Objective",
+      "type": "string"
+    },
+    "question": {
+      "maxLength": 8000,
+      "minLength": 1,
+      "title": "Question",
+      "type": "string"
+    },
+    "retrieval_cutoff": {
+      "format": "date",
+      "title": "Retrieval Cutoff",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "sources": {
+      "items": {
+        "enum": [
+          "arxiv",
+          "openalex",
+          "crossref",
+          "semantic_scholar"
+        ],
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Sources",
+      "type": "array"
+    },
+    "status": {
+      "enum": [
+        "draft",
+        "waiting_approval",
+        "approved",
+        "rejected"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "subquestions": {
+      "items": {
+        "$ref": "#/$defs/ResearchSubquestion"
+      },
+      "maxItems": 20,
+      "minItems": 1,
+      "title": "Subquestions",
+      "type": "array"
+    },
+    "task_id": {
+      "maxLength": 160,
+      "minLength": 3,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+      "title": "Task Id",
+      "type": "string"
+    },
+    "title": {
+      "maxLength": 300,
+      "minLength": 3,
+      "title": "Title",
+      "type": "string"
+    }
+  },
+  "required": [
+    "task_id",
+    "title",
+    "question",
+    "objective",
+    "subquestions",
+    "inclusion_criteria",
+    "exclusion_criteria",
+    "sources",
+    "retrieval_cutoff",
+    "budget",
+    "status"
+  ],
+  "title": "ResearchPlan",
+  "type": "object"
+}

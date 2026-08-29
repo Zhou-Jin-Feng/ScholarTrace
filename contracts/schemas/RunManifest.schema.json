@@ -1,0 +1,558 @@
+{
+  "$defs": {
+    "ArtifactRef": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "artifact_type": {
+          "enum": [
+            "research_plan",
+            "paper_card",
+            "evidence",
+            "claim",
+            "verification",
+            "citation_graph",
+            "tool_run",
+            "report"
+          ],
+          "title": "Artifact Type",
+          "type": "string"
+        },
+        "content_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Content Sha256",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "storage_uri": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Storage Uri",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "artifact_type",
+        "content_sha256",
+        "storage_uri",
+        "created_at"
+      ],
+      "title": "ArtifactRef",
+      "type": "object"
+    },
+    "Budget": {
+      "additionalProperties": false,
+      "properties": {
+        "limits": {
+          "$ref": "#/$defs/BudgetLimits"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "usage": {
+          "$ref": "#/$defs/BudgetUsage"
+        }
+      },
+      "title": "Budget",
+      "type": "object"
+    },
+    "BudgetLimits": {
+      "additionalProperties": false,
+      "properties": {
+        "max_api_calls": {
+          "default": 16,
+          "maximum": 200,
+          "minimum": 0,
+          "title": "Max Api Calls",
+          "type": "integer"
+        },
+        "max_candidate_papers": {
+          "default": 50,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Max Candidate Papers",
+          "type": "integer"
+        },
+        "max_concurrency": {
+          "default": 4,
+          "maximum": 16,
+          "minimum": 1,
+          "title": "Max Concurrency",
+          "type": "integer"
+        },
+        "max_cost_cny": {
+          "default": 10.0,
+          "minimum": 0,
+          "title": "Max Cost Cny",
+          "type": "number"
+        },
+        "max_duration_seconds": {
+          "default": 900,
+          "maximum": 86400,
+          "minimum": 30,
+          "title": "Max Duration Seconds",
+          "type": "integer"
+        },
+        "max_fulltext_papers": {
+          "default": 15,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Max Fulltext Papers",
+          "type": "integer"
+        },
+        "max_llm_input_tokens": {
+          "default": 160000,
+          "minimum": 1,
+          "title": "Max Llm Input Tokens",
+          "type": "integer"
+        },
+        "max_llm_output_tokens": {
+          "default": 40000,
+          "minimum": 1,
+          "title": "Max Llm Output Tokens",
+          "type": "integer"
+        },
+        "max_model_calls": {
+          "default": 60,
+          "maximum": 500,
+          "minimum": 0,
+          "title": "Max Model Calls",
+          "type": "integer"
+        },
+        "max_queries": {
+          "default": 12,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Max Queries",
+          "type": "integer"
+        },
+        "max_rag_calls_per_paper": {
+          "default": 6,
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Max Rag Calls Per Paper",
+          "type": "integer"
+        },
+        "max_rounds": {
+          "default": 2,
+          "maximum": 5,
+          "minimum": 1,
+          "title": "Max Rounds",
+          "type": "integer"
+        },
+        "max_total_tokens": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Total Tokens"
+        }
+      },
+      "title": "BudgetLimits",
+      "type": "object"
+    },
+    "BudgetUsage": {
+      "additionalProperties": false,
+      "properties": {
+        "api_calls": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Api Calls",
+          "type": "integer"
+        },
+        "candidate_papers": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Candidate Papers",
+          "type": "integer"
+        },
+        "elapsed_seconds": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Elapsed Seconds",
+          "type": "number"
+        },
+        "external_cost_cny": {
+          "default": 0,
+          "minimum": 0,
+          "title": "External Cost Cny",
+          "type": "number"
+        },
+        "fulltext_papers": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Fulltext Papers",
+          "type": "integer"
+        },
+        "llm_input_tokens": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Llm Input Tokens",
+          "type": "integer"
+        },
+        "llm_output_tokens": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Llm Output Tokens",
+          "type": "integer"
+        },
+        "local_gpu_seconds": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Local Gpu Seconds",
+          "type": "number"
+        },
+        "model_calls": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Model Calls",
+          "type": "integer"
+        },
+        "queries": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Queries",
+          "type": "integer"
+        },
+        "rag_calls": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Rag Calls",
+          "type": "integer"
+        }
+      },
+      "title": "BudgetUsage",
+      "type": "object"
+    },
+    "ModelUsageRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "billed_cost_cny": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Billed Cost Cny",
+          "type": "number"
+        },
+        "billed_cost_original": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Billed Cost Original",
+          "type": "number"
+        },
+        "billed_currency": {
+          "default": "CNY",
+          "maxLength": 3,
+          "minLength": 3,
+          "title": "Billed Currency",
+          "type": "string"
+        },
+        "cache_hit": {
+          "default": false,
+          "title": "Cache Hit",
+          "type": "boolean"
+        },
+        "call_count": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Call Count",
+          "type": "integer"
+        },
+        "duration_seconds": {
+          "minimum": 0,
+          "title": "Duration Seconds",
+          "type": "number"
+        },
+        "input_tokens": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Input Tokens",
+          "type": "integer"
+        },
+        "local_gpu_seconds": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Local Gpu Seconds",
+          "type": "number"
+        },
+        "model_name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Model Name",
+          "type": "string"
+        },
+        "model_version": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Model Version",
+          "type": "string"
+        },
+        "node": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Node",
+          "type": "string"
+        },
+        "output_tokens": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Output Tokens",
+          "type": "integer"
+        },
+        "profile_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Profile Id",
+          "type": "string"
+        },
+        "provider": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Provider",
+          "type": "string"
+        },
+        "queue_seconds": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Queue Seconds",
+          "type": "number"
+        },
+        "retry_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Retry Count",
+          "type": "integer"
+        },
+        "structured_repair_count": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Structured Repair Count",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "node",
+        "profile_id",
+        "provider",
+        "model_name",
+        "model_version",
+        "duration_seconds"
+      ],
+      "title": "ModelUsageRecord",
+      "type": "object"
+    },
+    "ServiceBaseline": {
+      "additionalProperties": false,
+      "properties": {
+        "capability_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Capability Id"
+        },
+        "contract_version": {
+          "maxLength": 32,
+          "minLength": 1,
+          "title": "Contract Version",
+          "type": "string"
+        },
+        "git_commit": {
+          "pattern": "^[a-f0-9]{7,40}$",
+          "title": "Git Commit",
+          "type": "string"
+        },
+        "service": {
+          "enum": [
+            "scholartrace",
+            "documind",
+            "scholargraph"
+          ],
+          "title": "Service",
+          "type": "string"
+        },
+        "version": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "service",
+        "version",
+        "git_commit",
+        "contract_version"
+      ],
+      "title": "ServiceBaseline",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "budget": {
+      "$ref": "#/$defs/Budget"
+    },
+    "completed_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Completed At"
+    },
+    "data_snapshot_refs": {
+      "items": {
+        "$ref": "#/$defs/ArtifactRef"
+      },
+      "title": "Data Snapshot Refs",
+      "type": "array"
+    },
+    "evaluation_seed_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Evaluation Seed Sha256",
+      "type": "string"
+    },
+    "model_policy_ref": {
+      "$ref": "#/$defs/ArtifactRef"
+    },
+    "model_usage": {
+      "items": {
+        "$ref": "#/$defs/ModelUsageRecord"
+      },
+      "title": "Model Usage",
+      "type": "array"
+    },
+    "outcome": {
+      "enum": [
+        "running",
+        "succeeded",
+        "degraded",
+        "failed"
+      ],
+      "title": "Outcome",
+      "type": "string"
+    },
+    "price_snapshot_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Price Snapshot At"
+    },
+    "price_snapshot_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Price Snapshot Sha256"
+    },
+    "prompt_set_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Prompt Set Sha256",
+      "type": "string"
+    },
+    "retrieval_cutoff": {
+      "format": "date",
+      "title": "Retrieval Cutoff",
+      "type": "string"
+    },
+    "run_id": {
+      "maxLength": 160,
+      "minLength": 3,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+      "title": "Run Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "service_baselines": {
+      "items": {
+        "$ref": "#/$defs/ServiceBaseline"
+      },
+      "minItems": 1,
+      "title": "Service Baselines",
+      "type": "array"
+    },
+    "started_at": {
+      "format": "date-time",
+      "title": "Started At",
+      "type": "string"
+    },
+    "task_id": {
+      "maxLength": 160,
+      "minLength": 3,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+      "title": "Task Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "run_id",
+    "task_id",
+    "started_at",
+    "retrieval_cutoff",
+    "service_baselines",
+    "model_policy_ref",
+    "prompt_set_sha256",
+    "evaluation_seed_sha256",
+    "budget",
+    "outcome"
+  ],
+  "title": "RunManifest",
+  "type": "object"
+}

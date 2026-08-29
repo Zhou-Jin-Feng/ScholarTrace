@@ -1,0 +1,337 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "DocuMind Evidence Retrieval API",
+    "version": "1.0.0",
+    "description": "ScholarTrace consumer contract frozen against DocuMind 2.1.0 (32c5eb8)."
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8001"
+    }
+  ],
+  "paths": {
+    "/api/v1/health/live": {
+      "get": {
+        "operationId": "getDocuMindLiveness",
+        "responses": {
+          "200": {
+            "description": "The API process is alive.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/health/ready": {
+      "get": {
+        "operationId": "getDocuMindReadiness",
+        "responses": {
+          "200": {
+            "description": "Required dependencies are ready.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      }
+    },
+    "/api/v1/retrieve": {
+      "post": {
+        "operationId": "retrieveDocumentEvidence",
+        "description": "Retrieve raw chunks from exactly one active document index without invoking an LLM.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Request-ID",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_.:-]{8,64}$"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RetrieveRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Retrieval succeeded. An empty chunks array is a valid business result.",
+            "headers": {
+              "X-Request-ID": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RetrieveResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "409": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "413": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "422": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "503": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "headers": {
+      "RequestId": {
+        "description": "Request correlation identifier.",
+        "schema": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 64
+        }
+      }
+    },
+    "responses": {
+      "ErrorResponse": {
+        "description": "Stable public error envelope.",
+        "headers": {
+          "X-Request-ID": {
+            "$ref": "#/components/headers/RequestId"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorEnvelope"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Sha256": {
+        "type": "string",
+        "pattern": "^[a-f0-9]{64}$"
+      },
+      "HealthResponse": {
+        "type": "object",
+        "required": ["status", "version", "ready"],
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "ready": {
+            "type": "boolean"
+          },
+          "dependencies": {
+            "type": ["object", "null"],
+            "additionalProperties": {
+              "type": "boolean"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "RetrieveRequest": {
+        "type": "object",
+        "required": [
+          "schema_version",
+          "query",
+          "document_key",
+          "expected_index_id",
+          "top_k",
+          "retrieval_mode"
+        ],
+        "properties": {
+          "schema_version": {
+            "const": "1.0"
+          },
+          "query": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4000
+          },
+          "document_key": {
+            "$ref": "#/components/schemas/Sha256"
+          },
+          "expected_index_id": {
+            "$ref": "#/components/schemas/Sha256"
+          },
+          "top_k": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          },
+          "retrieval_mode": {
+            "const": "dense"
+          },
+          "distance_threshold": {
+            "type": ["number", "null"],
+            "minimum": 0
+          }
+        },
+        "additionalProperties": false
+      },
+      "RetrievalChunk": {
+        "type": "object",
+        "required": [
+          "chunk_id",
+          "content",
+          "content_sha256",
+          "source",
+          "page_number",
+          "distance",
+          "rank"
+        ],
+        "properties": {
+          "chunk_id": {
+            "$ref": "#/components/schemas/Sha256"
+          },
+          "content": {
+            "type": "string",
+            "minLength": 1
+          },
+          "content_sha256": {
+            "$ref": "#/components/schemas/Sha256"
+          },
+          "source": {
+            "type": "string",
+            "minLength": 1
+          },
+          "page_number": {
+            "type": ["integer", "null"],
+            "minimum": 1
+          },
+          "distance": {
+            "type": "number",
+            "minimum": 0
+          },
+          "rank": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          }
+        },
+        "additionalProperties": false
+      },
+      "RetrieveResponse": {
+        "type": "object",
+        "required": [
+          "schema_version",
+          "service_version",
+          "retrieval_version",
+          "retrieval_mode",
+          "document_key",
+          "index_id",
+          "source_sha256",
+          "chunks"
+        ],
+        "properties": {
+          "schema_version": {
+            "const": "1.0"
+          },
+          "service_version": {
+            "type": "string",
+            "pattern": "^2\\.[1-9][0-9]*\\.[0-9]+$"
+          },
+          "retrieval_version": {
+            "const": "dense-v1"
+          },
+          "retrieval_mode": {
+            "const": "dense"
+          },
+          "document_key": {
+            "$ref": "#/components/schemas/Sha256"
+          },
+          "index_id": {
+            "$ref": "#/components/schemas/Sha256"
+          },
+          "source_sha256": {
+            "$ref": "#/components/schemas/Sha256"
+          },
+          "chunks": {
+            "type": "array",
+            "maxItems": 20,
+            "items": {
+              "$ref": "#/components/schemas/RetrievalChunk"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "ErrorDetail": {
+        "type": "object",
+        "required": ["code", "message", "request_id"],
+        "properties": {
+          "code": {
+            "type": "string",
+            "enum": [
+              "document_not_found",
+              "stale_document_index",
+              "document_operation_in_progress",
+              "document_index_unavailable",
+              "request_too_large",
+              "validation_error",
+              "retrieval_service_unavailable",
+              "service_unavailable"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1
+          },
+          "request_id": {
+            "type": ["string", "null"]
+          }
+        },
+        "additionalProperties": false
+      },
+      "ErrorEnvelope": {
+        "type": "object",
+        "required": ["error"],
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ErrorDetail"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

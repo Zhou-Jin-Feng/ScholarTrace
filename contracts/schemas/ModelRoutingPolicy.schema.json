@@ -1,0 +1,213 @@
+{
+  "$defs": {
+    "ModelProfile": {
+      "additionalProperties": false,
+      "properties": {
+        "context_window": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Context Window"
+        },
+        "enabled": {
+          "title": "Enabled",
+          "type": "boolean"
+        },
+        "kind": {
+          "enum": [
+            "deterministic",
+            "local",
+            "api"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "model_digest": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model Digest"
+        },
+        "model_name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Model Name",
+          "type": "string"
+        },
+        "model_version": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Model Version",
+          "type": "string"
+        },
+        "profile_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Profile Id",
+          "type": "string"
+        },
+        "provider": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Provider",
+          "type": "string"
+        },
+        "quantization": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Quantization"
+        }
+      },
+      "required": [
+        "profile_id",
+        "kind",
+        "provider",
+        "model_name",
+        "model_version",
+        "enabled"
+      ],
+      "title": "ModelProfile",
+      "type": "object"
+    },
+    "NodeModelRoute": {
+      "additionalProperties": false,
+      "properties": {
+        "default_profile_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Default Profile Id",
+          "type": "string"
+        },
+        "fallback_profile_id": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "minLength": 3,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fallback Profile Id"
+        },
+        "fallback_reason_allowlist": {
+          "items": {
+            "enum": [
+              "invalid_structured_output",
+              "critical_claim",
+              "cross_paper_conflict",
+              "partial_support"
+            ],
+            "type": "string"
+          },
+          "title": "Fallback Reason Allowlist",
+          "type": "array"
+        },
+        "max_attempts": {
+          "default": 2,
+          "maximum": 3,
+          "minimum": 1,
+          "title": "Max Attempts",
+          "type": "integer"
+        },
+        "node": {
+          "enum": [
+            "query_rewrite",
+            "abstract_screening",
+            "paper_card",
+            "claim_extraction",
+            "coordinator",
+            "critical_verifier",
+            "synthesis",
+            "scholargraph"
+          ],
+          "title": "Node",
+          "type": "string"
+        }
+      },
+      "required": [
+        "node",
+        "default_profile_id"
+      ],
+      "title": "NodeModelRoute",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "no_automatic_price_tier_upgrade": {
+      "const": true,
+      "default": true,
+      "title": "No Automatic Price Tier Upgrade",
+      "type": "boolean"
+    },
+    "paid_routes_enabled": {
+      "default": false,
+      "title": "Paid Routes Enabled",
+      "type": "boolean"
+    },
+    "policy_id": {
+      "maxLength": 160,
+      "minLength": 3,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+      "title": "Policy Id",
+      "type": "string"
+    },
+    "profiles": {
+      "items": {
+        "$ref": "#/$defs/ModelProfile"
+      },
+      "minItems": 1,
+      "title": "Profiles",
+      "type": "array"
+    },
+    "routes": {
+      "items": {
+        "$ref": "#/$defs/NodeModelRoute"
+      },
+      "minItems": 1,
+      "title": "Routes",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "policy_id",
+    "profiles",
+    "routes"
+  ],
+  "title": "ModelRoutingPolicy",
+  "type": "object"
+}

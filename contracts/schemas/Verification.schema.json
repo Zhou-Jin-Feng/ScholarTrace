@@ -1,0 +1,89 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "checked_evidence_ids": {
+      "items": {
+        "maxLength": 160,
+        "minLength": 3,
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+        "type": "string"
+      },
+      "maxItems": 200,
+      "minItems": 1,
+      "title": "Checked Evidence Ids",
+      "type": "array"
+    },
+    "claim_id": {
+      "maxLength": 160,
+      "minLength": 3,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+      "title": "Claim Id",
+      "type": "string"
+    },
+    "reason": {
+      "maxLength": 8000,
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "recommended_action": {
+      "enum": [
+        "keep",
+        "weaken",
+        "follow_up",
+        "remove"
+      ],
+      "title": "Recommended Action",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "supported",
+        "partially_supported",
+        "unsupported",
+        "conflicted"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "verification_id": {
+      "maxLength": 160,
+      "minLength": 3,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+      "title": "Verification Id",
+      "type": "string"
+    },
+    "verified_at": {
+      "format": "date-time",
+      "title": "Verified At",
+      "type": "string"
+    },
+    "verifier": {
+      "enum": [
+        "deterministic",
+        "model",
+        "human"
+      ],
+      "title": "Verifier",
+      "type": "string"
+    }
+  },
+  "required": [
+    "verification_id",
+    "claim_id",
+    "status",
+    "checked_evidence_ids",
+    "reason",
+    "recommended_action",
+    "verifier",
+    "verified_at"
+  ],
+  "title": "Verification",
+  "type": "object"
+}

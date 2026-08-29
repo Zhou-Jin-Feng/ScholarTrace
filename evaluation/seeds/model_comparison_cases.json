@@ -1,0 +1,83 @@
+{
+  "schema_version": "1.0",
+  "suite_id": "model-routing-m0-v1",
+  "purpose": "Compare local and API profiles on fixed, evidence-bounded structured tasks without changing prompts between profiles.",
+  "thresholds": {
+    "structured_success_rate": 1.0,
+    "semantic_rule_pass_rate": 1.0,
+    "unsupported_critical_claim_rate": 0.0,
+    "max_p95_latency_seconds": 120.0,
+    "max_cost_cny_per_case": 0.5
+  },
+  "cases": [
+    {
+      "case_id": "query-rewrite-01",
+      "node": "query_rewrite",
+      "system": "Return only JSON matching the supplied schema. Preserve the research scope and do not invent paper titles or results.",
+      "input": "Create three complementary academic search queries for: How do adaptive retrieval and evidence verification improve RAG faithfulness?",
+      "output_schema": {
+        "type": "object",
+        "required": ["queries"],
+        "properties": {
+          "queries": {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 3,
+            "items": {
+              "type": "string",
+              "minLength": 8
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "semantic_rule": "three_nonempty_queries"
+    },
+    {
+      "case_id": "claim-binding-01",
+      "node": "claim_extraction",
+      "system": "Return only JSON matching the supplied schema. Use only the evidence text. Keep the claim weaker than or equal to the evidence.",
+      "input": "Evidence ID: evidence:crag:abstract:01\nEvidence: Specifically, a lightweight retrieval evaluator is designed to assess the overall quality of retrieved documents for a query, returning a confidence degree based on which different knowledge retrieval actions can be triggered.",
+      "output_schema": {
+        "type": "object",
+        "required": ["claim", "evidence_id", "support"],
+        "properties": {
+          "claim": {
+            "type": "string",
+            "minLength": 20
+          },
+          "evidence_id": {
+            "const": "evidence:crag:abstract:01"
+          },
+          "support": {
+            "const": "supported"
+          }
+        },
+        "additionalProperties": false
+      },
+      "semantic_rule": "exact_evidence_binding"
+    },
+    {
+      "case_id": "abstract-screening-01",
+      "node": "abstract_screening",
+      "system": "Return only JSON matching the supplied schema. Judge relevance only from the supplied title and abstract excerpt.",
+      "input": "Research topic: corrective and adaptive retrieval in RAG.\nTitle: Corrective Retrieval Augmented Generation\nAbstract excerpt: A lightweight retrieval evaluator assesses retrieved document quality and triggers different knowledge retrieval actions.",
+      "output_schema": {
+        "type": "object",
+        "required": ["relevant", "reason"],
+        "properties": {
+          "relevant": {
+            "const": true
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 300
+          }
+        },
+        "additionalProperties": false
+      },
+      "semantic_rule": "relevant_true"
+    }
+  ]
+}

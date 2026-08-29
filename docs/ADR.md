@@ -1,0 +1,76 @@
+# ScholarTrace 架构决策记录
+
+> M0 冻结日期：2026-08-29
+
+## ADR-001：DocuMind 作为独立证据服务
+
+- 状态：Accepted
+- 决策：ScholarTrace 通过 HTTP/OpenAPI 调用 DocuMind，不复制 Retriever、Milvus 或解析器。
+- 当前基线：DocuMind `2.1.0`，commit `32c5eb8`，retrieve Schema `1.0`。
+- 原因：DocuMind 已拥有文档生命周期、active index 和可追溯 Chunk。
+- 代价：ScholarTrace 必须维护 Paper 到 DocuMindBinding 的唯一版本映射。
+
+## ADR-002：ScholarGraph 是默认关闭的能力受限工具
+
+- 状态：Accepted
+- 决策：仅对固定 RAG 摘要语料范围内的问题开放 B4 实验。
+- 当前基线：ScholarGraph `1.0.0`，commit `953e40b`，GraphRAG `3.1.2`。
+- 原因：正式语料只有 198 篇 2020-2025 RAG 摘要；Basic 当前评测最好，DRIFT 延迟高。
+- 代价：需要 Capability Router 和 eligible/boundary 两套评测。
+
+## ADR-003：P0 使用 HTTP/OpenAPI，不先使用 MCP 或 A2A
+
+- 状态：Accepted
+- 决策：服务间协议为版本化 HTTP/JSON + OpenAPI 3.1。
+- 原因：DocuMind 和 ScholarGraph 是工具服务，不拥有自主目标；HTTP 最贴近当前 FastAPI/服务层。
+- 代价：未来需要外部工具互操作时再维护 MCP Adapter。
+
+## ADR-004：Python 3.11 与 uv 锁定环境
+
+- 状态：Accepted
+- 决策：ScholarTrace 使用 Python `>=3.11,<3.12`，由 `.python-version` 和 `uv.lock` 固定。
+- 原因：本机默认 Python 3.14，不应把未经上游验证的新解释器引入跨仓兼容面。
+- 代价：开发命令必须使用 `uv run`，不能依赖系统 `python`。
+
+## ADR-005：轻量 State 与 Artifact Store 分离
+
+- 状态：Accepted
+- 决策：LangGraph State 只保存控制状态、ID、引用和计数。
+- 原因：避免长期 Checkpoint 重复存储大段 Evidence 和报告。
+- 代价：节点需要通过 Repository/Artifact Service 解引用。
+
+## ADR-006：Evidence Validator 与语义 Verifier 分离
+
+- 状态：Accepted
+- 决策：确定性校验先检查 ID、哈希、版本、页码、Chunk 和数值，再由独立 Verifier 判断语义支持。
+- 原因：结构错误不应交给概率模型猜测，Analysis 也不应自证其 Claim。
+- 代价：增加一个阶段和数据对象，但错误定位更清楚。
+
+## ADR-007：引用网络使用学术 API + NetworkX
+
+- 状态：Accepted
+- 决策：引用边来自 OpenAlex/可选 Semantic Scholar，MVP 使用 NetworkX。
+- 原因：显式引用图不同于 GraphRAG 语义图；小规模分析不需要 Neo4j。
+- 代价：外部 API 缺边必须明确降级，不能由语义边补造。
+
+## ADR-008：混合模型路由必须受评测和预算门禁
+
+- 状态：Accepted
+- 决策：确定性任务不用 LLM；高频受限任务使用冻结的本地 `qwen3:8b`；关键规划、核验和合成通过 `api-strong` Profile。付费 Profile 在用户确认 Provider、版本和价格前禁用。
+- 原因：控制批量成本，同时不让关键 Claim-Evidence 正确性受“全本地”目标绑架。
+- 约束：本地失败最多尝试两次，只按 allowlist 升级；禁止自动换到更贵模型；RunManifest 记录 Token、重试、墙钟、GPU 和 CNY 成本。
+- 代价：API Profile 未配置时关键节点 fail closed，不能形成完整 M2 报告。
+
+## ADR-009：先完成证据闭环，再增加 Multi-Agent
+
+- 状态：Accepted
+- 决策：M1 建立无 Agent Baseline，M2 完成 DocuMind Claim-Evidence MVP，M3 才引入真正并行 Agent。
+- 原因：否则无法判断 Agent 带来的收益，也难以定位检索与编排错误。
+- 代价：M2 前不能宣传真正 Multi-Agent 能力。
+
+## ADR-010：评测种子与开发主题隔离
+
+- 状态：Accepted
+- 决策：一个开发主题用于调试，三个评测主题只用于阶段评测；所有运行记录数据截止日期和种子 hash。
+- 原因：降低反复调参导致的评测泄漏。
+- 代价：评测主题需要人工确认关键论文、问题和排除条件。
