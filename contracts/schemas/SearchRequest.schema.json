@@ -1,0 +1,51 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "from_year": {
+      "anyOf": [
+        {
+          "maximum": 2100,
+          "minimum": 1900,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "From Year"
+    },
+    "max_results": {
+      "default": 10,
+      "maximum": 100,
+      "minimum": 1,
+      "title": "Max Results",
+      "type": "integer"
+    },
+    "query": {
+      "maxLength": 1000,
+      "minLength": 2,
+      "title": "Query",
+      "type": "string"
+    },
+    "to_year": {
+      "anyOf": [
+        {
+          "maximum": 2100,
+          "minimum": 1900,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "To Year"
+    }
+  },
+  "required": [
+    "query"
+  ],
+  "title": "SearchRequest",
+  "type": "object"
+}

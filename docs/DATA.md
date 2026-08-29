@@ -1,7 +1,7 @@
 # ScholarTrace 数据契约
 
-> 契约版本：`1.0`  
-> 代码源：`src/scholartrace/contracts.py`  
+> 核心契约版本：`1.0`；M1 搜索契约版本：`1.0`
+> 代码源：`src/scholartrace/contracts.py`、`src/scholartrace/search/models.py`
 > 机器格式：`contracts/schemas/*.schema.json`
 
 ## 1. 设计原则
@@ -29,6 +29,18 @@
 | ArtifactRef | artifact_id、type、content_sha256、storage_uri | State 只引用该对象，不内嵌完整 Artifact |
 | RunManifest | task/run、cutoff、service baselines、model、hash、budget | 公平对照和复现的最小快照 |
 
+M1 搜索对象：
+
+| 对象 | 关键字段 | 约束 |
+|---|---|---|
+| SearchRequest | query、max_results、year range | 查询非空；结果数和年份有界；起始年不得晚于结束年 |
+| SourcePolicy | 请求预算、间隔、超时、重试、响应大小 | 每个来源独立；网络预算必须覆盖最大尝试次数 |
+| SourceRequestRecord | 公开请求、时间、缓存、状态、错误、hash、成本 | 不保存 Key；空结果和失败分离；Provider 报告成本不等于账单成本 |
+| PaperCandidate | 来源 ID、论文标识、标题、作者、摘要、原始记录 hash | 来源记录进入统一契约前校验类型、长度和访问等级 |
+| MergeDecision | merge/version/separate、左右 ID、原因、review flag | 自动版本推断必须可审计；不确定关系进入复核 |
+| SearchSnapshot | 来源结果、排序论文、合并决策、候选 hash、outcome | 候选 hash 排除采集时间，固定内容可离线重放 |
+| BaselineArtifact | B0/B1、生成器、输入 hash、引用 ID、内容 hash、限制 | 本地模型只能引用实际提供的候选 ID；只声明摘要级证据 |
+
 M0 默认 Budget 上限：输入 160,000 Token、输出 40,000 Token、总计 200,000 Token、60 次模型调用、16 次付费 API 调用、1,800 秒、10 CNY。达到任一限制即停止新增调用；10 CNY 是硬上限，不是预计花费。
 
 ## 3. ID 规则
@@ -55,7 +67,9 @@ M0 默认 Budget 上限：输入 160,000 Token、输出 40,000 Token、总计 20
 4. Semantic Scholar Paper ID；
 5. 规范化标题、第一作者和年份的保守候选匹配。
 
-预印本和正式出版物先保留为两个来源记录，只有 DOI、作者、标题、年份和全文证据足以确认时才建立 `version_of`。来源冲突不得由 LLM 猜测解决，必须进入人工复核队列。
+精确 DOI、arXiv ID 和来源 ID 用于确定性合并；无强标识时，只有规范化标题、第一作者和年份同时一致才允许保守 fallback 合并。不同独立 DOI 不因标题相同而合并。
+
+预印本和独立 DOI 出版记录先保留为两个 Paper。标题、作者和年份高度一致时可以建立 `version_of` 候选关系，但自动推断必须设置 `review_required=true`。来源冲突不得由 LLM 猜测解决，必须进入人工复核队列。
 
 ## 5. Claim-Evidence 不变量
 
@@ -95,7 +109,7 @@ uv run python scripts/export_schemas.py
 uv run pytest tests/test_contract_models.py
 ```
 
-`contracts/examples/m0_bundle.json` 覆盖所有顶层核心对象。M0 示例用于结构和不变量测试，不代表已经完成正式全文标注。
+`contracts/examples/m0_bundle.json` 覆盖所有顶层核心对象；`contracts/schemas/` 同时包含 M1 搜索对象的独立 Schema。M0 示例和 M1 Baseline 都不代表已经完成正式全文标注。
 
 ## 学术来源与访问约束
 

@@ -1,0 +1,160 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "attempts": {
+      "maximum": 10,
+      "minimum": 0,
+      "title": "Attempts",
+      "type": "integer"
+    },
+    "cache_hit": {
+      "title": "Cache Hit",
+      "type": "boolean"
+    },
+    "candidate_count": {
+      "default": 0,
+      "maximum": 10000,
+      "minimum": 0,
+      "title": "Candidate Count",
+      "type": "integer"
+    },
+    "completed_at": {
+      "format": "date-time",
+      "title": "Completed At",
+      "type": "string"
+    },
+    "duration_seconds": {
+      "minimum": 0,
+      "title": "Duration Seconds",
+      "type": "number"
+    },
+    "error_code": {
+      "anyOf": [
+        {
+          "enum": [
+            "authentication_required",
+            "budget_exhausted",
+            "client_error",
+            "invalid_response",
+            "network_error",
+            "rate_limited",
+            "response_too_large",
+            "service_unavailable",
+            "timed_out"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Error Code"
+    },
+    "http_status": {
+      "anyOf": [
+        {
+          "maximum": 599,
+          "minimum": 100,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Http Status"
+    },
+    "provider_reported_cost_usd": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Provider Reported Cost Usd",
+      "type": "number"
+    },
+    "public_params": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Public Params",
+      "type": "object"
+    },
+    "public_reason": {
+      "anyOf": [
+        {
+          "maxLength": 500,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Public Reason"
+    },
+    "public_url": {
+      "maxLength": 2048,
+      "minLength": 1,
+      "title": "Public Url",
+      "type": "string"
+    },
+    "request_id": {
+      "maxLength": 160,
+      "minLength": 3,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+      "title": "Request Id",
+      "type": "string"
+    },
+    "response_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Response Sha256"
+    },
+    "source": {
+      "enum": [
+        "arxiv",
+        "openalex",
+        "crossref",
+        "semantic_scholar"
+      ],
+      "title": "Source",
+      "type": "string"
+    },
+    "started_at": {
+      "format": "date-time",
+      "title": "Started At",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "succeeded",
+        "empty",
+        "failed",
+        "skipped"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "request_id",
+    "source",
+    "public_url",
+    "public_params",
+    "started_at",
+    "completed_at",
+    "duration_seconds",
+    "cache_hit",
+    "attempts",
+    "status"
+  ],
+  "title": "SourceRequestRecord",
+  "type": "object"
+}

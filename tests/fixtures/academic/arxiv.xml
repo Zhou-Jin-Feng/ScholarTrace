@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:arxiv="http://arxiv.org/schemas/atom">
+  <entry>
+    <id>http://arxiv.org/abs/2401.15884v3</id>
+    <title>Corrective Retrieval Augmented Generation</title>
+    <published>2024-01-29T04:36:39Z</published>
+    <updated>2024-10-07T02:19:21Z</updated>
+    <link href="https://arxiv.org/abs/2401.15884v3" rel="alternate" type="text/html" />
+    <summary>CRAG uses a lightweight retrieval evaluator and corrective retrieval actions.</summary>
+    <author><name>Shi-Qi Yan</name></author>
+    <author><name>Jia-Chen Gu</name></author>
+    <author><name>Yun Zhu</name></author>
+    <author><name>Zhen-Hua Ling</name></author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2403.14403v2</id>
+    <title>Adaptive-RAG: Learning to Adapt Retrieval-Augmented Large Language Models</title>
+    <published>2024-03-21T00:00:00Z</published>
+    <updated>2024-06-01T00:00:00Z</updated>
+    <link href="https://arxiv.org/abs/2403.14403v2" rel="alternate" type="text/html" />
+    <summary>Adaptive-RAG routes questions by estimated complexity.</summary>
+    <author><name>Soyeong Jeong</name></author>
+  </entry>
+</feed>

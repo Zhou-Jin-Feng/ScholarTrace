@@ -1,0 +1,21 @@
+{
+  "total": 1,
+  "data": [
+    {
+      "paperId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "title": "Corrective Retrieval Augmented Generation",
+      "authors": [
+        {"name": "Shi-Qi Yan"},
+        {"name": "Jia-Chen Gu"}
+      ],
+      "year": 2024,
+      "abstract": "CRAG evaluates retrieval and selects corrective actions.",
+      "externalIds": {
+        "ArXiv": "2401.15884",
+        "DOI": "10.48550/arxiv.2401.15884"
+      },
+      "url": "https://www.semanticscholar.org/paper/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "openAccessPdf": null
+    }
+  ]
+}

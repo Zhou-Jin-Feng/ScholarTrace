@@ -1,0 +1,29 @@
+{
+  "status": "ok",
+  "message": {
+    "items": [
+      {
+        "DOI": "10.2139/ssrn.5267341",
+        "title": ["Corrective Retrieval Augmented Generation"],
+        "author": [
+          {"given": "Shi-Qi", "family": "Yan"},
+          {"given": "Jia-Chen", "family": "Gu"},
+          {"given": "Yun", "family": "Zhu"},
+          {"given": "Zhen-Hua", "family": "Ling"}
+        ],
+        "published": {"date-parts": [[2025]]},
+        "abstract": "<jats:p>CRAG evaluates retrieval quality before corrective generation.</jats:p>",
+        "type": "posted-content",
+        "URL": "https://doi.org/10.2139/ssrn.5267341"
+      },
+      {
+        "DOI": "10.5555/example.2026",
+        "title": ["A Different Corrective Retrieval Study"],
+        "author": [{"given": "Ada", "family": "Example"}],
+        "published": {"date-parts": [[2026, 1, 1]]},
+        "type": "journal-article",
+        "URL": "https://doi.org/10.5555/example.2026"
+      }
+    ]
+  }
+}

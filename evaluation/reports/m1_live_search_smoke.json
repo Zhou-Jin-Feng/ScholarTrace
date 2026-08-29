@@ -1,0 +1,48 @@
+{
+  "billed_api_cost_cny": 0.0,
+  "cached_replay_passed": true,
+  "candidate_set_sha256": "f0f8594e305095b3e1c4e3a20aee63c33df57b84bb2effcbb8df6cf747995494",
+  "generated_at": "2026-08-29T08:23:50.566978+00:00",
+  "manifest_sha256": "3d03566f8aaf0da92f1e37cc76eb5c474853e7aeabeec980436281f1c35a665d",
+  "normalized_paper_count": 6,
+  "notes": [
+    "Provider-reported request cost is not represented as a paid invoice.",
+    "No paid model route was enabled or called.",
+    "Raw source responses and credentials are not included in this summary.",
+    "B0/B1 are deterministic M1 controls over metadata and abstracts only."
+  ],
+  "offline_replay_passed": true,
+  "passed": true,
+  "provider_reported_cost_usd": 0.001,
+  "query": "Corrective Retrieval Augmented Generation",
+  "schema_version": "1.0",
+  "sources": [
+    {
+      "cache_hit": false,
+      "candidate_count": 3,
+      "error_code": null,
+      "network_attempts": 1,
+      "provider_reported_cost_usd": 0.0,
+      "source": "arxiv",
+      "status": "succeeded"
+    },
+    {
+      "cache_hit": false,
+      "candidate_count": 3,
+      "error_code": null,
+      "network_attempts": 1,
+      "provider_reported_cost_usd": 0.001,
+      "source": "openalex",
+      "status": "succeeded"
+    },
+    {
+      "cache_hit": false,
+      "candidate_count": 3,
+      "error_code": null,
+      "network_attempts": 1,
+      "provider_reported_cost_usd": 0.0,
+      "source": "crossref",
+      "status": "succeeded"
+    }
+  ]
+}

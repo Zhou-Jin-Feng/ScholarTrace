@@ -1,0 +1,727 @@
+{
+  "$defs": {
+    "MergeDecision": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "enum": [
+            "merged",
+            "version_linked",
+            "kept_separate"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "decision_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Decision Id",
+          "type": "string"
+        },
+        "left_ids": {
+          "items": {
+            "maxLength": 160,
+            "minLength": 3,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Left Ids",
+          "type": "array"
+        },
+        "reason": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "review_required": {
+          "default": false,
+          "title": "Review Required",
+          "type": "boolean"
+        },
+        "right_ids": {
+          "items": {
+            "maxLength": 160,
+            "minLength": 3,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Right Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "decision_id",
+        "action",
+        "left_ids",
+        "right_ids",
+        "reason"
+      ],
+      "title": "MergeDecision",
+      "type": "object"
+    },
+    "Paper": {
+      "additionalProperties": false,
+      "properties": {
+        "abstract": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Abstract"
+        },
+        "access_level": {
+          "enum": [
+            "fulltext",
+            "abstract",
+            "metadata"
+          ],
+          "title": "Access Level",
+          "type": "string"
+        },
+        "arxiv_id": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Arxiv Id"
+        },
+        "authors": {
+          "items": {
+            "maxLength": 8000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 200,
+          "minItems": 1,
+          "title": "Authors",
+          "type": "array"
+        },
+        "canonical_paper_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Canonical Paper Id",
+          "type": "string"
+        },
+        "doi": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Doi"
+        },
+        "normalized_title": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Normalized Title",
+          "type": "string"
+        },
+        "openalex_id": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Openalex Id"
+        },
+        "publication_year": {
+          "maximum": 2100,
+          "minimum": 1900,
+          "title": "Publication Year",
+          "type": "integer"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "semantic_scholar_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Semantic Scholar Id"
+        },
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/PaperSource"
+          },
+          "minItems": 1,
+          "title": "Sources",
+          "type": "array"
+        },
+        "title": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "version_of": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "minLength": 3,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Version Of"
+        }
+      },
+      "required": [
+        "canonical_paper_id",
+        "title",
+        "normalized_title",
+        "authors",
+        "publication_year",
+        "access_level",
+        "sources"
+      ],
+      "title": "Paper",
+      "type": "object"
+    },
+    "PaperCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "abstract": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Abstract"
+        },
+        "access_level": {
+          "enum": [
+            "abstract",
+            "metadata"
+          ],
+          "title": "Access Level",
+          "type": "string"
+        },
+        "arxiv_id": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Arxiv Id"
+        },
+        "arxiv_version": {
+          "anyOf": [
+            {
+              "maximum": 999,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Arxiv Version"
+        },
+        "authors": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 200,
+          "minItems": 1,
+          "title": "Authors",
+          "type": "array"
+        },
+        "candidate_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Candidate Id",
+          "type": "string"
+        },
+        "doi": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Doi"
+        },
+        "openalex_id": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Openalex Id"
+        },
+        "publication_year": {
+          "maximum": 2100,
+          "minimum": 1900,
+          "title": "Publication Year",
+          "type": "integer"
+        },
+        "record_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Record Sha256",
+          "type": "string"
+        },
+        "retrieved_at": {
+          "format": "date-time",
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "semantic_scholar_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Semantic Scholar Id"
+        },
+        "source": {
+          "enum": [
+            "arxiv",
+            "openalex",
+            "crossref",
+            "semantic_scholar"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "source_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_url": {
+          "anyOf": [
+            {
+              "maxLength": 2048,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Url"
+        },
+        "title": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "candidate_id",
+        "source",
+        "source_id",
+        "title",
+        "authors",
+        "publication_year",
+        "access_level",
+        "retrieved_at",
+        "record_sha256"
+      ],
+      "title": "PaperCandidate",
+      "type": "object"
+    },
+    "PaperSource": {
+      "additionalProperties": false,
+      "properties": {
+        "record_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Record Sha256",
+          "type": "string"
+        },
+        "retrieved_at": {
+          "format": "date-time",
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "source": {
+          "enum": [
+            "arxiv",
+            "openalex",
+            "crossref",
+            "semantic_scholar"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "source_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Source Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source",
+        "source_id",
+        "retrieved_at",
+        "record_sha256"
+      ],
+      "title": "PaperSource",
+      "type": "object"
+    },
+    "RankedPaper": {
+      "additionalProperties": false,
+      "properties": {
+        "matched_query_terms": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100,
+          "title": "Matched Query Terms",
+          "type": "array"
+        },
+        "paper": {
+          "$ref": "#/$defs/Paper"
+        },
+        "score": {
+          "minimum": 0,
+          "title": "Score",
+          "type": "number"
+        }
+      },
+      "required": [
+        "paper",
+        "score"
+      ],
+      "title": "RankedPaper",
+      "type": "object"
+    },
+    "SourceRequestRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "attempts": {
+          "maximum": 10,
+          "minimum": 0,
+          "title": "Attempts",
+          "type": "integer"
+        },
+        "cache_hit": {
+          "title": "Cache Hit",
+          "type": "boolean"
+        },
+        "candidate_count": {
+          "default": 0,
+          "maximum": 10000,
+          "minimum": 0,
+          "title": "Candidate Count",
+          "type": "integer"
+        },
+        "completed_at": {
+          "format": "date-time",
+          "title": "Completed At",
+          "type": "string"
+        },
+        "duration_seconds": {
+          "minimum": 0,
+          "title": "Duration Seconds",
+          "type": "number"
+        },
+        "error_code": {
+          "anyOf": [
+            {
+              "enum": [
+                "authentication_required",
+                "budget_exhausted",
+                "client_error",
+                "invalid_response",
+                "network_error",
+                "rate_limited",
+                "response_too_large",
+                "service_unavailable",
+                "timed_out"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Error Code"
+        },
+        "http_status": {
+          "anyOf": [
+            {
+              "maximum": 599,
+              "minimum": 100,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Http Status"
+        },
+        "provider_reported_cost_usd": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Provider Reported Cost Usd",
+          "type": "number"
+        },
+        "public_params": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Public Params",
+          "type": "object"
+        },
+        "public_reason": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Public Reason"
+        },
+        "public_url": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Public Url",
+          "type": "string"
+        },
+        "request_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Request Id",
+          "type": "string"
+        },
+        "response_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[a-f0-9]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Response Sha256"
+        },
+        "source": {
+          "enum": [
+            "arxiv",
+            "openalex",
+            "crossref",
+            "semantic_scholar"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "started_at": {
+          "format": "date-time",
+          "title": "Started At",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "succeeded",
+            "empty",
+            "failed",
+            "skipped"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "request_id",
+        "source",
+        "public_url",
+        "public_params",
+        "started_at",
+        "completed_at",
+        "duration_seconds",
+        "cache_hit",
+        "attempts",
+        "status"
+      ],
+      "title": "SourceRequestRecord",
+      "type": "object"
+    },
+    "SourceSearchResult": {
+      "additionalProperties": false,
+      "properties": {
+        "candidates": {
+          "items": {
+            "$ref": "#/$defs/PaperCandidate"
+          },
+          "maxItems": 10000,
+          "title": "Candidates",
+          "type": "array"
+        },
+        "request": {
+          "$ref": "#/$defs/SourceRequestRecord"
+        },
+        "source": {
+          "enum": [
+            "arxiv",
+            "openalex",
+            "crossref",
+            "semantic_scholar"
+          ],
+          "title": "Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source",
+        "request"
+      ],
+      "title": "SourceSearchResult",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "candidate_set_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Candidate Set Sha256",
+      "type": "string"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "title": "Generated At",
+      "type": "string"
+    },
+    "merge_decisions": {
+      "items": {
+        "$ref": "#/$defs/MergeDecision"
+      },
+      "title": "Merge Decisions",
+      "type": "array"
+    },
+    "outcome": {
+      "enum": [
+        "succeeded",
+        "degraded",
+        "failed"
+      ],
+      "title": "Outcome",
+      "type": "string"
+    },
+    "query": {
+      "maxLength": 1000,
+      "minLength": 2,
+      "title": "Query",
+      "type": "string"
+    },
+    "ranked_papers": {
+      "items": {
+        "$ref": "#/$defs/RankedPaper"
+      },
+      "title": "Ranked Papers",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "snapshot_id": {
+      "maxLength": 160,
+      "minLength": 3,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+      "title": "Snapshot Id",
+      "type": "string"
+    },
+    "source_results": {
+      "items": {
+        "$ref": "#/$defs/SourceSearchResult"
+      },
+      "minItems": 1,
+      "title": "Source Results",
+      "type": "array"
+    }
+  },
+  "required": [
+    "snapshot_id",
+    "query",
+    "generated_at",
+    "source_results",
+    "ranked_papers",
+    "merge_decisions",
+    "candidate_set_sha256",
+    "outcome"
+  ],
+  "title": "SearchSnapshot",
+  "type": "object"
+}

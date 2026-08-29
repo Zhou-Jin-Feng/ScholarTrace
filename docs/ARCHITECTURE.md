@@ -1,7 +1,7 @@
 # ScholarTrace 架构设计
 
-> 版本：M0 / 1.0  
-> 决策状态：核心路线已冻结，业务实现从 M1 开始
+> 版本：M1 / 1.1
+> 决策状态：核心路线和多源搜索已冻结，停在 M2 开始前
 
 ## 1. 架构目标
 
@@ -64,7 +64,22 @@ src/scholartrace/
 └─ observability/      # 安全日志、事件、指标、Trace
 ```
 
-M0 只建立 `contracts.py` 和契约测试；目录在对应实现阶段按需创建，避免空模块伪装完成度。
+M0 建立 `contracts.py` 和核心契约；M1 已实现 `src/scholartrace/search/`，内部按 models、providers、http/cache、normalization、pipeline、baseline、manifest 和 storage 分层。后续目录仍在对应阶段按需创建，避免空模块伪装完成度。
+
+### 5.1 M1 搜索数据流
+
+```text
+SearchRequest
+  -> source adapter + per-source AcademicHttpClient
+  -> SourceSearchResult + request audit
+  -> conservative normalization / version links
+  -> deterministic relevance ranking
+  -> SearchSnapshot + candidate-set hash
+  -> deterministic or local-Qwen B0/B1
+  -> RunManifest
+```
+
+各来源共享错误语义但不共享请求预算。缓存键只包含公开 URL 和公开参数，API Key、联系邮箱等私有参数既不写缓存，也不进入审计记录。单源失败保留结构化错误并允许其他来源继续；所有必选来源都失败或没有达到最低相关性 `4.0` 的论文时，流水线失败关闭。
 
 ## 6. 技术栈冻结
 
@@ -77,7 +92,7 @@ M0 只建立 `contracts.py` 和契约测试；目录在对应实现阶段按需�
 | API | FastAPI 0.141.1 | 与 ScholarGraph 锁文件对齐；后续生成 OpenAPI |
 | 本地模型 | Ollama `qwen3:8b` / Q4_K_M | 高频、低风险、可复核结构化任务；M0 实机 smoke 通过 |
 | API 模型 | `api-strong` Profile | 用户确认 Provider/版本/价格前保持禁用并 fail closed |
-| HTTP | HTTPX AsyncClient | M1 引入，独立连接池、超时和错误分类 |
+| HTTP | HTTPX AsyncClient | M1 已实现独立来源 Client、超时、限流、缓存和错误分类 |
 | 数据 | SQLite + Artifact Store 抽象 | 单用户 MVP 足够，正文不进入 Checkpoint |
 | 引用图 | NetworkX | M4 小规模确定性图，不提前引入 Neo4j |
 | 前端 | React + TypeScript + Vite | M6 实现结构化工作台 |

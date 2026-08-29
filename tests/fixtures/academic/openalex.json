@@ -1,0 +1,52 @@
+{
+  "meta": {"count": 2, "cost_usd": 0.001},
+  "results": [
+    {
+      "id": "https://openalex.org/W4391418506",
+      "doi": "https://doi.org/10.48550/arxiv.2401.15884",
+      "title": "Corrective Retrieval Augmented Generation",
+      "publication_year": 2024,
+      "authorships": [
+        {"author": {"display_name": "Shi-Qi Yan"}},
+        {"author": {"display_name": "Jia-Chen Gu"}},
+        {"author": {"display_name": "Yun Zhu"}},
+        {"author": {"display_name": "Zhen-Hua Ling"}}
+      ],
+      "ids": {
+        "openalex": "https://openalex.org/W4391418506",
+        "doi": "https://doi.org/10.48550/arxiv.2401.15884"
+      },
+      "abstract_inverted_index": {
+        "CRAG": [0],
+        "evaluates": [1],
+        "retrieval": [2],
+        "quality": [3]
+      },
+      "primary_location": {
+        "landing_page_url": "https://arxiv.org/abs/2401.15884"
+      },
+      "type": "preprint"
+    },
+    {
+      "id": "https://openalex.org/W4410705984",
+      "doi": "https://doi.org/10.2139/ssrn.5267341",
+      "title": "Corrective Retrieval Augmented Generation",
+      "publication_year": 2025,
+      "authorships": [
+        {"author": {"display_name": "Shi-Qi Yan"}},
+        {"author": {"display_name": "Jia-Chen Gu"}},
+        {"author": {"display_name": "Yun Zhu"}},
+        {"author": {"display_name": "Zhen-Hua Ling"}}
+      ],
+      "ids": {
+        "openalex": "https://openalex.org/W4410705984",
+        "doi": "https://doi.org/10.2139/ssrn.5267341"
+      },
+      "abstract_inverted_index": null,
+      "primary_location": {
+        "landing_page_url": "https://doi.org/10.2139/ssrn.5267341"
+      },
+      "type": "preprint"
+    }
+  ]
+}

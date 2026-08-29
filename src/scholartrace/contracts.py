@@ -34,6 +34,8 @@ class ArtifactRef(ContractModel):
         "citation_graph",
         "tool_run",
         "report",
+        "search_snapshot",
+        "baseline_report",
     ]
     content_sha256: Sha256
     storage_uri: Annotated[str, Field(min_length=1, max_length=2048)]
@@ -299,6 +301,8 @@ class ServiceBaseline(BaseModel):
     git_commit: Annotated[str, Field(pattern=r"^[a-f0-9]{7,40}$")]
     contract_version: Annotated[str, Field(min_length=1, max_length=32)]
     capability_id: str | None = Field(default=None, max_length=200)
+    worktree_dirty: bool = False
+    source_tree_sha256: Sha256 | None = None
 
 
 class RunManifest(ContractModel):

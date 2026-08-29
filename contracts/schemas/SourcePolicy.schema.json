@@ -1,0 +1,63 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "base_backoff_seconds": {
+      "default": 0.25,
+      "maximum": 30,
+      "minimum": 0,
+      "title": "Base Backoff Seconds",
+      "type": "number"
+    },
+    "jitter_ratio": {
+      "default": 0.1,
+      "maximum": 1,
+      "minimum": 0,
+      "title": "Jitter Ratio",
+      "type": "number"
+    },
+    "max_attempts": {
+      "default": 3,
+      "maximum": 5,
+      "minimum": 1,
+      "title": "Max Attempts",
+      "type": "integer"
+    },
+    "max_backoff_seconds": {
+      "default": 4,
+      "maximum": 120,
+      "minimum": 0,
+      "title": "Max Backoff Seconds",
+      "type": "number"
+    },
+    "max_network_requests": {
+      "default": 3,
+      "maximum": 100,
+      "minimum": 1,
+      "title": "Max Network Requests",
+      "type": "integer"
+    },
+    "max_response_bytes": {
+      "default": 2000000,
+      "maximum": 20000000,
+      "minimum": 1024,
+      "title": "Max Response Bytes",
+      "type": "integer"
+    },
+    "min_interval_seconds": {
+      "default": 0,
+      "maximum": 60,
+      "minimum": 0,
+      "title": "Min Interval Seconds",
+      "type": "number"
+    },
+    "timeout_seconds": {
+      "default": 20,
+      "exclusiveMinimum": 0,
+      "maximum": 300,
+      "title": "Timeout Seconds",
+      "type": "number"
+    }
+  },
+  "title": "SourcePolicy",
+  "type": "object"
+}

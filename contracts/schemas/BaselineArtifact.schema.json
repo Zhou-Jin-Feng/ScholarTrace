@@ -1,0 +1,109 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "artifact_id": {
+      "maxLength": 160,
+      "minLength": 3,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+      "title": "Artifact Id",
+      "type": "string"
+    },
+    "baseline": {
+      "enum": [
+        "B0",
+        "B1"
+      ],
+      "title": "Baseline",
+      "type": "string"
+    },
+    "candidate_paper_ids": {
+      "items": {
+        "maxLength": 160,
+        "minLength": 3,
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+        "type": "string"
+      },
+      "title": "Candidate Paper Ids",
+      "type": "array"
+    },
+    "content_markdown": {
+      "maxLength": 200000,
+      "minLength": 1,
+      "title": "Content Markdown",
+      "type": "string"
+    },
+    "content_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Content Sha256",
+      "type": "string"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "title": "Generated At",
+      "type": "string"
+    },
+    "generator": {
+      "enum": [
+        "deterministic_extractive",
+        "ollama_qwen3_8b"
+      ],
+      "title": "Generator",
+      "type": "string"
+    },
+    "input_snapshot_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Input Snapshot Sha256",
+      "type": "string"
+    },
+    "limitations": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 20,
+      "minItems": 1,
+      "title": "Limitations",
+      "type": "array"
+    },
+    "model_profile_id": {
+      "anyOf": [
+        {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Model Profile Id"
+    },
+    "query": {
+      "maxLength": 1000,
+      "minLength": 2,
+      "title": "Query",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "artifact_id",
+    "baseline",
+    "generator",
+    "query",
+    "input_snapshot_sha256",
+    "candidate_paper_ids",
+    "content_markdown",
+    "content_sha256",
+    "limitations",
+    "generated_at"
+  ],
+  "title": "BaselineArtifact",
+  "type": "object"
+}

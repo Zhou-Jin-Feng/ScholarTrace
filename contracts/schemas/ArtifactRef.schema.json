@@ -17,7 +17,9 @@
         "verification",
         "citation_graph",
         "tool_run",
-        "report"
+        "report",
+        "search_snapshot",
+        "baseline_report"
       ],
       "title": "Artifact Type",
       "type": "string"

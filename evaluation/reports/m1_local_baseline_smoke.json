@@ -1,0 +1,38 @@
+{
+  "baselines": [
+    {
+      "baseline": "B0",
+      "call_count": 1,
+      "cited_candidate_count": 2,
+      "content_sha256": "325a8687c8f6cd018624e7c6f37b68d365827c2611fe60e16c4e050ef75fb781",
+      "duration_seconds": 13.851,
+      "input_tokens": 967,
+      "output_tokens": 414
+    },
+    {
+      "baseline": "B1",
+      "call_count": 1,
+      "cited_candidate_count": 5,
+      "content_sha256": "e4cbf26751a6c91aae3d34f817816e8c76c231b0b862265d89f8aa6484c1c7d2",
+      "duration_seconds": 15.517,
+      "input_tokens": 1809,
+      "output_tokens": 486
+    }
+  ],
+  "billed_api_cost_cny": 0.0,
+  "context_window": 40960,
+  "extended_manifest_sha256": "6eaa09c695a58de267ab4aabe3ac629648b2036c73387969381db0c41af94163",
+  "generated_at": "2026-08-29T09:11:41.029183+00:00",
+  "model": "qwen3:8b",
+  "model_id": "500a1f067a9f",
+  "notes": [
+    "Cited IDs were validated against the supplied candidate set.",
+    "Only metadata and abstracts were supplied to the model.",
+    "Raw Ollama envelopes and prompts are not stored in this report.",
+    "GPU time is not measured separately from wall time in M1."
+  ],
+  "passed": true,
+  "quantization": "Q4_K_M",
+  "request_context_window": 8192,
+  "schema_version": "1.0"
+}

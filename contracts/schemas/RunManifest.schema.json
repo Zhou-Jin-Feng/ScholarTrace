@@ -19,7 +19,9 @@
             "verification",
             "citation_graph",
             "tool_run",
-            "report"
+            "report",
+            "search_snapshot",
+            "baseline_report"
           ],
           "title": "Artifact Type",
           "type": "string"
@@ -404,11 +406,29 @@
           "title": "Service",
           "type": "string"
         },
+        "source_tree_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[a-f0-9]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Tree Sha256"
+        },
         "version": {
           "maxLength": 100,
           "minLength": 1,
           "title": "Version",
           "type": "string"
+        },
+        "worktree_dirty": {
+          "default": false,
+          "title": "Worktree Dirty",
+          "type": "boolean"
         }
       },
       "required": [

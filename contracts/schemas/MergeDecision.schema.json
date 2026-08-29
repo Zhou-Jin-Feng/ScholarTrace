@@ -1,0 +1,63 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "action": {
+      "enum": [
+        "merged",
+        "version_linked",
+        "kept_separate"
+      ],
+      "title": "Action",
+      "type": "string"
+    },
+    "decision_id": {
+      "maxLength": 160,
+      "minLength": 3,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+      "title": "Decision Id",
+      "type": "string"
+    },
+    "left_ids": {
+      "items": {
+        "maxLength": 160,
+        "minLength": 3,
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Left Ids",
+      "type": "array"
+    },
+    "reason": {
+      "maxLength": 500,
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "review_required": {
+      "default": false,
+      "title": "Review Required",
+      "type": "boolean"
+    },
+    "right_ids": {
+      "items": {
+        "maxLength": 160,
+        "minLength": 3,
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Right Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "decision_id",
+    "action",
+    "left_ids",
+    "right_ids",
+    "reason"
+  ],
+  "title": "MergeDecision",
+  "type": "object"
+}
