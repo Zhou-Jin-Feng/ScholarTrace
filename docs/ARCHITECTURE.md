@@ -1,7 +1,7 @@
 # ScholarTrace 架构设计
 
-> 版本：M2 / 1.2
-> 决策状态：核心路线、多源搜索和证据闭环已冻结，停在 M3 开始前
+> 版本：M3 / 1.3
+> 决策状态：核心路线、证据闭环和可恢复 Multi-Agent 编排已冻结，停在 M4 开始前
 
 ## 1. 架构目标
 
@@ -64,7 +64,7 @@ src/scholartrace/
 └─ observability/      # 安全日志、事件、指标、Trace
 ```
 
-M0 建立 `contracts.py` 和核心契约；M1 已实现 `src/scholartrace/search/`，内部按 models、providers、http/cache、normalization、pipeline、baseline、manifest 和 storage 分层。M2 已实现 `src/scholartrace/evidence/`，内部按 models、bindings、client、analysis、pipeline、report 和 artifacts 分层。后续目录仍在对应阶段按需创建，避免空模块伪装完成度。
+M0 建立 `contracts.py` 和核心契约；M1 已实现 `src/scholartrace/search/`；M2 已实现 `src/scholartrace/evidence/`；M3 已实现 `src/scholartrace/workflow/` 的 Coordinator 门禁、动态 Search Agent、持久图、Worker Runner、Artifact/Event/Budget Store，以及 `src/scholartrace/api/events.py` 的 SSE 补发 Router。后续目录仍在对应阶段按需创建，避免空模块伪装完成度。
 
 ### 5.1 M1 搜索数据流
 
@@ -98,22 +98,35 @@ Paper + DocuMindBinding
 
 模型不会回写长 SHA-256 或复制原文 quote。它只选择本次单论文输入中的短引用；Consumer 将短引用映射回真实 `chunk_id` 和受信 Chunk 文本，并计算 quote hash、字符偏移与确定性 ID。这样把概率性的内容理解和确定性的 provenance 校验分离。检索与生成之间设置全局阶段屏障，避免单 GPU Ollama 在 `qwen3-embedding` 与 `qwen3:8b` 间交错换模造成超时。
 
+### 5.3 M3 编排数据流
+
+```text
+injectable Coordinator -> immutable draft plan Artifact
+  -> interrupt approval / modification / rejection
+  -> adaptive search rounds -> immutable SearchRound Artifact
+  -> coverage / saturation / round / budget stop
+  -> LangGraph Send -> bounded idempotent Paper Workers
+  -> deterministic ArtifactRef reducer -> final control state
+```
+
+Checkpoint、Artifact Store 和 Runtime Ledger 使用三个独立 SQLite 文件。Checkpoint 只保存控制面状态；完整计划、检索轮次和 Worker 输出写入 Artifact Store；预算 effect 和业务事件写入 Runtime Ledger。所有可重放写入使用稳定 key，同进程重复 Worker 投递在执行前按 effect key 加锁，跨恢复则由 Artifact/预算唯一键去重。
+
 ## 6. 技术栈冻结
 
 | 层 | 选择 | M0 结论 |
 |---|---|---|
 | Python | CPython 3.11 | 锁定 `.python-version=3.11`，与上游一致 |
 | 依赖 | uv + pyproject + uv.lock | 锁文件是精确版本证据 |
-| 编排 | LangGraph 1.2.11 | Send、interrupt、InMemory Checkpoint、事件流 smoke 通过后锁定 |
+| 编排 | LangGraph 1.2.11 + SQLite Checkpoint 3.1.1 | Send、interrupt、严格 MessagePack、持久恢复和事件流通过 |
 | 类型 | Pydantic 2.13.4 | 拒绝额外字段并导出 JSON Schema |
 | API | FastAPI 0.141.1 | 与 ScholarGraph 锁文件对齐；后续生成 OpenAPI |
 | 本地模型 | Ollama `qwen3:8b` / Q4_K_M | 高频、低风险、可复核结构化任务；M0 实机 smoke 通过 |
 | API 模型 | `api-strong` Profile | 用户确认 Provider/版本/价格前保持禁用并 fail closed |
 | HTTP | HTTPX AsyncClient | M1 来源 Client 与 M2 DocuMind Consumer 均已实现有界请求和错误分类 |
-| 数据 | SQLite + 原子 Artifact Store | M2 绑定 CAS、报告、审计、用量与 RunManifest 已落地 |
+| 数据 | 分离的 SQLite Checkpoint + Artifact Store + Runtime Ledger | M3 恢复、幂等 Artifact、预算 effect 和业务事件已落地 |
 | 引用图 | NetworkX | M4 小规模确定性图，不提前引入 Neo4j |
 | 前端 | React + TypeScript + Vite | M6 实现结构化工作台 |
-| 流式 | SSE | 单向进度足够，事件先持久化 |
+| 流式 | SSE | 持久事件支持 `Last-Event-ID` 补发；长连接 heartbeat 延后到 M6 服务装配 |
 | 测试 | Pytest、RESPX、Playwright | 按阶段引入，外部调用默认 Fixture |
 | 质量 | Ruff + Mypy | M0 起作为本地门禁 |
 

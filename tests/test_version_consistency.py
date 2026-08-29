@@ -10,7 +10,9 @@ ROOT = Path(__file__).resolve().parents[1]
 def test_python_and_core_dependency_versions_are_frozen() -> None:
     project = tomllib.loads((ROOT / "pyproject.toml").read_text("utf-8"))["project"]
     assert project["requires-python"] == ">=3.11,<3.12"
+    assert project["version"] == "0.3.0"
     assert "langgraph==1.2.11" in project["dependencies"]
+    assert "langgraph-checkpoint-sqlite==3.1.1" in project["dependencies"]
     assert "pydantic==2.13.4" in project["dependencies"]
     assert "fastapi==0.141.1" in project["dependencies"]
 

@@ -2,7 +2,7 @@
 
 ScholarTrace 是一个面向计算机与人工智能技术调研的证据可追溯 Multi-Agent 学术研究工作台，服务学生、开发者和初级研究人员，使关键结论能够回溯到真实论文、页码或 Chunk。
 
-当前仓库已完成 **M0：范围、契约和评测种子**、**M1：多源搜索、归一化和简单 Baseline**，以及 **M2：DocuMind 证据闭环 MVP**。M2 已通过冻结 Provider 契约、Fixture、本地模型和三篇公开全文在线闭环复审，结论为 `PASS`；M3 Agent 工作流和前端尚未实现。
+当前仓库已完成 **M0：范围与契约**、**M1：多源搜索**、**M2：DocuMind 证据闭环**和 **M3：LangGraph Multi-Agent 编排**。M3 的动态路由、人工审批、SQLite 恢复、受限 `Send` 并行、幂等副作用和 SSE 补发已通过工程复审，结论为 `PASS WITH NOTES`。
 
 ## 已冻结交付
 
@@ -40,6 +40,15 @@ M2 增加了单论文范围的证据闭环：
 - 三篇论文 Evidence 报告、检索审计、模型用量、预算和 RunManifest 原子持久化；
 - DocuMind `2.2.0` 三篇版本化公开 arXiv PDF 的 upload/status/retrieve 在线验收；
 - `docs/M2_EVIDENCE_BASELINE.md`：M2 契约、实测指标、在线限制与阶段复审。
+
+M3 增加了可恢复 Multi-Agent 控制面：
+
+- 可注入 Coordinator、严格付费 Profile 门禁和 approve/modify/reject `interrupt`；
+- 基于中间覆盖调整 query 的 Search Agent，以及覆盖/饱和/轮数/预算停止；
+- `Send` 论文 Worker、并发信号量、独立超时和确定性 ArtifactRef reducer；
+- 分离的 SQLite Checkpoint、Artifact Store、Runtime Ledger 和稳定幂等 key；
+- 持久业务事件、SSE 与 `Last-Event-ID` 补发；
+- `docs/M3_WORKFLOW_BASELINE.md`：恢复、并发、预算、Fixture 指标和阶段限制。
 
 ## 环境
 
@@ -92,6 +101,15 @@ M2 三论文 DocuMind 在线全文 smoke（要求 DocuMind `2.2.0`、Milvus、Ol
 uv run python scripts/run_m2_live_smoke.py
 ```
 
+M3 确定性编排 smoke（不访问网络，不调用本地或付费模型）：
+
+```powershell
+$env:LANGGRAPH_STRICT_MSGPACK = "true"
+uv run python scripts/run_m3_fixture_smoke.py
+```
+
+该 smoke 在 `interrupt` 后关闭并重开 SQLite 资源，再执行审批恢复、动态两轮检索和三个受限 `Send` Worker。临时数据库位于已忽略的 `artifacts/`，只提交脱敏指标。
+
 脚本只下载 Fixture 锁定版本的公开 arXiv PDF，限制响应类型和大小；原文、绑定和完整 Evidence Artifact 写入已忽略的 `artifacts/`。默认只删除本次新建的 DocuMind 文档，传入 `--keep-documents` 才保留索引。
 
 公开数据源联机 smoke 会访问外部学术元数据 API，并将原始运行 Artifact 写入已忽略的 `artifacts/` 和 `data/`：
@@ -117,6 +135,8 @@ powershell -ExecutionPolicy Bypass -File scripts/verify_upstreams.ps1
 - 本地模型冻结为 `qwen3:8b`；M0 已确认保持付费 API Profile 禁用，未来启用前仍需独立预算授权；
 - M1 的 B0/B1 只使用元数据和摘要，不代表已经核对论文全文；
 - M2 已用三篇公开全文完成在线工程验收，但样本规模有限，且独立语义蕴含核验按计划延后到 M4；
+- M3 已验证编排可靠性，但 `api-strong` 仍禁用，真实 Coordinator 规划质量和成本尚未在线评测；
+- M3 SSE Router 只补发当前持久事件；持续 tail、heartbeat、认证和完整 Research Task HTTP 装配延后到 M6；
 - 不提交凭据、运行数据、论文全文、模型原始回答或 `agent/` 工作记录。
 
 产品范围见 [`docs/PRD.md`](docs/PRD.md)，架构与演进条件见 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)。

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "scholartrace"
-version = "0.2.0"
+version = "0.3.0"
 description = "Evidence-grounded multi-agent academic research workspace"
 readme = "README.md"
 requires-python = ">=3.11,<3.12"
@@ -12,6 +12,7 @@ dependencies = [
   "fastapi==0.141.1",
   "httpx>=0.28.1,<0.29",
   "langgraph==1.2.11",
+  "langgraph-checkpoint-sqlite==3.1.1",
   "pydantic==2.13.4",
 ]
 

@@ -90,3 +90,19 @@
 - 原因：DocuMind 的 `qwen3-embedding` 与 ScholarTrace 的 `qwen3:8b` 共享单 GPU。交错执行会触发换模和排队，使 Embedding 查询在生成期间超时。
 - 约束：Embedding readiness 在在线 smoke 前显式预热且有界检查；阶段屏障不放宽检索、模型或总任务预算。
 - 代价：不能把单篇检索与单篇分析完全流水化，但三篇实测墙钟稳定且避免跨模型资源争用。
+
+## ADR-013：Checkpoint、Artifact 与运行账本物理分离
+
+- 状态：Accepted
+- 决策：M3 使用 `langgraph-checkpoint-sqlite==3.1.1` 保存短期控制状态，独立 Artifact Store 保存完整业务对象，Runtime Ledger 保存幂等预算 effect 和业务事件。
+- 原因：Checkpoint 恢复、业务数据生命周期和 SSE 断线续传有不同的查询与保留需求；混入同一状态会放大快照并导致重复副作用。
+- 约束：自定义 `ArtifactRef` 通过严格 MessagePack 白名单恢复；相同 task/node/paper/round 使用稳定 effect key；目标保留窗口为 7 天，M3 只允许终态通过显式入口删除，自动清理由后续服务装配实现。
+- 代价：单进程 MVP 需要管理三个 SQLite 文件；出现跨进程并发写或多用户需求后再迁移 PostgreSQL。
+
+## ADR-014：M3 Coordinator 保持付费门禁并使用 Fixture 验证编排
+
+- 状态：Accepted
+- 决策：Coordinator 通过可注入接口接入；`api-strong` 未启用时生产门禁抛出明确错误，离线测试和 smoke 使用确定性 ResearchPlan Fixture。
+- 原因：用户尚未确认 Provider、模型、价格和预算；为完成控制流验证而静默替换为本地模型会破坏 M0 冻结策略。
+- 约束：Fixture 只能证明 Schema、interrupt、恢复、路由、并发和幂等，不能作为真实 Coordinator 规划质量或付费模型成本证据。
+- 代价：M3 工程能力可复现，但真实研究任务在配置并评测 `api-strong` 前不能自动生成生产计划。

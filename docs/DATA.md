@@ -1,7 +1,7 @@
 # ScholarTrace 数据契约
 
-> 核心契约版本：`1.0`；M1 搜索契约版本：`1.0`；M2 证据契约版本：`1.0`
-> 代码源：`src/scholartrace/contracts.py`、`src/scholartrace/search/models.py`、`src/scholartrace/evidence/models.py`
+> 核心契约版本：`1.0`；M1 搜索契约版本：`1.0`；M2 证据契约版本：`1.0`；M3 图状态版本：`1.0`
+> 代码源：`src/scholartrace/contracts.py`、`src/scholartrace/search/models.py`、`src/scholartrace/evidence/models.py`、`src/scholartrace/workflow/models.py`
 > 机器格式：`contracts/schemas/*.schema.json`
 
 ## 1. 设计原则
@@ -53,6 +53,16 @@ M2 证据对象：
 | EvidenceReportArtifact | 3-5 个分析 bundle、Markdown、content hash | Paper/Claim/Evidence ID 全局唯一；Markdown hash 必须匹配 |
 
 `PaperAnalysisDraft` 是模型内部临时对象，不是最终 Evidence。模型只返回 `chunk-1..6` 与 `quote-1..6`；Consumer 在单论文白名单内解析为真实 `chunk_id` 和原始 Chunk 文本。长哈希和逐字 quote 不依赖模型复制。
+
+M3 控制对象：
+
+| 对象 | 关键字段 | 约束 |
+|---|---|---|
+| ApprovalDecision | action、modified_plan、reason | modify 必须给出完整 ResearchPlan；reject 不执行 Search/Worker |
+| SearchRoundArtifact | round、query、adjustment、candidate/new IDs、coverage、ratio | 完整轮次只进入 Artifact Store；State 保存引用 |
+| PaperWorkerArtifact | paper ID、status、output/public reason | 稳定 task+paper Artifact ID；重复投递不得重复执行 |
+| PersistedEvent | event/sequence、task、node、kind、artifact、payload | 单调 sequence；稳定 key 去重；安全 payload |
+| ResearchState | task/thread、plan/search/worker refs、paper IDs、round、status | 不含完整计划、检索结果、Worker output、Evidence 或报告 |
 
 M0 默认 Budget 上限：输入 160,000 Token、输出 40,000 Token、总计 200,000 Token、60 次模型调用、16 次 API/工具调用、1,800 秒、10 CNY。达到任一限制即停止新增调用；10 CNY 是硬上限，不是预计花费。
 
@@ -123,7 +133,7 @@ uv run python scripts/export_schemas.py
 uv run pytest tests/test_contract_models.py
 ```
 
-`contracts/examples/m0_bundle.json` 覆盖核心对象；`contracts/schemas/` 同时包含 M1 搜索与 M2 证据对象的独立 Schema。M0 示例、M1 Baseline 和 M2 契约 Fixture 不代表在线全文质量；在线工程验收的脱敏指标单独保存在 `evaluation/reports/m2_live_documind_smoke.json`，原文和完整 Evidence Artifact 不进入 Git。
+`contracts/examples/m0_bundle.json` 覆盖核心对象；`contracts/schemas/` 同时包含 M1 搜索与 M2 证据对象的独立 Schema。M3 TypedDict 是 LangGraph 内部控制契约，不作为跨服务 JSON Schema。M3 的脱敏 Fixture 指标位于 `evaluation/reports/m3_workflow_fixture_smoke.json`；Checkpoint 和完整业务 Artifact 不进入 Git。
 
 ## 学术来源与访问约束
 

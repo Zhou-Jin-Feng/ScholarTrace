@@ -1,0 +1,45 @@
+{
+  "artifact_count": 7,
+  "budget_usage": {
+    "api_calls": 2,
+    "candidate_papers": 3,
+    "elapsed_seconds": 0.0,
+    "external_cost_cny": 0.0,
+    "fulltext_papers": 3,
+    "llm_input_tokens": 0,
+    "llm_output_tokens": 0,
+    "local_gpu_seconds": 0.0,
+    "model_calls": 1,
+    "queries": 2,
+    "rag_calls": 0
+  },
+  "checkpoint_backend": "sqlite",
+  "coordinator_fixture_calls": 1,
+  "deterministic_merge": true,
+  "duration_seconds": 0.342,
+  "dynamic_query_route": true,
+  "event_count": 10,
+  "fixture_kind": "deterministic_m3_control_flow",
+  "generated_at": "2026-08-29T15:51:45.198422+00:00",
+  "interrupt_saved": true,
+  "local_model_calls": 0,
+  "max_observed_worker_concurrency": 2,
+  "notes": [
+    "The api-strong profile remains disabled and no model provider was called.",
+    "The Coordinator and tool responses are deterministic fixtures for control-flow tests.",
+    "Checkpoint, Artifact Store and runtime event ledger use three separate SQLite files."
+  ],
+  "paper_worker_calls": 3,
+  "passed": true,
+  "provider_calls": 0,
+  "query_adjustment_reasons": [
+    "initial_plan",
+    "uncovered_subquestion"
+  ],
+  "query_count": 2,
+  "replayed_event_count": 8,
+  "resource_restart_before_resume": true,
+  "schema_version": "1.0",
+  "selected_paper_count": 3,
+  "state_size_bytes": 3247
+}

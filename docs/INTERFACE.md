@@ -1,6 +1,6 @@
 # ScholarTrace 接口契约
 
-> 状态：M2 DocuMind Consumer 契约冻结
+> 状态：M3 工作流事件补发接口已实现；其余 Research Task HTTP 装配延后
 > 内部协议：版本化 HTTP/JSON + OpenAPI 3.1  
 > 契约目录：`contracts/openapi/`
 
@@ -91,7 +91,7 @@ Client 还必须校验返回的 document、index、source、服务版本、Chunk
 
 机器契约：`contracts/openapi/scholargraph-v1.openapi.json`
 
-ScholarGraph commit `953e40b` 当前只有 Python `src.demo_service.run_query` 和 Streamlit Demo。以下 HTTP 端点是 M5 Provider 实现目标，不得在 M0/M1/M2 中写成现有能力：
+ScholarGraph commit `953e40b` 当前只有 Python `src.demo_service.run_query` 和 Streamlit Demo。以下 HTTP 端点是 M5 Provider 实现目标，不得在 M0-M3 中写成现有能力：
 
 ```text
 GET  /api/v1/health/live
@@ -120,9 +120,19 @@ POST /api/v1/query
 - 无可验证 source_refs 的 answer 只能作为分析或检索线索；
 - 超时或失败回退 B3，不把部分输出当成成功答案。
 
-## 5. ScholarTrace Research Task API 计划
+## 5. ScholarTrace Research Task API
 
-这些端点在 M3/M6 实现，本阶段只冻结职责：
+M3 已实现只读事件补发 Router：
+
+```text
+GET /api/v1/research/tasks/{task_id}/events
+Last-Event-ID: event:<sequence>
+Accept: text/event-stream
+```
+
+事件先以稳定 key 写入 Runtime Ledger，再按单调 `event:<sequence>` 以 SSE 返回。无效 `Last-Event-ID` 返回 HTTP 400；响应禁止代理缓冲和缓存。M3 Router 返回当前已有事件后结束响应，M6 服务装配再加入任务创建/审批 HTTP、持续 tail、heartbeat、认证和 Artifact 授权。
+
+完整目标端点：
 
 ```text
 POST /api/v1/research/tasks
@@ -133,8 +143,8 @@ GET  /api/v1/research/tasks/{task_id}/artifacts
 GET  /api/v1/research/tasks/{task_id}/report
 ```
 
-- 创建和审批使用 Idempotency-Key；
-- 事件先持久化再通过 SSE 发送，支持 `Last-Event-ID`；
+- 创建和审批使用 Idempotency-Key；当前通过 `M3Workflow.start/resume` 提供内部应用服务接口；
+- 事件先持久化再通过 SSE 发送，支持 `Last-Event-ID`；M3 已实现有限补发；
 - 长研究问题放 POST body，不放查询参数；
 - Artifact 响应默认返回元数据和安全摘要，正文使用授权下载端点。
 
