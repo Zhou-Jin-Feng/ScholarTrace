@@ -1,0 +1,147 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "attempts": {
+      "maximum": 3,
+      "minimum": 0,
+      "title": "Attempts",
+      "type": "integer"
+    },
+    "canonical_paper_id": {
+      "maxLength": 160,
+      "minLength": 3,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+      "title": "Canonical Paper Id",
+      "type": "string"
+    },
+    "chunk_count": {
+      "default": 0,
+      "maximum": 20,
+      "minimum": 0,
+      "title": "Chunk Count",
+      "type": "integer"
+    },
+    "completed_at": {
+      "format": "date-time",
+      "title": "Completed At",
+      "type": "string"
+    },
+    "document_key": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Document Key",
+      "type": "string"
+    },
+    "duration_seconds": {
+      "minimum": 0,
+      "title": "Duration Seconds",
+      "type": "number"
+    },
+    "error_code": {
+      "anyOf": [
+        {
+          "enum": [
+            "document_not_found",
+            "stale_document_index",
+            "document_operation_in_progress",
+            "document_index_unavailable",
+            "request_too_large",
+            "validation_error",
+            "retrieval_service_unavailable",
+            "service_unavailable",
+            "retrieval_capacity_exceeded",
+            "retrieval_timeout"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Error Code"
+    },
+    "index_id": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Index Id",
+      "type": "string"
+    },
+    "query_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Query Sha256",
+      "type": "string"
+    },
+    "retrieval_run_id": {
+      "maxLength": 160,
+      "minLength": 3,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+      "title": "Retrieval Run Id",
+      "type": "string"
+    },
+    "retrieval_version": {
+      "anyOf": [
+        {
+          "const": "dense-v1",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Retrieval Version"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "service_version": {
+      "anyOf": [
+        {
+          "maxLength": 100,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Service Version"
+    },
+    "source_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Source Sha256",
+      "type": "string"
+    },
+    "started_at": {
+      "format": "date-time",
+      "title": "Started At",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "succeeded",
+        "empty",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "retrieval_run_id",
+    "canonical_paper_id",
+    "document_key",
+    "index_id",
+    "source_sha256",
+    "query_sha256",
+    "started_at",
+    "completed_at",
+    "duration_seconds",
+    "attempts",
+    "status"
+  ],
+  "title": "RetrievalAudit",
+  "type": "object"
+}

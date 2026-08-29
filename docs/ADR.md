@@ -6,7 +6,7 @@
 
 - 状态：Accepted
 - 决策：ScholarTrace 通过 HTTP/OpenAPI 调用 DocuMind，不复制 Retriever、Milvus 或解析器。
-- 当前基线：DocuMind `2.1.0`，commit `32c5eb8`，retrieve Schema `1.0`。
+- 当前基线：最低 DocuMind `2.1.0/32c5eb8`；已验证兼容 `2.2.0/212f60a`，retrieve Schema `1.0`。
 - 原因：DocuMind 已拥有文档生命周期、active index 和可追溯 Chunk。
 - 代价：ScholarTrace 必须维护 Paper 到 DocuMindBinding 的唯一版本映射。
 
@@ -59,7 +59,7 @@
 - 决策：确定性任务不用 LLM；高频受限任务使用冻结的本地 `qwen3:8b`；关键规划、核验和合成通过 `api-strong` Profile。付费 Profile 在用户确认 Provider、版本和价格前禁用。
 - 原因：控制批量成本，同时不让关键 Claim-Evidence 正确性受“全本地”目标绑架。
 - 约束：本地失败最多尝试两次，只按 allowlist 升级；禁止自动换到更贵模型；RunManifest 记录 Token、重试、墙钟、GPU 和 CNY 成本。
-- 代价：API Profile 未配置时关键节点 fail closed，不能形成完整 M2 报告。
+- 代价：API Profile 未配置时 M3 Coordinator 与后续关键 Verifier/Synthesis fail closed；M2 受限 PaperCard/Claim 提取仍可使用已冻结的本地 Profile。
 
 ## ADR-009：先完成证据闭环，再增加 Multi-Agent
 
@@ -74,3 +74,19 @@
 - 决策：一个开发主题用于调试，三个评测主题只用于阶段评测；所有运行记录数据截止日期和种子 hash。
 - 原因：降低反复调参导致的评测泄漏。
 - 代价：评测主题需要人工确认关键论文、问题和排除条件。
+
+## ADR-011：模型只选择短证据引用
+
+- 状态：Accepted
+- 决策：Paper Analysis 模型只返回本次单论文输入中的 `chunk-N` 与 `quote-N`；Consumer 确定性解析真实 64 位 Chunk ID 和逐字 quote。
+- 原因：M2 实机 smoke 证明本地模型不能稳定复制 SHA-256 和长引文；让概率模型承担字节级完整性会造成不必要的结构化失败。
+- 约束：短引用最多 6 组，只在单次单论文调用内有效；未知引用、Chunk/quote 不匹配、跨论文响应全部 fail closed；最终 Evidence 必须保存真实 provenance、内容哈希和字符偏移。
+- 代价：M2 引文粒度暂为受限 Chunk excerpt；更细的句级切分必须由确定性解析器产生候选，不能回退为模型自由复制。
+
+## ADR-012：单 GPU 本地模型使用阶段屏障
+
+- 状态：Accepted
+- 决策：M2 先完成全部论文的 DocuMind 检索与校验，再启动本地 `qwen3:8b` 分析；同一 Paper 并发上限仍为 2。
+- 原因：DocuMind 的 `qwen3-embedding` 与 ScholarTrace 的 `qwen3:8b` 共享单 GPU。交错执行会触发换模和排队，使 Embedding 查询在生成期间超时。
+- 约束：Embedding readiness 在在线 smoke 前显式预热且有界检查；阶段屏障不放宽检索、模型或总任务预算。
+- 代价：不能把单篇检索与单篇分析完全流水化，但三篇实测墙钟稳定且避免跨模型资源争用。

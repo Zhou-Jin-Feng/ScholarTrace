@@ -34,6 +34,19 @@
       "default": null,
       "title": "Char Start"
     },
+    "chunk_content_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Chunk Content Sha256"
+    },
     "chunk_id": {
       "anyOf": [
         {

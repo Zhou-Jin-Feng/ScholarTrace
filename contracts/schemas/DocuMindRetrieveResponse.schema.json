@@ -1,0 +1,122 @@
+{
+  "$defs": {
+    "RetrievalChunk": {
+      "additionalProperties": false,
+      "properties": {
+        "chunk_id": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Chunk Id",
+          "type": "string"
+        },
+        "content": {
+          "maxLength": 200000,
+          "minLength": 1,
+          "title": "Content",
+          "type": "string"
+        },
+        "content_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Content Sha256",
+          "type": "string"
+        },
+        "distance": {
+          "minimum": 0,
+          "title": "Distance",
+          "type": "number"
+        },
+        "page_number": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Number"
+        },
+        "rank": {
+          "maximum": 20,
+          "minimum": 1,
+          "title": "Rank",
+          "type": "integer"
+        },
+        "source": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chunk_id",
+        "content",
+        "content_sha256",
+        "source",
+        "distance",
+        "rank"
+      ],
+      "title": "RetrievalChunk",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "chunks": {
+      "items": {
+        "$ref": "#/$defs/RetrievalChunk"
+      },
+      "maxItems": 20,
+      "title": "Chunks",
+      "type": "array"
+    },
+    "document_key": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Document Key",
+      "type": "string"
+    },
+    "index_id": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Index Id",
+      "type": "string"
+    },
+    "retrieval_mode": {
+      "const": "dense",
+      "title": "Retrieval Mode",
+      "type": "string"
+    },
+    "retrieval_version": {
+      "const": "dense-v1",
+      "title": "Retrieval Version",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "service_version": {
+      "pattern": "^2\\.[1-9][0-9]*\\.[0-9]+$",
+      "title": "Service Version",
+      "type": "string"
+    },
+    "source_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Source Sha256",
+      "type": "string"
+    }
+  },
+  "required": [
+    "service_version",
+    "retrieval_version",
+    "retrieval_mode",
+    "document_key",
+    "index_id",
+    "source_sha256"
+  ],
+  "title": "DocuMindRetrieveResponse",
+  "type": "object"
+}

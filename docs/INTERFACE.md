@@ -1,6 +1,6 @@
 # ScholarTrace 接口契约
 
-> 状态：M0 冻结草案  
+> 状态：M2 DocuMind Consumer 契约冻结
 > 内部协议：版本化 HTTP/JSON + OpenAPI 3.1  
 > 契约目录：`contracts/openapi/`
 
@@ -21,9 +21,11 @@
 - Consumer 不兼容时 fail fast，禁止猜测字段或回退 DocuMind `/chat/stream`；
 - 只读检索端点不需要 Idempotency-Key，未来写接口必须使用幂等键。
 
-## 3. DocuMind `2.1.0` 已实现接口
+## 3. DocuMind `2.1.0+` 已实现接口
 
 机器契约：`contracts/openapi/documind-v1.openapi.json`
+
+最低兼容版本为 `2.1.0/32c5eb8`；`2.2.0/212f60a` 保持相同请求/响应字段，并增加 retrieval readiness、有界执行与错误码。兼容检查只读取冻结 Git 对象，不将 DocuMind 当前未提交工作树视为协议。
 
 ### 3.1 健康检查
 
@@ -32,7 +34,7 @@ GET /api/v1/health/live
 GET /api/v1/health/ready
 ```
 
-`live` 只说明进程存活；`ready` 检查实际依赖。ScholarTrace 启动时先校验版本和 readiness，运行中对暂时故障执行预算内重试或降级。
+`live` 只说明进程存活；`ready` 检查实际依赖。ScholarTrace 启动时先校验版本和 readiness，运行中对暂时故障执行预算内重试或降级。DocuMind 2.2.0 即使因生成模型不可用返回 HTTP 503，只要 `components.retrieval == "ready"`，纯检索仍可用；组件缺失或非 ready 时 fail closed。
 
 ### 3.2 单文档证据检索
 
@@ -57,7 +59,7 @@ Content-Type: application/json
 | 字段 | 约束 |
 |---|---|
 | schema_version | 固定 `1.0` |
-| service_version | M0 基线 `2.1.0`，兼容范围由 Consumer 显式升级 |
+| service_version | 支持冻结的 `2.1.0` 与 `2.2.0`；必须和当前 Paper 绑定完全一致 |
 | retrieval_version | 固定 `dense-v1` |
 | document_key/index_id/source_sha256 | 64 位小写 SHA-256 |
 | chunks | 0-20 条；空数组是成功业务结果 |
@@ -76,6 +78,14 @@ Content-Type: application/json
 | 413 | request_too_large | 修正请求，不重试原请求 |
 | 422 | validation_error | 编程错误，fail fast |
 | 503 | retrieval_service_unavailable | 有界重试后降级或失败 |
+| 503 | retrieval_capacity_exceeded | 相同论文范围内有界退避；不得扩大 document scope |
+| 503 | retrieval_timeout | 相同请求最多执行 Consumer 预算内重试 |
+
+Client 还必须校验返回的 document、index、source、服务版本、Chunk 内容 hash、唯一 ID 和连续 rank。`stale_document_index` 不自动刷新绑定或重试；调用方必须显式读取新 active index 并执行 CAS。
+
+### 3.4 M2 在线状态边界
+
+`evaluation/reports/m2_documind_compatibility.json` 证明 2.1.0 与 2.2.0 的冻结 Provider Schema 可被 Consumer 接受。最终阶段复审时本机 `127.0.0.1:8001` 运行冻结部署 `2.2.0/212f60a`，OpenAPI 包含 `/api/v1/retrieve`，预热后的 readiness 为 HTTP 200 且 `components.retrieval=ready`，因此 `online_acceptance_passed=true`。`evaluation/reports/m2_live_documind_smoke.json` 另行记录三篇公开全文的真实 upload/status/retrieve 与 Evidence 闭环；Fixture 指标和在线指标保持分离。
 
 ## 4. ScholarGraph 待实现接口
 

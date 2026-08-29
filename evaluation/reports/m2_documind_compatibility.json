@@ -1,0 +1,41 @@
+{
+  "consumer": "scholartrace-m2",
+  "frozen_baselines": [
+    {
+      "contract_sha256": "c4dcc3ab6d5bbc83776041d28dc9bdd5793907e5a7f53bd8bed9d778610f793b",
+      "git_commit": "32c5eb8d755065c7e8db9dae80973263aa77f196",
+      "passed": true,
+      "schema_version": "1.0",
+      "unknown_field_rejected_by_both": true,
+      "valid_request_response_error_passed": true,
+      "version": "2.1.0"
+    },
+    {
+      "contract_sha256": "60636ab2ec3348d37d6ca4c40b80c62bda7782cde6fe7efd19e2f55fa3dee869",
+      "git_commit": "212f60a57d401b90debd57db0cd660397c9c8d1b",
+      "passed": true,
+      "schema_version": "1.0",
+      "unknown_field_rejected_by_both": true,
+      "valid_request_response_error_passed": true,
+      "version": "2.2.0"
+    }
+  ],
+  "generated_at": "2026-08-29T13:14:21.431549+00:00",
+  "notes": [
+    "Frozen Provider commits were read with git show; the DocuMind worktree was not modified.",
+    "Online readiness is reported separately and does not replace frozen contract validation.",
+    "No response body, document identity, query text, Chunk content, or credential is stored."
+  ],
+  "online_acceptance_passed": true,
+  "online_readiness": {
+    "compatible": true,
+    "http_status": 200,
+    "reachable": true,
+    "retrieval_component": "ready",
+    "service_version": "2.2.0"
+  },
+  "passed": true,
+  "provider": "documind",
+  "provider_worktree_dirty": true,
+  "schema_version": "1.0"
+}

@@ -1,0 +1,45 @@
+{
+  "billed_api_cost_cny": 0.0,
+  "documind_mode": "mock_provider_responses",
+  "documind_online_service_used": false,
+  "documind_provider_baseline": {
+    "contract_version": "1.0",
+    "git_commit": "212f60a",
+    "retrieval_version": "dense-v1",
+    "service": "documind",
+    "version": "2.2.0"
+  },
+  "evidence_count": 3,
+  "fixture_kind": "contract_and_local_model_smoke",
+  "generated_at": "2026-08-29T12:07:02.920550+00:00",
+  "input_tokens": 1009,
+  "local_model": {
+    "model_id": "500a1f067a9f",
+    "name": "qwen3:8b",
+    "quantization": "Q4_K_M",
+    "request_context_window": 8192
+  },
+  "manifest_sha256": "42f92ade001b8c3a762cf27a91c7c7af65d2cfcebc513e6fded5a577751860dd",
+  "model_calls": 3,
+  "model_duration_seconds": 49.34,
+  "notes": [
+    "The three paper identities are real DEV-01 papers, but retrieval responses are fixtures.",
+    "This smoke validates local structured extraction and provenance, not DocuMind retrieval quality.",
+    "Only exact quotes from supplied chunks are accepted; raw Ollama envelopes are not stored.",
+    "GPU time is not measured separately from wall time in M2."
+  ],
+  "output_tokens": 903,
+  "paper_count": 3,
+  "paper_ids": [
+    "doi:10.48550/arxiv.2312.10997",
+    "doi:10.48550/arxiv.2401.15884",
+    "doi:10.48550/arxiv.2403.14403"
+  ],
+  "passed": true,
+  "pipeline_duration_seconds": 29.6,
+  "quality_scope": "Public abstract excerpts are shaped as synthetic DocuMind responses. This fixture verifies contracts and provenance, not online retrieval quality.",
+  "report_content_sha256": "a41aef1926a259369d2ada3bf5970ecc322db130c54550784b6285c07bd7701a",
+  "retrieval_attempts": 3,
+  "schema_version": "1.0",
+  "structured_repairs": 0
+}

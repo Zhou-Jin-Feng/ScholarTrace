@@ -1,0 +1,60 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "distance_threshold": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Distance Threshold"
+    },
+    "document_key": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Document Key",
+      "type": "string"
+    },
+    "expected_index_id": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Expected Index Id",
+      "type": "string"
+    },
+    "query": {
+      "maxLength": 4000,
+      "minLength": 1,
+      "title": "Query",
+      "type": "string"
+    },
+    "retrieval_mode": {
+      "const": "dense",
+      "default": "dense",
+      "title": "Retrieval Mode",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "top_k": {
+      "default": 5,
+      "maximum": 20,
+      "minimum": 1,
+      "title": "Top K",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "query",
+    "document_key",
+    "expected_index_id"
+  ],
+  "title": "DocuMindRetrieveRequest",
+  "type": "object"
+}

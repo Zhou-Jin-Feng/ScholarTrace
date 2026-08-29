@@ -3,7 +3,7 @@
   "info": {
     "title": "DocuMind Evidence Retrieval API",
     "version": "1.0.0",
-    "description": "ScholarTrace consumer contract frozen against DocuMind 2.1.0 (32c5eb8)."
+    "description": "ScholarTrace consumer contract compatible with DocuMind 2.1.0 (32c5eb8) and 2.2.0 (212f60a)."
   },
   "servers": [
     {
@@ -164,6 +164,12 @@
             "additionalProperties": {
               "type": "boolean"
             }
+          },
+          "components": {
+            "type": ["object", "null"],
+            "additionalProperties": {
+              "type": "string"
+            }
           }
         },
         "additionalProperties": false
@@ -215,7 +221,6 @@
           "content",
           "content_sha256",
           "source",
-          "page_number",
           "distance",
           "rank"
         ],
@@ -297,7 +302,7 @@
       },
       "ErrorDetail": {
         "type": "object",
-        "required": ["code", "message", "request_id"],
+        "required": ["code", "message"],
         "properties": {
           "code": {
             "type": "string",
@@ -309,6 +314,8 @@
               "request_too_large",
               "validation_error",
               "retrieval_service_unavailable",
+              "retrieval_capacity_exceeded",
+              "retrieval_timeout",
               "service_unavailable"
             ]
           },

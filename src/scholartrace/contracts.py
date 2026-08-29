@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 from datetime import date, datetime
 from typing import Annotated, Literal
 
@@ -153,6 +154,7 @@ class Evidence(ContractModel):
     quote: NonBlank
     evidence_level: Literal["fulltext", "abstract", "metadata"]
     content_sha256: Sha256
+    chunk_content_sha256: Sha256 | None = None
     document_key: Sha256 | None = None
     index_id: Sha256 | None = None
     section: str | None = Field(default=None, max_length=500)
@@ -167,6 +169,9 @@ class Evidence(ContractModel):
 
     @model_validator(mode="after")
     def enforce_fulltext_provenance(self) -> Evidence:
+        quote_sha256 = hashlib.sha256(self.quote.encode("utf-8")).hexdigest()
+        if self.content_sha256 != quote_sha256:
+            raise ValueError("evidence content_sha256 must match quote")
         if (
             self.char_start is not None
             and self.char_end is not None
@@ -178,6 +183,7 @@ class Evidence(ContractModel):
                 self.document_key,
                 self.index_id,
                 self.chunk_id,
+                self.chunk_content_sha256,
                 self.source_sha256,
                 self.retrieval_run_id,
             )

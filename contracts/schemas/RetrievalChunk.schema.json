@@ -1,0 +1,61 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "chunk_id": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Chunk Id",
+      "type": "string"
+    },
+    "content": {
+      "maxLength": 200000,
+      "minLength": 1,
+      "title": "Content",
+      "type": "string"
+    },
+    "content_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Content Sha256",
+      "type": "string"
+    },
+    "distance": {
+      "minimum": 0,
+      "title": "Distance",
+      "type": "number"
+    },
+    "page_number": {
+      "anyOf": [
+        {
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Page Number"
+    },
+    "rank": {
+      "maximum": 20,
+      "minimum": 1,
+      "title": "Rank",
+      "type": "integer"
+    },
+    "source": {
+      "maxLength": 2048,
+      "minLength": 1,
+      "title": "Source",
+      "type": "string"
+    }
+  },
+  "required": [
+    "chunk_id",
+    "content",
+    "content_sha256",
+    "source",
+    "distance",
+    "rank"
+  ],
+  "title": "RetrievalChunk",
+  "type": "object"
+}

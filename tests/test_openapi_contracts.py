@@ -28,6 +28,13 @@ def test_documind_contract_matches_frozen_provider_constraints() -> None:
     assert request["properties"]["retrieval_mode"]["const"] == "dense"
     assert response["properties"]["retrieval_version"]["const"] == "dense-v1"
     assert "query" not in response["properties"]
+    error_codes = schemas["ErrorDetail"]["properties"]["code"]["enum"]  # type: ignore[index]
+    assert "retrieval_capacity_exceeded" in error_codes
+    assert "retrieval_timeout" in error_codes
+    health = schemas["HealthResponse"]  # type: ignore[index]
+    assert "components" in health["properties"]
+    assert "page_number" not in schemas["RetrievalChunk"]["required"]  # type: ignore[index]
+    assert "request_id" not in schemas["ErrorDetail"]["required"]  # type: ignore[index]
 
 
 def test_scholargraph_contract_declares_fixed_abstract_corpus() -> None:

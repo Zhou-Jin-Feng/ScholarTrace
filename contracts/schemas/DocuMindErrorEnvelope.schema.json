@@ -1,0 +1,79 @@
+{
+  "$defs": {
+    "DocuMindErrorDetail": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "enum": [
+            "document_not_found",
+            "stale_document_index",
+            "document_operation_in_progress",
+            "document_index_unavailable",
+            "request_too_large",
+            "validation_error",
+            "retrieval_service_unavailable",
+            "service_unavailable",
+            "retrieval_capacity_exceeded",
+            "retrieval_timeout"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "items": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fields"
+        },
+        "message": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Request Id"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ],
+      "title": "DocuMindErrorDetail",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "error": {
+      "$ref": "#/$defs/DocuMindErrorDetail"
+    }
+  },
+  "required": [
+    "error"
+  ],
+  "title": "DocuMindErrorEnvelope",
+  "type": "object"
+}

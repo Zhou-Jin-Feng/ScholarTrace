@@ -1,7 +1,7 @@
 # ScholarTrace 数据契约
 
-> 核心契约版本：`1.0`；M1 搜索契约版本：`1.0`
-> 代码源：`src/scholartrace/contracts.py`、`src/scholartrace/search/models.py`
+> 核心契约版本：`1.0`；M1 搜索契约版本：`1.0`；M2 证据契约版本：`1.0`
+> 代码源：`src/scholartrace/contracts.py`、`src/scholartrace/search/models.py`、`src/scholartrace/evidence/models.py`
 > 机器格式：`contracts/schemas/*.schema.json`
 
 ## 1. 设计原则
@@ -41,7 +41,20 @@ M1 搜索对象：
 | SearchSnapshot | 来源结果、排序论文、合并决策、候选 hash、outcome | 候选 hash 排除采集时间，固定内容可离线重放 |
 | BaselineArtifact | B0/B1、生成器、输入 hash、引用 ID、内容 hash、限制 | 本地模型只能引用实际提供的候选 ID；只声明摘要级证据 |
 
-M0 默认 Budget 上限：输入 160,000 Token、输出 40,000 Token、总计 200,000 Token、60 次模型调用、16 次付费 API 调用、1,800 秒、10 CNY。达到任一限制即停止新增调用；10 CNY 是硬上限，不是预计花费。
+M2 证据对象：
+
+| 对象 | 关键字段 | 约束 |
+|---|---|---|
+| DocuMindRetrieveRequest | query、document_key、expected_index_id、top_k | 单文档、Schema 1.0、Dense-only、未知字段拒绝 |
+| RetrievalChunk | chunk_id、content/hash、source、page、distance、rank | 内容 hash 必须匹配；ID 唯一；rank 从 1 连续 |
+| RetrievalAudit | paper/document/index/source、query hash、attempts、status | 不保存 query 或 Chunk 正文；空结果与失败分离 |
+| PaperCard | paper、question、summary、contributions、limitations、ID 引用 | 输入、模型 Profile 和生成时间可审计 |
+| PaperAnalysisBundle | PaperCard、Claim、Evidence、RetrievalAudit | 只允许一篇 Paper；Claim 不得引用 bundle 外 Evidence |
+| EvidenceReportArtifact | 3-5 个分析 bundle、Markdown、content hash | Paper/Claim/Evidence ID 全局唯一；Markdown hash 必须匹配 |
+
+`PaperAnalysisDraft` 是模型内部临时对象，不是最终 Evidence。模型只返回 `chunk-1..6` 与 `quote-1..6`；Consumer 在单论文白名单内解析为真实 `chunk_id` 和原始 Chunk 文本。长哈希和逐字 quote 不依赖模型复制。
+
+M0 默认 Budget 上限：输入 160,000 Token、输出 40,000 Token、总计 200,000 Token、60 次模型调用、16 次 API/工具调用、1,800 秒、10 CNY。达到任一限制即停止新增调用；10 CNY 是硬上限，不是预计花费。
 
 ## 3. ID 规则
 
@@ -75,7 +88,7 @@ M0 默认 Budget 上限：输入 160,000 Token、输出 40,000 Token、总计 20
 
 1. 每个关键 Claim 至少引用一个存在的 Evidence；
 2. Evidence 引用的 Paper 必须存在；
-3. fulltext Evidence 的 Paper、document_key、index_id、chunk_id 和 source_sha256 必须一致；
+3. fulltext Evidence 的 Paper、document_key、index_id、chunk_id、chunk_content_sha256 和 source_sha256 必须一致；
 4. 数值 Claim 同时保留指标、数据集和实验条件；
 5. unsupported Claim 不进入无标记结论；
 6. conflicted Claim 同时展示支持和反证；
@@ -83,6 +96,7 @@ M0 默认 Budget 上限：输入 160,000 Token、输出 40,000 Token、总计 20
 8. ScholarGraph 只产生 abstract 辅助证据或检索线索；
 9. 同一输入的幂等重试不得产生不同 Artifact ID；
 10. 内容哈希变化必须生成新 Artifact 或新版本。
+11. Evidence `content_sha256` 必须等于 quote 的 UTF-8 SHA-256；模型短引用只能解析到本次单论文输入。
 
 ## 6. Artifact Store 边界
 
@@ -109,7 +123,7 @@ uv run python scripts/export_schemas.py
 uv run pytest tests/test_contract_models.py
 ```
 
-`contracts/examples/m0_bundle.json` 覆盖所有顶层核心对象；`contracts/schemas/` 同时包含 M1 搜索对象的独立 Schema。M0 示例和 M1 Baseline 都不代表已经完成正式全文标注。
+`contracts/examples/m0_bundle.json` 覆盖核心对象；`contracts/schemas/` 同时包含 M1 搜索与 M2 证据对象的独立 Schema。M0 示例、M1 Baseline 和 M2 契约 Fixture 不代表在线全文质量；在线工程验收的脱敏指标单独保存在 `evaluation/reports/m2_live_documind_smoke.json`，原文和完整 Evidence Artifact 不进入 Git。
 
 ## 学术来源与访问约束
 

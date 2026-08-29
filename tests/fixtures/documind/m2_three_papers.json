@@ -1,0 +1,209 @@
+{
+  "schema_version": "1.0",
+  "fixture_kind": "contract_and_local_model_smoke",
+  "quality_scope": "Public abstract excerpts are shaped as synthetic DocuMind responses. This fixture verifies contracts and provenance, not online retrieval quality.",
+  "provider_baseline": {
+    "service": "documind",
+    "version": "2.2.0",
+    "git_commit": "212f60a",
+    "contract_version": "1.0",
+    "retrieval_version": "dense-v1"
+  },
+  "question": "What signals or classifications determine how retrieval is used?",
+  "papers": [
+    {
+      "paper": {
+        "schema_version": "1.0",
+        "canonical_paper_id": "doi:10.48550/arxiv.2401.15884",
+        "title": "Corrective Retrieval Augmented Generation",
+        "normalized_title": "corrective retrieval augmented generation",
+        "authors": ["Shi-Qi Yan", "Jia-Chen Gu", "Yun Zhu", "Zhen-Hua Ling"],
+        "publication_year": 2024,
+        "doi": "10.48550/arxiv.2401.15884",
+        "arxiv_id": "2401.15884",
+        "openalex_id": "W4391418506",
+        "access_level": "fulltext",
+        "sources": [
+          {
+            "source": "arxiv",
+            "source_id": "http://arxiv.org/abs/2401.15884v3",
+            "retrieved_at": "2026-08-29T11:37:15Z",
+            "record_sha256": "6666666666666666666666666666666666666666666666666666666666666666"
+          }
+        ]
+      },
+      "binding": {
+        "schema_version": "1.0",
+        "canonical_paper_id": "doi:10.48550/arxiv.2401.15884",
+        "document_key": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "index_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "source_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "documind_version": "2.2.0",
+        "retrieval_schema_version": "1.0"
+      },
+      "retrieve_response": {
+        "schema_version": "1.0",
+        "service_version": "2.2.0",
+        "retrieval_version": "dense-v1",
+        "retrieval_mode": "dense",
+        "document_key": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "index_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "source_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "chunks": [
+          {
+            "chunk_id": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+            "content": "Specifically, a lightweight retrieval evaluator is designed to assess the overall quality of retrieved documents for a query, returning a confidence degree based on which different knowledge retrieval actions can be triggered. CRAG is plug-and-play and can be seamlessly coupled with various RAG-based approaches.",
+            "content_sha256": "45e6f02a856c1d3c41e4519e47b73d3a5f280b42751dead7c5705b6f2d2eafa4",
+            "source": "2401.15884v3.pdf",
+            "page_number": 1,
+            "distance": 0.12,
+            "rank": 1
+          }
+        ]
+      },
+      "analysis_draft": {
+        "summary": "CRAG uses a retrieval evaluator to decide among corrective retrieval actions.",
+        "contributions": ["It links a confidence signal to different knowledge retrieval actions."],
+        "limitations": ["The supplied fixture contains only an abstract excerpt."],
+        "claims": [
+          {
+            "text": "CRAG uses a lightweight evaluator and confidence degree to trigger different retrieval actions.",
+            "claim_type": "fact",
+            "chunk_ref": "chunk-1",
+            "quote_ref": "quote-1",
+            "importance": "critical"
+          }
+        ]
+      }
+    },
+    {
+      "paper": {
+        "schema_version": "1.0",
+        "canonical_paper_id": "doi:10.48550/arxiv.2312.10997",
+        "title": "Retrieval-Augmented Generation for Large Language Models: A Survey",
+        "normalized_title": "retrieval augmented generation for large language models a survey",
+        "authors": ["Yunfan Gao", "Yun Xiong", "Xinyu Gao", "Kangxiang Jia", "Jinliu Pan", "Yuxi Bi", "Yi Dai", "Jiawei Sun", "Meng Wang", "Haofen Wang"],
+        "publication_year": 2023,
+        "doi": "10.48550/arxiv.2312.10997",
+        "arxiv_id": "2312.10997",
+        "openalex_id": "W4389984066",
+        "access_level": "fulltext",
+        "sources": [
+          {
+            "source": "arxiv",
+            "source_id": "http://arxiv.org/abs/2312.10997v5",
+            "retrieved_at": "2026-08-29T10:53:58Z",
+            "record_sha256": "7777777777777777777777777777777777777777777777777777777777777777"
+          }
+        ]
+      },
+      "binding": {
+        "schema_version": "1.0",
+        "canonical_paper_id": "doi:10.48550/arxiv.2312.10997",
+        "document_key": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "index_id": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "source_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "documind_version": "2.2.0",
+        "retrieval_schema_version": "1.0"
+      },
+      "retrieve_response": {
+        "schema_version": "1.0",
+        "service_version": "2.2.0",
+        "retrieval_version": "dense-v1",
+        "retrieval_mode": "dense",
+        "document_key": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "index_id": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "source_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "chunks": [
+          {
+            "chunk_id": "1111111111111111111111111111111111111111111111111111111111111111",
+            "content": "This comprehensive review paper offers a detailed examination of the progression of RAG paradigms, encompassing the Naive RAG, the Advanced RAG, and the Modular RAG. It meticulously scrutinizes the tripartite foundation of RAG frameworks, which includes the retrieval, the generation and the augmentation techniques.",
+            "content_sha256": "dbea95985c30bf870407b9764e3a57ce9ca090b1074d6e4d63d8525426265911",
+            "source": "2312.10997v5.pdf",
+            "page_number": 1,
+            "distance": 0.18,
+            "rank": 1
+          }
+        ]
+      },
+      "analysis_draft": {
+        "summary": "The survey organizes RAG into Naive, Advanced, and Modular paradigms.",
+        "contributions": ["It provides a taxonomy of three RAG paradigms."],
+        "limitations": ["The supplied fixture contains only an abstract excerpt."],
+        "claims": [
+          {
+            "text": "The survey describes Naive, Advanced, and Modular RAG paradigms.",
+            "claim_type": "fact",
+            "chunk_ref": "chunk-1",
+            "quote_ref": "quote-1",
+            "importance": "supporting"
+          }
+        ]
+      }
+    },
+    {
+      "paper": {
+        "schema_version": "1.0",
+        "canonical_paper_id": "doi:10.48550/arxiv.2403.14403",
+        "title": "Adaptive-RAG: Learning to Adapt Retrieval-Augmented Large Language Models through Question Complexity",
+        "normalized_title": "adaptive rag learning to adapt retrieval augmented large language models through question complexity",
+        "authors": ["Soyeong Jeong", "Jinheon Baek", "Sukmin Cho", "Sung Ju Hwang", "Jong C. Park"],
+        "publication_year": 2024,
+        "doi": "10.48550/arxiv.2403.14403",
+        "arxiv_id": "2403.14403",
+        "access_level": "fulltext",
+        "sources": [
+          {
+            "source": "arxiv",
+            "source_id": "http://arxiv.org/abs/2403.14403v2",
+            "retrieved_at": "2026-08-29T11:39:31Z",
+            "record_sha256": "8888888888888888888888888888888888888888888888888888888888888888"
+          }
+        ]
+      },
+      "binding": {
+        "schema_version": "1.0",
+        "canonical_paper_id": "doi:10.48550/arxiv.2403.14403",
+        "document_key": "2222222222222222222222222222222222222222222222222222222222222222",
+        "index_id": "3333333333333333333333333333333333333333333333333333333333333333",
+        "source_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+        "documind_version": "2.2.0",
+        "retrieval_schema_version": "1.0"
+      },
+      "retrieve_response": {
+        "schema_version": "1.0",
+        "service_version": "2.2.0",
+        "retrieval_version": "dense-v1",
+        "retrieval_mode": "dense",
+        "document_key": "2222222222222222222222222222222222222222222222222222222222222222",
+        "index_id": "3333333333333333333333333333333333333333333333333333333333333333",
+        "source_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+        "chunks": [
+          {
+            "chunk_id": "5555555555555555555555555555555555555555555555555555555555555555",
+            "content": "In this work, we propose a novel adaptive QA framework, that can dynamically select the most suitable strategy for (retrieval-augmented) LLMs from the simplest to the most sophisticated ones based on the query complexity. Also, this selection process is operationalized with a classifier, which is a smaller LM trained to predict the complexity level of incoming queries with automatically collected labels, obtained from actual predicted outcomes of models and inherent inductive biases in datasets.",
+            "content_sha256": "818177519fcdf67fedfc76330bfd75ffc852d87b5da0b89c4e4f77a1e118da5c",
+            "source": "2403.14403v2.pdf",
+            "page_number": 1,
+            "distance": 0.15,
+            "rank": 1
+          }
+        ]
+      },
+      "analysis_draft": {
+        "summary": "Adaptive-RAG selects a retrieval strategy according to query complexity.",
+        "contributions": ["It operationalizes strategy selection with a smaller classifier."],
+        "limitations": ["The supplied fixture contains only an abstract excerpt."],
+        "claims": [
+          {
+            "text": "Adaptive-RAG dynamically selects among retrieval strategies using query complexity.",
+            "claim_type": "fact",
+            "chunk_ref": "chunk-1",
+            "quote_ref": "quote-1",
+            "importance": "critical"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 # ScholarTrace 架构设计
 
-> 版本：M1 / 1.1
-> 决策状态：核心路线和多源搜索已冻结，停在 M2 开始前
+> 版本：M2 / 1.2
+> 决策状态：核心路线、多源搜索和证据闭环已冻结，停在 M3 开始前
 
 ## 1. 架构目标
 
@@ -26,7 +26,7 @@ flowchart LR
     GRAPH --> SEARCH[Academic Search Tools]
     GRAPH --> WORKERS[Paper Analysis Workers]
     GRAPH --> VERIFY[Validator and Verifier]
-    WORKERS --> DM[DocuMind 2.1 Retrieval]
+    WORKERS --> DM[DocuMind 2.1+ Retrieval]
     GRAPH --> ROUTER[Capability Router]
     ROUTER -. eligible only .-> SG[ScholarGraph Fixed Corpus]
     SEARCH --> PAPERS[(Paper Repository)]
@@ -64,7 +64,7 @@ src/scholartrace/
 └─ observability/      # 安全日志、事件、指标、Trace
 ```
 
-M0 建立 `contracts.py` 和核心契约；M1 已实现 `src/scholartrace/search/`，内部按 models、providers、http/cache、normalization、pipeline、baseline、manifest 和 storage 分层。后续目录仍在对应阶段按需创建，避免空模块伪装完成度。
+M0 建立 `contracts.py` 和核心契约；M1 已实现 `src/scholartrace/search/`，内部按 models、providers、http/cache、normalization、pipeline、baseline、manifest 和 storage 分层。M2 已实现 `src/scholartrace/evidence/`，内部按 models、bindings、client、analysis、pipeline、report 和 artifacts 分层。后续目录仍在对应阶段按需创建，避免空模块伪装完成度。
 
 ### 5.1 M1 搜索数据流
 
@@ -81,6 +81,23 @@ SearchRequest
 
 各来源共享错误语义但不共享请求预算。缓存键只包含公开 URL 和公开参数，API Key、联系邮箱等私有参数既不写缓存，也不进入审计记录。单源失败保留结构化错误并允许其他来源继续；所有必选来源都失败或没有达到最低相关性 `4.0` 的论文时，流水线失败关闭。
 
+### 5.2 M2 证据数据流
+
+```text
+Paper + DocuMindBinding
+  -> readiness + bounded parallel single-document RetrieveRequest
+  -> all-paper retrieval barrier
+  -> identity / source / hash / rank validation
+  -> bounded Chunk aliases (chunk-1..6, quote-1..6)
+  -> bounded parallel local-Qwen PaperAnalysisDraft
+  -> deterministic alias resolution to original Chunk and exact quote
+  -> PaperCard + Claim + fulltext Evidence
+  -> three-to-five-paper Markdown report
+  -> retrieval audits + model usage + budget + RunManifest
+```
+
+模型不会回写长 SHA-256 或复制原文 quote。它只选择本次单论文输入中的短引用；Consumer 将短引用映射回真实 `chunk_id` 和受信 Chunk 文本，并计算 quote hash、字符偏移与确定性 ID。这样把概率性的内容理解和确定性的 provenance 校验分离。检索与生成之间设置全局阶段屏障，避免单 GPU Ollama 在 `qwen3-embedding` 与 `qwen3:8b` 间交错换模造成超时。
+
 ## 6. 技术栈冻结
 
 | 层 | 选择 | M0 结论 |
@@ -92,8 +109,8 @@ SearchRequest
 | API | FastAPI 0.141.1 | 与 ScholarGraph 锁文件对齐；后续生成 OpenAPI |
 | 本地模型 | Ollama `qwen3:8b` / Q4_K_M | 高频、低风险、可复核结构化任务；M0 实机 smoke 通过 |
 | API 模型 | `api-strong` Profile | 用户确认 Provider/版本/价格前保持禁用并 fail closed |
-| HTTP | HTTPX AsyncClient | M1 已实现独立来源 Client、超时、限流、缓存和错误分类 |
-| 数据 | SQLite + Artifact Store 抽象 | 单用户 MVP 足够，正文不进入 Checkpoint |
+| HTTP | HTTPX AsyncClient | M1 来源 Client 与 M2 DocuMind Consumer 均已实现有界请求和错误分类 |
+| 数据 | SQLite + 原子 Artifact Store | M2 绑定 CAS、报告、审计、用量与 RunManifest 已落地 |
 | 引用图 | NetworkX | M4 小规模确定性图，不提前引入 Neo4j |
 | 前端 | React + TypeScript + Vite | M6 实现结构化工作台 |
 | 流式 | SSE | 单向进度足够，事件先持久化 |
@@ -134,7 +151,7 @@ Reducer 只做以下操作：
 - 服务只暴露白名单字段，不透传内部路径、容器日志或向量 metadata；
 - `.env`、API Key、模型原始回答、全文和运行数据不进入 Git；
 - 错误响应提供公开 code 和 request_id，不暴露堆栈；
-- 外部 URL 获取在 M2 实现域名、大小、类型和重定向限制。
+- M2 核心流水线不提供通用论文 acquisition；在线验收脚本只允许 Fixture 锁定的版本化 arXiv URL，并限制 PDF 类型和大小。面向用户的 acquisition 层仍须在后续阶段独立实现完整的域名、重定向、合法访问和内容治理策略。
 
 ## 10. 风险
 
