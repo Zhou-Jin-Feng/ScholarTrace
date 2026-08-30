@@ -1,0 +1,33 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "cited_paper_id": {
+      "maxLength": 160,
+      "minLength": 3,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+      "title": "Cited Paper Id",
+      "type": "string"
+    },
+    "citing_paper_id": {
+      "maxLength": 160,
+      "minLength": 3,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+      "title": "Citing Paper Id",
+      "type": "string"
+    },
+    "claim_id": {
+      "maxLength": 160,
+      "minLength": 3,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+      "title": "Claim Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "claim_id",
+    "citing_paper_id",
+    "cited_paper_id"
+  ],
+  "title": "CitationRequirement",
+  "type": "object"
+}

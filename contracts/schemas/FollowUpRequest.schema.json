@@ -1,0 +1,88 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "claim_id": {
+      "maxLength": 160,
+      "minLength": 3,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+      "title": "Claim Id",
+      "type": "string"
+    },
+    "max_additional_queries": {
+      "const": 1,
+      "default": 1,
+      "title": "Max Additional Queries",
+      "type": "integer"
+    },
+    "missing_evidence_type": {
+      "enum": [
+        "fulltext",
+        "counter_evidence",
+        "experimental_setup",
+        "citation_path"
+      ],
+      "title": "Missing Evidence Type",
+      "type": "string"
+    },
+    "reason": {
+      "maxLength": 8000,
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "request_id": {
+      "maxLength": 160,
+      "minLength": 3,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+      "title": "Request Id",
+      "type": "string"
+    },
+    "round_index": {
+      "const": 1,
+      "default": 1,
+      "title": "Round Index",
+      "type": "integer"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "subquestion_id": {
+      "maxLength": 160,
+      "minLength": 3,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+      "title": "Subquestion Id",
+      "type": "string"
+    },
+    "target_paper_ids": {
+      "items": {
+        "maxLength": 160,
+        "minLength": 3,
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+        "type": "string"
+      },
+      "maxItems": 20,
+      "title": "Target Paper Ids",
+      "type": "array"
+    },
+    "task_id": {
+      "maxLength": 160,
+      "minLength": 3,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+      "title": "Task Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "request_id",
+    "task_id",
+    "claim_id",
+    "subquestion_id",
+    "reason",
+    "missing_evidence_type"
+  ],
+  "title": "FollowUpRequest",
+  "type": "object"
+}

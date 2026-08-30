@@ -9,7 +9,6 @@
         "type": "string"
       },
       "maxItems": 200,
-      "minItems": 1,
       "title": "Checked Evidence Ids",
       "type": "array"
     },
@@ -68,7 +67,8 @@
       "enum": [
         "deterministic",
         "model",
-        "human"
+        "human",
+        "fixture"
       ],
       "title": "Verifier",
       "type": "string"
@@ -78,7 +78,6 @@
     "verification_id",
     "claim_id",
     "status",
-    "checked_evidence_ids",
     "reason",
     "recommended_action",
     "verifier",

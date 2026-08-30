@@ -1,0 +1,58 @@
+{
+  "api_key_configured": false,
+  "billed_api_cost_cny": 0.0,
+  "bounded_metadata_resolution_ratio": 0.8,
+  "cached_replay_passed": true,
+  "citation_edge_count": 62,
+  "credential_mode": "anonymous",
+  "discovered_candidate_count": 8,
+  "deferred_due_to_bound_count": 52,
+  "duration_seconds": 1.778,
+  "fixture_kind": "bounded_openalex_citation_live_smoke",
+  "generated_at": "2026-08-30T05:01:01.298530+00:00",
+  "logical_request_count": 2,
+  "max_discovered_papers": 10,
+  "metadata_requested_count": 10,
+  "missing_reference_paper_count": 0,
+  "network_attempts": 2,
+  "overall_metadata_resolution_ratio": 0.129032,
+  "notes": [
+    "Raw OpenAlex responses are stored only in the ignored runtime cache.",
+    "The report contains no API key, abstracts, titles, or raw response bodies.",
+    "A bounded smoke proves live compatibility, not complete citation recall.",
+    "No DocuMind service, local generation model, or paid model route was called."
+  ],
+  "passed": true,
+  "provenance_complete": true,
+  "provider_outcome": "degraded",
+  "provider_reported_cost_usd": 0.0002,
+  "quality_scope": "Online engineering smoke; not a citation recall benchmark.",
+  "request_statuses": [
+    {
+      "attempts": 1,
+      "cache_hit": false,
+      "candidate_count": 1,
+      "duration_seconds": 0.802,
+      "error_code": null,
+      "provider_reported_cost_usd": 0.0001,
+      "request_id": "request:openalex:citation:33bde05e6e3da0e5032d",
+      "status": "succeeded"
+    },
+    {
+      "attempts": 1,
+      "cache_hit": false,
+      "candidate_count": 8,
+      "duration_seconds": 0.81,
+      "error_code": null,
+      "provider_reported_cost_usd": 0.0001,
+      "request_id": "request:openalex:citation:ece99032a7ef847ef5b4",
+      "status": "succeeded"
+    }
+  ],
+  "requested_unresolved_count": 2,
+  "schema_version": "1.0",
+  "seed_paper_count": 1,
+  "source_work_count": 1,
+  "unique_cited_paper_count": 62,
+  "unresolved_openalex_id_count": 54
+}

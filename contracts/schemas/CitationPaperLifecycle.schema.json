@@ -1,0 +1,419 @@
+{
+  "$defs": {
+    "ArtifactRef": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "artifact_type": {
+          "enum": [
+            "research_plan",
+            "paper_card",
+            "evidence",
+            "claim",
+            "verification",
+            "citation_graph",
+            "tool_run",
+            "report",
+            "search_snapshot",
+            "baseline_report",
+            "validation",
+            "follow_up"
+          ],
+          "title": "Artifact Type",
+          "type": "string"
+        },
+        "content_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Content Sha256",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "storage_uri": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Storage Uri",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "artifact_type",
+        "content_sha256",
+        "storage_uri",
+        "created_at"
+      ],
+      "title": "ArtifactRef",
+      "type": "object"
+    },
+    "DocuMindBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "canonical_paper_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Canonical Paper Id",
+          "type": "string"
+        },
+        "document_key": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Document Key",
+          "type": "string"
+        },
+        "documind_version": {
+          "pattern": "^2\\.[1-9][0-9]*\\.[0-9]+$",
+          "title": "Documind Version",
+          "type": "string"
+        },
+        "index_id": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Index Id",
+          "type": "string"
+        },
+        "retrieval_schema_version": {
+          "const": "1.0",
+          "title": "Retrieval Schema Version",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "source_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Source Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "canonical_paper_id",
+        "document_key",
+        "index_id",
+        "source_sha256",
+        "documind_version",
+        "retrieval_schema_version"
+      ],
+      "title": "DocuMindBinding",
+      "type": "object"
+    },
+    "Paper": {
+      "additionalProperties": false,
+      "properties": {
+        "abstract": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Abstract"
+        },
+        "access_level": {
+          "enum": [
+            "fulltext",
+            "abstract",
+            "metadata"
+          ],
+          "title": "Access Level",
+          "type": "string"
+        },
+        "arxiv_id": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Arxiv Id"
+        },
+        "authors": {
+          "items": {
+            "maxLength": 8000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 200,
+          "minItems": 1,
+          "title": "Authors",
+          "type": "array"
+        },
+        "canonical_paper_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Canonical Paper Id",
+          "type": "string"
+        },
+        "doi": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Doi"
+        },
+        "normalized_title": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Normalized Title",
+          "type": "string"
+        },
+        "openalex_id": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Openalex Id"
+        },
+        "publication_year": {
+          "maximum": 2100,
+          "minimum": 1900,
+          "title": "Publication Year",
+          "type": "integer"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "semantic_scholar_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Semantic Scholar Id"
+        },
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/PaperSource"
+          },
+          "minItems": 1,
+          "title": "Sources",
+          "type": "array"
+        },
+        "title": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "version_of": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "minLength": 3,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Version Of"
+        }
+      },
+      "required": [
+        "canonical_paper_id",
+        "title",
+        "normalized_title",
+        "authors",
+        "publication_year",
+        "access_level",
+        "sources"
+      ],
+      "title": "Paper",
+      "type": "object"
+    },
+    "PaperSource": {
+      "additionalProperties": false,
+      "properties": {
+        "record_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Record Sha256",
+          "type": "string"
+        },
+        "retrieved_at": {
+          "format": "date-time",
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "source": {
+          "enum": [
+            "arxiv",
+            "openalex",
+            "crossref",
+            "semantic_scholar"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "source_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Source Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source",
+        "source_id",
+        "retrieved_at",
+        "record_sha256"
+      ],
+      "title": "PaperSource",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "access_url": {
+      "anyOf": [
+        {
+          "maxLength": 2048,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Access Url"
+    },
+    "acquired_source_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Acquired Source Sha256"
+    },
+    "analysis_ref": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ArtifactRef"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "binding": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DocuMindBinding"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "canonical_paper_id": {
+      "maxLength": 160,
+      "minLength": 3,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+      "title": "Canonical Paper Id",
+      "type": "string"
+    },
+    "paper": {
+      "$ref": "#/$defs/Paper"
+    },
+    "public_reason": {
+      "anyOf": [
+        {
+          "maxLength": 500,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Public Reason"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "stage": {
+      "enum": [
+        "normalized",
+        "relevance_passed",
+        "access_resolved",
+        "acquired",
+        "ingested",
+        "analyzed",
+        "rejected",
+        "failed"
+      ],
+      "title": "Stage",
+      "type": "string"
+    },
+    "updated_at": {
+      "format": "date-time",
+      "title": "Updated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "canonical_paper_id",
+    "paper",
+    "stage",
+    "updated_at"
+  ],
+  "title": "CitationPaperLifecycle",
+  "type": "object"
+}

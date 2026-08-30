@@ -1,6 +1,6 @@
 # ScholarTrace 接口契约
 
-> 状态：M3 工作流事件补发接口已实现；其余 Research Task HTTP 装配延后
+> 状态：M4 内部引用与核验 Provider/Consumer 已实现；完整 Research Task HTTP 装配延后
 > 内部协议：版本化 HTTP/JSON + OpenAPI 3.1  
 > 契约目录：`contracts/openapi/`
 
@@ -156,6 +156,15 @@ GET  /api/v1/research/tasks/{task_id}/report
 4. Provider 发布版本并记录 commit；
 5. ScholarTrace 更新 RunManifest 基线；
 6. 不兼容变更必须新建主版本端点或 Schema。
+
+## 7. M4 内部 Provider/Consumer 边界
+
+- `OpenAlexCitationProvider` 接受完整 `Paper` 或轻量 `CitationSeed`，只读取显式 `referenced_works`，先取 seed work，再对受限目标 ID 批量取元数据；API Key 只进入私有请求参数，不进入请求审计或缓存键；
+- Provider 返回 `CitationExpansionResult`，区分成功空引用、缺失引用列表、目标元数据缺失和网络失败；Semantic Scholar 尚未作为必选 Provider；
+- `CitationLifecycleGate` 消费归一化后的 `Paper`，不接受原始学术 API 记录；acquire 与 DocuMind ingest 继续由拥有合法访问和文档生命周期的调用层执行；
+- `EvidenceValidator` 消费 Paper、Evidence、Binding、RetrievalChunk、CitationGraph 和 Lifecycle 快照，不调用网络或模型；
+- `VerifierRunner` 只消费 deterministic validation 通过的 Claim；生产模型必须匹配启用的 `critical_verifier` Profile；
+- `M4ReliabilityPipeline` 输出 Validation、Verification、ReportGate 和至多一个 FollowUpRequest，尚未暴露新的 HTTP 端点。
 
 ## 上游隔离与观测约束
 

@@ -1,7 +1,7 @@
 # ScholarTrace 数据契约
 
-> 核心契约版本：`1.0`；M1 搜索契约版本：`1.0`；M2 证据契约版本：`1.0`；M3 图状态版本：`1.0`
-> 代码源：`src/scholartrace/contracts.py`、`src/scholartrace/search/models.py`、`src/scholartrace/evidence/models.py`、`src/scholartrace/workflow/models.py`
+> 核心契约版本：`1.0`；M1 搜索契约版本：`1.0`；M2 证据契约版本：`1.0`；M3 图状态版本：`1.0`；M4 引用与核验契约版本：`1.0`
+> 代码源：`src/scholartrace/contracts.py`、`src/scholartrace/search/models.py`、`src/scholartrace/evidence/models.py`、`src/scholartrace/workflow/models.py`、`src/scholartrace/citations/models.py`、`src/scholartrace/verification/models.py`
 > 机器格式：`contracts/schemas/*.schema.json`
 
 ## 1. 设计原则
@@ -63,6 +63,21 @@ M3 控制对象：
 | PaperWorkerArtifact | paper ID、status、output/public reason | 稳定 task+paper Artifact ID；重复投递不得重复执行 |
 | PersistedEvent | event/sequence、task、node、kind、artifact、payload | 单调 sequence；稳定 key 去重；安全 payload |
 | ResearchState | task/thread、plan/search/worker refs、paper IDs、round、status | 不含完整计划、检索结果、Worker output、Evidence 或报告 |
+
+M4 引用与核验对象：
+
+| 对象 | 关键字段 | 约束 |
+|---|---|---|
+| CitationSeed | canonical paper ID、OpenAlex ID | 只用于引用 Provider 控制输入；不伪造标题、作者或全文状态 |
+| CitationEdge | citing/cited paper、source work、request、response hash | 方向固定 `citing -> cited`；禁止自环；边来源可追溯 |
+| CitationExpansionResult | seed、edges、candidates、request records、missing IDs、outcome | 缺引用列表、目标元数据或请求失败必须显式 degraded/failed |
+| CitationPaperLifecycle | Paper、stage、access、source hash、binding、analysis ref | 阶段不可跳过；ingested 必须匹配 acquired source hash |
+| CitationGraphArtifact | nodes、edges、metrics、components、communities、timeline、hash | 节点覆盖所有边端点；同一输入和时间产生相同内容 hash |
+| ClaimValidation | checked evidence、issues、passed、time | 任一 error 都阻止语义 Verifier；Issue ID 稳定 |
+| ValidationBundle | claim validations、outcome | 关键 Claim 确定性失败时 bundle 为 failed |
+| SemanticVerificationDraft | status、reason、action | 仅在确定性校验通过后由 Verifier 产生 |
+| ReportGateResult | dispositions、blocked critical IDs、report_safe | unsupported 不包含；partial/conflicted 必须有可见 marker |
+| FollowUpRequest | task/claim/subquestion、missing type、targets、round/query | 全局最多一个；round 和追加查询数都固定为 1 |
 
 M0 默认 Budget 上限：输入 160,000 Token、输出 40,000 Token、总计 200,000 Token、60 次模型调用、16 次 API/工具调用、1,800 秒、10 CNY。达到任一限制即停止新增调用；10 CNY 是硬上限，不是预计花费。
 
@@ -133,7 +148,7 @@ uv run python scripts/export_schemas.py
 uv run pytest tests/test_contract_models.py
 ```
 
-`contracts/examples/m0_bundle.json` 覆盖核心对象；`contracts/schemas/` 同时包含 M1 搜索与 M2 证据对象的独立 Schema。M3 TypedDict 是 LangGraph 内部控制契约，不作为跨服务 JSON Schema。M3 的脱敏 Fixture 指标位于 `evaluation/reports/m3_workflow_fixture_smoke.json`；Checkpoint 和完整业务 Artifact 不进入 Git。
+`contracts/examples/m0_bundle.json` 覆盖核心对象；`contracts/schemas/` 同时包含 M1 搜索、M2 证据和 M4 引用/核验对象的独立 Schema。M3 TypedDict 是 LangGraph 内部控制契约，不作为跨服务 JSON Schema。M3/M4 脱敏 Fixture 指标分别位于 `evaluation/reports/m3_workflow_fixture_smoke.json` 和 `evaluation/reports/m4_reliability_fixture_smoke.json`；Checkpoint 和完整业务 Artifact 不进入 Git。
 
 ## 学术来源与访问约束
 

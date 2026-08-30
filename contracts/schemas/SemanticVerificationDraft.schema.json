@@ -1,0 +1,38 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "reason": {
+      "maxLength": 8000,
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "recommended_action": {
+      "enum": [
+        "keep",
+        "weaken",
+        "follow_up",
+        "remove"
+      ],
+      "title": "Recommended Action",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "supported",
+        "partially_supported",
+        "unsupported",
+        "conflicted"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "status",
+    "reason",
+    "recommended_action"
+  ],
+  "title": "SemanticVerificationDraft",
+  "type": "object"
+}

@@ -1,0 +1,80 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "cited_paper_id": {
+      "maxLength": 160,
+      "minLength": 3,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+      "title": "Cited Paper Id",
+      "type": "string"
+    },
+    "citing_paper_id": {
+      "maxLength": 160,
+      "minLength": 3,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+      "title": "Citing Paper Id",
+      "type": "string"
+    },
+    "edge_id": {
+      "maxLength": 160,
+      "minLength": 3,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+      "title": "Edge Id",
+      "type": "string"
+    },
+    "relation": {
+      "const": "references",
+      "default": "references",
+      "title": "Relation",
+      "type": "string"
+    },
+    "request_id": {
+      "maxLength": 160,
+      "minLength": 3,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+      "title": "Request Id",
+      "type": "string"
+    },
+    "response_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Response Sha256",
+      "type": "string"
+    },
+    "retrieved_at": {
+      "format": "date-time",
+      "title": "Retrieved At",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source": {
+      "enum": [
+        "openalex",
+        "semantic_scholar"
+      ],
+      "title": "Source",
+      "type": "string"
+    },
+    "source_work_id": {
+      "pattern": "^W\\d+$",
+      "title": "Source Work Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "edge_id",
+    "citing_paper_id",
+    "cited_paper_id",
+    "source",
+    "source_work_id",
+    "request_id",
+    "response_sha256",
+    "retrieved_at"
+  ],
+  "title": "CitationEdge",
+  "type": "object"
+}

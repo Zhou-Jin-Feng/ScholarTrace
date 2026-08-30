@@ -1,7 +1,7 @@
 # ScholarTrace 架构设计
 
-> 版本：M3 / 1.3
-> 决策状态：核心路线、证据闭环和可恢复 Multi-Agent 编排已冻结，停在 M4 开始前
+> 版本：M4 / 1.4
+> 决策状态：引用网络、确定性核验与报告门禁已冻结，停在 M5 开始前
 
 ## 1. 架构目标
 
@@ -184,6 +184,28 @@ Reducer 只做以下操作：
 - Neo4j：图达到数万节点且 NetworkX 无法满足在线查询；
 - MCP：需要让外部 Agent 客户端复用工具服务；
 - 动态 GraphRAG：固定语料 B4 已证明收益，且新语料有独立预算和评测。
+
+## 12. M4 引用与核验实现
+
+M4 将引用图与证据核验拆成两个独立可靠性层：
+
+```text
+OpenAlex explicit references
+  -> normalize citation candidates
+  -> relevance/access/acquire/DocuMind ingest/analyze gate
+  -> NetworkX citation graph
+  -> deterministic Evidence Validator
+  -> profile-gated semantic Verifier
+  -> report claim gate
+  -> at most one budgeted FollowUpRequest
+```
+
+- 引用边固定为 `citing -> cited`，来源响应、请求 ID 和响应 hash 可追溯；缺少引用列表或目标元数据时标记 partial，不补造边；
+- 新引用论文只能顺序通过六个生命周期阶段，未完成 DocuMind ingest 不能分析，未完成分析不能核验；
+- NetworkX 负责有向图、弱连通分量和社区；PageRank 使用无 NumPy/SciPy 的有界确定性幂迭代；
+- Validator 在任何语义调用前检查 Claim-Evidence 引用、Paper/Binding/版本、内容和 Chunk hash、页码、字符范围、数值与要求的显式引用边；
+- 生产 Verifier 必须匹配 `critical_verifier` Profile；`api-strong` 禁用时 fail closed，测试 Fixture 以独立 `fixture` 类型标识；
+- unsupported Claim 不进入报告，partially_supported/conflicted Claim 必须带可见标记；FollowUp 全局最多一个且固定为第 1 轮、最多 1 个追加查询。
 
 ## 恢复与资源隔离约束
 

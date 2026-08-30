@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0",
+  "fixture_kind": "m4_openalex_live_compatibility_seeds",
+  "quality_scope": "Provider compatibility controls; not replacements for evaluation papers.",
+  "seeds": [
+    {
+      "schema_version": "1.0",
+      "canonical_paper_id": "doi:10.18653/v1/2023.emnlp-main.495",
+      "openalex_id": "W4389519118"
+    }
+  ],
+  "selection_note": "FLARE is relevant to adaptive retrieval and its OpenAlex record exposes explicit referenced_works."
+}

@@ -1,0 +1,29 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "canonical_paper_id": {
+      "maxLength": 160,
+      "minLength": 3,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+      "title": "Canonical Paper Id",
+      "type": "string"
+    },
+    "openalex_id": {
+      "pattern": "^W\\d+$",
+      "title": "Openalex Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "canonical_paper_id",
+    "openalex_id"
+  ],
+  "title": "CitationSeed",
+  "type": "object"
+}

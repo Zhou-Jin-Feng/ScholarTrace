@@ -1,0 +1,530 @@
+{
+  "$defs": {
+    "ClaimValidation": {
+      "additionalProperties": false,
+      "properties": {
+        "checked_evidence_ids": {
+          "items": {
+            "maxLength": 160,
+            "minLength": 3,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+            "type": "string"
+          },
+          "maxItems": 200,
+          "title": "Checked Evidence Ids",
+          "type": "array"
+        },
+        "claim_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Claim Id",
+          "type": "string"
+        },
+        "issues": {
+          "items": {
+            "$ref": "#/$defs/ValidationIssue"
+          },
+          "maxItems": 1000,
+          "title": "Issues",
+          "type": "array"
+        },
+        "passed": {
+          "title": "Passed",
+          "type": "boolean"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "validated_at": {
+          "format": "date-time",
+          "title": "Validated At",
+          "type": "string"
+        },
+        "validation_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Validation Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "validation_id",
+        "claim_id",
+        "passed",
+        "validated_at"
+      ],
+      "title": "ClaimValidation",
+      "type": "object"
+    },
+    "FollowUpRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "claim_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Claim Id",
+          "type": "string"
+        },
+        "max_additional_queries": {
+          "const": 1,
+          "default": 1,
+          "title": "Max Additional Queries",
+          "type": "integer"
+        },
+        "missing_evidence_type": {
+          "enum": [
+            "fulltext",
+            "counter_evidence",
+            "experimental_setup",
+            "citation_path"
+          ],
+          "title": "Missing Evidence Type",
+          "type": "string"
+        },
+        "reason": {
+          "maxLength": 8000,
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "request_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Request Id",
+          "type": "string"
+        },
+        "round_index": {
+          "const": 1,
+          "default": 1,
+          "title": "Round Index",
+          "type": "integer"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "subquestion_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Subquestion Id",
+          "type": "string"
+        },
+        "target_paper_ids": {
+          "items": {
+            "maxLength": 160,
+            "minLength": 3,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+            "type": "string"
+          },
+          "maxItems": 20,
+          "title": "Target Paper Ids",
+          "type": "array"
+        },
+        "task_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Task Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "request_id",
+        "task_id",
+        "claim_id",
+        "subquestion_id",
+        "reason",
+        "missing_evidence_type"
+      ],
+      "title": "FollowUpRequest",
+      "type": "object"
+    },
+    "ReportClaimDisposition": {
+      "additionalProperties": false,
+      "properties": {
+        "claim_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Claim Id",
+          "type": "string"
+        },
+        "importance": {
+          "enum": [
+            "critical",
+            "supporting"
+          ],
+          "title": "Importance",
+          "type": "string"
+        },
+        "included": {
+          "title": "Included",
+          "type": "boolean"
+        },
+        "marker": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Marker"
+        },
+        "rendered_text": {
+          "maxLength": 8200,
+          "minLength": 1,
+          "title": "Rendered Text",
+          "type": "string"
+        },
+        "verification_status": {
+          "enum": [
+            "supported",
+            "partially_supported",
+            "unsupported",
+            "conflicted"
+          ],
+          "title": "Verification Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "claim_id",
+        "importance",
+        "verification_status",
+        "included",
+        "rendered_text"
+      ],
+      "title": "ReportClaimDisposition",
+      "type": "object"
+    },
+    "ReportGateResult": {
+      "additionalProperties": false,
+      "properties": {
+        "blocked_critical_claim_ids": {
+          "items": {
+            "maxLength": 160,
+            "minLength": 3,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+            "type": "string"
+          },
+          "title": "Blocked Critical Claim Ids",
+          "type": "array"
+        },
+        "dispositions": {
+          "items": {
+            "$ref": "#/$defs/ReportClaimDisposition"
+          },
+          "title": "Dispositions",
+          "type": "array"
+        },
+        "report_safe": {
+          "title": "Report Safe",
+          "type": "boolean"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dispositions",
+        "report_safe"
+      ],
+      "title": "ReportGateResult",
+      "type": "object"
+    },
+    "ValidationBundle": {
+      "additionalProperties": false,
+      "properties": {
+        "bundle_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Bundle Id",
+          "type": "string"
+        },
+        "generated_at": {
+          "format": "date-time",
+          "title": "Generated At",
+          "type": "string"
+        },
+        "outcome": {
+          "enum": [
+            "succeeded",
+            "degraded",
+            "failed"
+          ],
+          "title": "Outcome",
+          "type": "string"
+        },
+        "results": {
+          "items": {
+            "$ref": "#/$defs/ClaimValidation"
+          },
+          "title": "Results",
+          "type": "array"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bundle_id",
+        "results",
+        "outcome",
+        "generated_at"
+      ],
+      "title": "ValidationBundle",
+      "type": "object"
+    },
+    "ValidationIssue": {
+      "additionalProperties": false,
+      "properties": {
+        "claim_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Claim Id",
+          "type": "string"
+        },
+        "code": {
+          "enum": [
+            "claim_missing_evidence",
+            "evidence_missing",
+            "evidence_paper_missing",
+            "content_hash_mismatch",
+            "binding_missing",
+            "document_key_mismatch",
+            "index_id_mismatch",
+            "source_hash_mismatch",
+            "chunk_missing",
+            "chunk_hash_mismatch",
+            "quote_not_in_chunk",
+            "char_range_mismatch",
+            "page_mismatch",
+            "numeric_mismatch",
+            "version_target_missing",
+            "citation_edge_missing",
+            "lifecycle_incomplete"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "evidence_id": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "minLength": 3,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Evidence Id"
+        },
+        "issue_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Issue Id",
+          "type": "string"
+        },
+        "message": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "paper_id": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "minLength": 3,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Paper Id"
+        },
+        "severity": {
+          "enum": [
+            "error",
+            "warning"
+          ],
+          "title": "Severity",
+          "type": "string"
+        }
+      },
+      "required": [
+        "issue_id",
+        "code",
+        "severity",
+        "message",
+        "claim_id"
+      ],
+      "title": "ValidationIssue",
+      "type": "object"
+    },
+    "Verification": {
+      "additionalProperties": false,
+      "properties": {
+        "checked_evidence_ids": {
+          "items": {
+            "maxLength": 160,
+            "minLength": 3,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+            "type": "string"
+          },
+          "maxItems": 200,
+          "title": "Checked Evidence Ids",
+          "type": "array"
+        },
+        "claim_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Claim Id",
+          "type": "string"
+        },
+        "reason": {
+          "maxLength": 8000,
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "recommended_action": {
+          "enum": [
+            "keep",
+            "weaken",
+            "follow_up",
+            "remove"
+          ],
+          "title": "Recommended Action",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "supported",
+            "partially_supported",
+            "unsupported",
+            "conflicted"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "verification_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Verification Id",
+          "type": "string"
+        },
+        "verified_at": {
+          "format": "date-time",
+          "title": "Verified At",
+          "type": "string"
+        },
+        "verifier": {
+          "enum": [
+            "deterministic",
+            "model",
+            "human",
+            "fixture"
+          ],
+          "title": "Verifier",
+          "type": "string"
+        }
+      },
+      "required": [
+        "verification_id",
+        "claim_id",
+        "status",
+        "reason",
+        "recommended_action",
+        "verifier",
+        "verified_at"
+      ],
+      "title": "Verification",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "follow_up_requests": {
+      "items": {
+        "$ref": "#/$defs/FollowUpRequest"
+      },
+      "maxItems": 1,
+      "title": "Follow Up Requests",
+      "type": "array"
+    },
+    "outcome": {
+      "enum": [
+        "succeeded",
+        "degraded",
+        "failed"
+      ],
+      "title": "Outcome",
+      "type": "string"
+    },
+    "report_gate": {
+      "$ref": "#/$defs/ReportGateResult"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "validation": {
+      "$ref": "#/$defs/ValidationBundle"
+    },
+    "verifications": {
+      "items": {
+        "$ref": "#/$defs/Verification"
+      },
+      "title": "Verifications",
+      "type": "array"
+    }
+  },
+  "required": [
+    "validation",
+    "verifications",
+    "report_gate",
+    "outcome"
+  ],
+  "title": "M4ReliabilityResult",
+  "type": "object"
+}

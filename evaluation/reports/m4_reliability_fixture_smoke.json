@@ -1,0 +1,37 @@
+{
+  "blocked_critical_claim_ids": [
+    "claim:m4:missing-citation"
+  ],
+  "citation_edge_count": 1,
+  "citation_graph_sha256": "5ad6a29ced75d29786061f06944ca5e24f6bc3699225830f47c8bd5f1f334c4e",
+  "citation_node_count": 2,
+  "fixture_kind": "deterministic_m4_conflict_and_missing_citation",
+  "fixture_verifier_calls": 1,
+  "follow_up_count": 1,
+  "follow_up_round": 1,
+  "generated_at": "2026-08-30T06:00:00+00:00",
+  "model_provider_calls": 0,
+  "notes": [
+    "The fixture Verifier proves four-state handling, not semantic model quality.",
+    "No academic provider, DocuMind service, local model, or paid API was called.",
+    "The missing explicit citation edge blocks the critical claim from the report."
+  ],
+  "outcome": "degraded",
+  "pagerank_sum": 1.0,
+  "passed": true,
+  "provider_calls": 0,
+  "report_safe": true,
+  "schema_version": "1.0",
+  "validation_codes": {
+    "claim:m4:conflicted": [],
+    "claim:m4:missing-citation": [
+      "citation_edge_missing"
+    ]
+  },
+  "validation_outcome": "failed",
+  "verification_statuses": {
+    "claim:m4:conflicted": "conflicted",
+    "claim:m4:missing-citation": "unsupported"
+  },
+  "visible_conflict_marker": "[CONFLICTED]"
+}

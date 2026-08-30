@@ -37,6 +37,8 @@ class ArtifactRef(ContractModel):
         "report",
         "search_snapshot",
         "baseline_report",
+        "validation",
+        "follow_up",
     ]
     content_sha256: Sha256
     storage_uri: Annotated[str, Field(min_length=1, max_length=2048)]
@@ -206,11 +208,28 @@ class Verification(ContractModel):
     verification_id: StableId
     claim_id: StableId
     status: Literal["supported", "partially_supported", "unsupported", "conflicted"]
-    checked_evidence_ids: Annotated[list[StableId], Field(min_length=1, max_length=200)]
+    checked_evidence_ids: list[StableId] = Field(default_factory=list, max_length=200)
     reason: NonBlank
     recommended_action: Literal["keep", "weaken", "follow_up", "remove"]
-    verifier: Literal["deterministic", "model", "human"]
+    verifier: Literal["deterministic", "model", "human", "fixture"]
     verified_at: datetime
+
+
+class FollowUpRequest(ContractModel):
+    request_id: StableId
+    task_id: StableId
+    claim_id: StableId
+    subquestion_id: StableId
+    reason: NonBlank
+    missing_evidence_type: Literal[
+        "fulltext",
+        "counter_evidence",
+        "experimental_setup",
+        "citation_path",
+    ]
+    target_paper_ids: list[StableId] = Field(default_factory=list, max_length=20)
+    max_additional_queries: Literal[1] = 1
+    round_index: Literal[1] = 1
 
 
 class ModelProfile(BaseModel):
@@ -340,6 +359,7 @@ CONTRACT_MODELS: dict[str, type[ContractModel]] = {
         Evidence,
         Claim,
         Verification,
+        FollowUpRequest,
         ModelRoutingPolicy,
         RunManifest,
     )

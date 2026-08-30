@@ -173,6 +173,18 @@
     "verifier": "human",
     "verified_at": "2026-08-29T08:30:00Z"
   },
+  "FollowUpRequest": {
+    "schema_version": "1.0",
+    "request_id": "follow-up:m4:crag-evidence",
+    "task_id": "task:dev-adaptive-rag",
+    "claim_id": "claim:crag:retrieval-evaluator",
+    "subquestion_id": "subq:dev:verification",
+    "reason": "Additional counter-evidence is required before synthesis.",
+    "missing_evidence_type": "counter_evidence",
+    "target_paper_ids": ["doi:10.48550/arxiv.2401.15884"],
+    "max_additional_queries": 1,
+    "round_index": 1
+  },
   "ModelRoutingPolicy": {
     "schema_version": "1.0",
     "policy_id": "model-policy:m0:v1",

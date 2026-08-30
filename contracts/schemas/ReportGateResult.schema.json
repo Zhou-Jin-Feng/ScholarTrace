@@ -1,0 +1,102 @@
+{
+  "$defs": {
+    "ReportClaimDisposition": {
+      "additionalProperties": false,
+      "properties": {
+        "claim_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Claim Id",
+          "type": "string"
+        },
+        "importance": {
+          "enum": [
+            "critical",
+            "supporting"
+          ],
+          "title": "Importance",
+          "type": "string"
+        },
+        "included": {
+          "title": "Included",
+          "type": "boolean"
+        },
+        "marker": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Marker"
+        },
+        "rendered_text": {
+          "maxLength": 8200,
+          "minLength": 1,
+          "title": "Rendered Text",
+          "type": "string"
+        },
+        "verification_status": {
+          "enum": [
+            "supported",
+            "partially_supported",
+            "unsupported",
+            "conflicted"
+          ],
+          "title": "Verification Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "claim_id",
+        "importance",
+        "verification_status",
+        "included",
+        "rendered_text"
+      ],
+      "title": "ReportClaimDisposition",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "blocked_critical_claim_ids": {
+      "items": {
+        "maxLength": 160,
+        "minLength": 3,
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+        "type": "string"
+      },
+      "title": "Blocked Critical Claim Ids",
+      "type": "array"
+    },
+    "dispositions": {
+      "items": {
+        "$ref": "#/$defs/ReportClaimDisposition"
+      },
+      "title": "Dispositions",
+      "type": "array"
+    },
+    "report_safe": {
+      "title": "Report Safe",
+      "type": "boolean"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "dispositions",
+    "report_safe"
+  ],
+  "title": "ReportGateResult",
+  "type": "object"
+}

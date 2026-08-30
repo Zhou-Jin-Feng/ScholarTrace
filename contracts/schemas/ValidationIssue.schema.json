@@ -1,0 +1,95 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "claim_id": {
+      "maxLength": 160,
+      "minLength": 3,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+      "title": "Claim Id",
+      "type": "string"
+    },
+    "code": {
+      "enum": [
+        "claim_missing_evidence",
+        "evidence_missing",
+        "evidence_paper_missing",
+        "content_hash_mismatch",
+        "binding_missing",
+        "document_key_mismatch",
+        "index_id_mismatch",
+        "source_hash_mismatch",
+        "chunk_missing",
+        "chunk_hash_mismatch",
+        "quote_not_in_chunk",
+        "char_range_mismatch",
+        "page_mismatch",
+        "numeric_mismatch",
+        "version_target_missing",
+        "citation_edge_missing",
+        "lifecycle_incomplete"
+      ],
+      "title": "Code",
+      "type": "string"
+    },
+    "evidence_id": {
+      "anyOf": [
+        {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Evidence Id"
+    },
+    "issue_id": {
+      "maxLength": 160,
+      "minLength": 3,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+      "title": "Issue Id",
+      "type": "string"
+    },
+    "message": {
+      "maxLength": 500,
+      "minLength": 1,
+      "title": "Message",
+      "type": "string"
+    },
+    "paper_id": {
+      "anyOf": [
+        {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Paper Id"
+    },
+    "severity": {
+      "enum": [
+        "error",
+        "warning"
+      ],
+      "title": "Severity",
+      "type": "string"
+    }
+  },
+  "required": [
+    "issue_id",
+    "code",
+    "severity",
+    "message",
+    "claim_id"
+  ],
+  "title": "ValidationIssue",
+  "type": "object"
+}

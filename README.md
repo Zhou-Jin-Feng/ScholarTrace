@@ -2,7 +2,7 @@
 
 ScholarTrace 是一个面向计算机与人工智能技术调研的证据可追溯 Multi-Agent 学术研究工作台，服务学生、开发者和初级研究人员，使关键结论能够回溯到真实论文、页码或 Chunk。
 
-当前仓库已完成 **M0：范围与契约**、**M1：多源搜索**、**M2：DocuMind 证据闭环**和 **M3：LangGraph Multi-Agent 编排**。M3 的动态路由、人工审批、SQLite 恢复、受限 `Send` 并行、幂等副作用和 SSE 补发已通过工程复审，结论为 `PASS WITH NOTES`。
+当前仓库已完成 **M0：范围与契约**、**M1：多源搜索**、**M2：DocuMind 证据闭环**、**M3：LangGraph Multi-Agent 编排**和 **M4：引用网络与证据核验**。M4 的显式引用边、论文生命周期门、确定性 Validator、四态 Verifier、报告门禁和单轮 FollowUp 已通过工程复审，结论为 `PASS WITH NOTES`。
 
 ## 已冻结交付
 
@@ -49,6 +49,17 @@ M3 增加了可恢复 Multi-Agent 控制面：
 - 分离的 SQLite Checkpoint、Artifact Store、Runtime Ledger 和稳定幂等 key；
 - 持久业务事件、SSE 与 `Last-Event-ID` 补发；
 - `docs/M3_WORKFLOW_BASELINE.md`：恢复、并发、预算、Fixture 指标和阶段限制。
+
+M4 增加了引用网络与独立证据核验层：
+
+- OpenAlex 两段式显式引用扩展，保留请求、响应 hash、边来源和缺边降级；
+- `normalize -> relevance -> access -> acquire -> DocuMind ingest -> analyze` 顺序生命周期门；
+- NetworkX 有向图、弱连通分量、社区、确定性 PageRank 和时间线候选；
+- ID、绑定、版本、hash、页码、Chunk、字符范围、数值与引用边的确定性 Validator；
+- `supported / partially_supported / unsupported / conflicted` 四态 Verifier 与 Profile 门禁；
+- unsupported Claim 排除、partial/conflicted 可见标记和全局最多一轮 FollowUp；
+- 匿名 OpenAlex 有界在线 smoke、真实边 provenance 和缓存重放；
+- `docs/M4_RELIABILITY_BASELINE.md`：契约、Fixture 指标、测试证据和阶段限制。
 
 ## 环境
 
@@ -110,6 +121,22 @@ uv run python scripts/run_m3_fixture_smoke.py
 
 该 smoke 在 `interrupt` 后关闭并重开 SQLite 资源，再执行审批恢复、动态两轮检索和三个受限 `Send` Worker。临时数据库位于已忽略的 `artifacts/`，只提交脱敏指标。
 
+M4 确定性引用与核验 smoke（不访问学术 API、DocuMind 或模型 Provider）：
+
+```powershell
+uv run python scripts/run_m4_fixture_smoke.py
+```
+
+该 smoke 使用显式冲突和缺失引用边 Fixture，验证冲突标记、关键 Claim 拦截与单轮 FollowUp；Fixture Verifier 只证明四态处理，不代表真实语义核验质量。
+
+M4 OpenAlex 有界在线 smoke（访问公开学术 API，不调用 DocuMind 或模型）：
+
+```powershell
+uv run python scripts/run_m4_openalex_live_smoke.py
+```
+
+默认使用独立兼容性控制 seed、至多 10 个引用目标元数据和新建的已忽略缓存目录；公开报告不保存标题、摘要、响应正文或 API Key。该 smoke 验证在线兼容性，不是完整引用召回率基准。
+
 脚本只下载 Fixture 锁定版本的公开 arXiv PDF，限制响应类型和大小；原文、绑定和完整 Evidence Artifact 写入已忽略的 `artifacts/`。默认只删除本次新建的 DocuMind 文档，传入 `--keep-documents` 才保留索引。
 
 公开数据源联机 smoke 会访问外部学术元数据 API，并将原始运行 Artifact 写入已忽略的 `artifacts/` 和 `data/`：
@@ -134,8 +161,10 @@ powershell -ExecutionPolicy Bypass -File scripts/verify_upstreams.ps1
 - ScholarGraph 只覆盖固定的 198 篇 RAG 摘要，不能替代全文证据；
 - 本地模型冻结为 `qwen3:8b`；M0 已确认保持付费 API Profile 禁用，未来启用前仍需独立预算授权；
 - M1 的 B0/B1 只使用元数据和摘要，不代表已经核对论文全文；
-- M2 已用三篇公开全文完成在线工程验收，但样本规模有限，且独立语义蕴含核验按计划延后到 M4；
+- M2 已用三篇公开全文完成在线工程验收，但样本规模仍有限；
 - M3 已验证编排可靠性，但 `api-strong` 仍禁用，真实 Coordinator 规划质量和成本尚未在线评测；
+- M4 已完成匿名 OpenAlex 有界在线兼容性验收，但 1 个控制 seed 不能代表完整引用覆盖率；
+- M4 的 `api-strong` 关键 Verifier 仍禁用，生产调用 fail closed，Fixture 结果不能作为语义准确率或模型成本证据；
 - M3 SSE Router 只补发当前持久事件；持续 tail、heartbeat、认证和完整 Research Task HTTP 装配延后到 M6；
 - 不提交凭据、运行数据、论文全文、模型原始回答或 `agent/` 工作记录。
 

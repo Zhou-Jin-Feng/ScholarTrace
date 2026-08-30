@@ -5,7 +5,7 @@
 - 产品名：ScholarTrace
 - 英文副标题：Evidence-Grounded Research Agent
 - 上游能力：`DocuMind` 原文 RAG、`ScholarGraph` GraphRAG 语义检索
-- 当前阶段：M0-M3 已完成复审；M3 结论为 `PASS WITH NOTES`，停在提交与 M4 前
+- 当前阶段：M0-M4 已完成复审；M4 结论为 `PASS WITH NOTES`，M5 尚未开始
 
 ## 目标交付
 

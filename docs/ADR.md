@@ -106,3 +106,19 @@
 - 原因：用户尚未确认 Provider、模型、价格和预算；为完成控制流验证而静默替换为本地模型会破坏 M0 冻结策略。
 - 约束：Fixture 只能证明 Schema、interrupt、恢复、路由、并发和幂等，不能作为真实 Coordinator 规划质量或付费模型成本证据。
 - 代价：M3 工程能力可复现，但真实研究任务在配置并评测 `api-strong` 前不能自动生成生产计划。
+
+## ADR-015：引用扩展使用显式边和顺序生命周期门
+
+- 状态：Accepted
+- 决策：OpenAlex Citation Provider 只使用书目 `referenced_works`；新论文必须依次通过 normalize、relevance、access、acquire、DocuMind ingest 和 analyze，不能从 API 元数据直接进入核验。
+- 原因：显式书目边可追溯，且引用发现不等于论文身份、合法全文访问或证据可用。
+- 约束：边方向固定 `citing -> cited`；缺少引用列表或目标元数据时显式降级；ScholarGraph 语义边不得补造引用。
+- 代价：引用 API 缺边会形成 partial graph，新增论文处理延迟高于仅抓元数据。
+
+## ADR-016：确定性 Validator 先于独立 Verifier
+
+- 状态：Accepted
+- 决策：ID、Paper/Binding/版本、hash、页码、Chunk、字符范围、数值和引用边由确定性 Validator 先检查；通过后才允许独立 Verifier 判断 supported、partially_supported、unsupported 或 conflicted。
+- 原因：概率模型不能修复或猜测字节级 provenance；Analysis 也不能自证 Claim。
+- 约束：`api-strong` 未启用时生产 Verifier fail closed；Fixture Verifier 明确标记为 fixture；unsupported Claim 排除，partial/conflicted Claim 带可见标记；FollowUp 全局最多一轮一个查询。
+- 代价：当前可验证工程门禁，但真实语义准确率和费用必须在启用强模型后单独评测。

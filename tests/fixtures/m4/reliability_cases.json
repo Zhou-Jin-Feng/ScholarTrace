@@ -1,0 +1,150 @@
+{
+  "schema_version": "1.0",
+  "fixture_kind": "deterministic_m4_conflict_and_missing_citation",
+  "quality_scope": "Control-flow and policy fixture; not semantic model quality evidence.",
+  "paper": {
+    "schema_version": "1.0",
+    "canonical_paper_id": "doi:10.1000/m4-fixture",
+    "title": "M4 Reliability Fixture",
+    "normalized_title": "m4 reliability fixture",
+    "authors": ["Test Author"],
+    "publication_year": 2024,
+    "doi": "10.1000/m4-fixture",
+    "openalex_id": "W100",
+    "access_level": "fulltext",
+    "sources": [
+      {
+        "source": "openalex",
+        "source_id": "https://openalex.org/W100",
+        "retrieved_at": "2026-08-30T06:00:00Z",
+        "record_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ]
+  },
+  "citation_paper": {
+    "schema_version": "1.0",
+    "canonical_paper_id": "openalex:W200",
+    "title": "Earlier Citation Fixture",
+    "normalized_title": "earlier citation fixture",
+    "authors": ["Earlier Author"],
+    "publication_year": 2022,
+    "openalex_id": "W200",
+    "access_level": "abstract",
+    "sources": [
+      {
+        "source": "openalex",
+        "source_id": "https://openalex.org/W200",
+        "retrieved_at": "2026-08-30T06:00:00Z",
+        "record_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      }
+    ]
+  },
+  "binding": {
+    "schema_version": "1.0",
+    "canonical_paper_id": "doi:10.1000/m4-fixture",
+    "document_key": "1111111111111111111111111111111111111111111111111111111111111111",
+    "index_id": "2222222222222222222222222222222222222222222222222222222222222222",
+    "source_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+    "documind_version": "2.2.0",
+    "retrieval_schema_version": "1.0"
+  },
+  "chunks": [
+    {
+      "chunk_id": "4444444444444444444444444444444444444444444444444444444444444444",
+      "content": "Evaluation reports a 10% improvement on the test set.",
+      "content_sha256": "b5e370b941f00c30b3c509372733d656c82263f75a123e0af29f2eb71ec1b9b7",
+      "source": "fixture.pdf",
+      "page_number": 3,
+      "distance": 0.1,
+      "rank": 1
+    },
+    {
+      "chunk_id": "5555555555555555555555555555555555555555555555555555555555555555",
+      "content": "Under a shifted setting, the evaluation reports no measurable improvement.",
+      "content_sha256": "856148c9a181e632eb245526612ae827f5307033fd238921c204b6a78697d153",
+      "source": "fixture.pdf",
+      "page_number": 5,
+      "distance": 0.2,
+      "rank": 2
+    }
+  ],
+  "evidence": [
+    {
+      "schema_version": "1.0",
+      "evidence_id": "evidence:m4:support",
+      "canonical_paper_id": "doi:10.1000/m4-fixture",
+      "quote": "Evaluation reports a 10% improvement on the test set.",
+      "evidence_level": "fulltext",
+      "content_sha256": "b5e370b941f00c30b3c509372733d656c82263f75a123e0af29f2eb71ec1b9b7",
+      "chunk_content_sha256": "b5e370b941f00c30b3c509372733d656c82263f75a123e0af29f2eb71ec1b9b7",
+      "document_key": "1111111111111111111111111111111111111111111111111111111111111111",
+      "index_id": "2222222222222222222222222222222222222222222222222222222222222222",
+      "section": "results",
+      "page_number": 3,
+      "chunk_id": "4444444444444444444444444444444444444444444444444444444444444444",
+      "char_start": 0,
+      "char_end": 53,
+      "source_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+      "parser_version": "documind-2.2.0/dense-v1",
+      "retrieval_run_id": "retrieval:m4:fixture"
+    },
+    {
+      "schema_version": "1.0",
+      "evidence_id": "evidence:m4:counter",
+      "canonical_paper_id": "doi:10.1000/m4-fixture",
+      "quote": "Under a shifted setting, the evaluation reports no measurable improvement.",
+      "evidence_level": "fulltext",
+      "content_sha256": "856148c9a181e632eb245526612ae827f5307033fd238921c204b6a78697d153",
+      "chunk_content_sha256": "856148c9a181e632eb245526612ae827f5307033fd238921c204b6a78697d153",
+      "document_key": "1111111111111111111111111111111111111111111111111111111111111111",
+      "index_id": "2222222222222222222222222222222222222222222222222222222222222222",
+      "section": "robustness",
+      "page_number": 5,
+      "chunk_id": "5555555555555555555555555555555555555555555555555555555555555555",
+      "char_start": 0,
+      "char_end": 74,
+      "source_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+      "parser_version": "documind-2.2.0/dense-v1",
+      "retrieval_run_id": "retrieval:m4:fixture"
+    }
+  ],
+  "claims": [
+    {
+      "schema_version": "1.0",
+      "claim_id": "claim:m4:conflicted",
+      "text": "The method improves exact match by 10% on the test set.",
+      "claim_type": "result",
+      "evidence_ids": ["evidence:m4:support"],
+      "counter_evidence_ids": ["evidence:m4:counter"],
+      "origin": "cross_paper_synthesis",
+      "importance": "critical"
+    },
+    {
+      "schema_version": "1.0",
+      "claim_id": "claim:m4:missing-citation",
+      "text": "The conclusion requires an explicit bibliographic relation.",
+      "claim_type": "inference",
+      "evidence_ids": ["evidence:m4:support"],
+      "counter_evidence_ids": [],
+      "origin": "system_inferred",
+      "importance": "critical"
+    }
+  ],
+  "citation_edge": {
+    "schema_version": "1.0",
+    "edge_id": "citation:openalex:m4-fixture",
+    "citing_paper_id": "doi:10.1000/m4-fixture",
+    "cited_paper_id": "openalex:W200",
+    "source": "openalex",
+    "relation": "references",
+    "source_work_id": "W100",
+    "request_id": "request:openalex:citation:m4-fixture",
+    "response_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "retrieved_at": "2026-08-30T06:00:00Z"
+  },
+  "missing_citation_requirement": {
+    "claim_id": "claim:m4:missing-citation",
+    "citing_paper_id": "doi:10.1000/m4-fixture",
+    "cited_paper_id": "openalex:W300"
+  }
+}
