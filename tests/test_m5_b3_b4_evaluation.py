@@ -13,8 +13,8 @@ from scholartrace.scholargraph.evaluation import (
     EvaluationError,
     QuestionSetHashes,
     ScholarGraphEvaluationAudit,
-    file_sha256,
     load_question_sets,
+    question_set_sha256,
 )
 from scholartrace.scholargraph.fixture_smoke import run_fixture_smoke
 
@@ -23,8 +23,8 @@ ELIGIBLE = ROOT / "evaluation" / "seeds" / "m5_scholargraph_eligible_eval.jsonl"
 BOUNDARY = ROOT / "evaluation" / "seeds" / "m5_scholargraph_boundary_eval.jsonl"
 QUESTIONS = load_question_sets(ELIGIBLE, BOUNDARY)
 HASHES = QuestionSetHashes(
-    eligible_sha256=file_sha256(ELIGIBLE),
-    boundary_sha256=file_sha256(BOUNDARY),
+    eligible_sha256=question_set_sha256(ELIGIBLE),
+    boundary_sha256=question_set_sha256(BOUNDARY),
 )
 
 
@@ -110,6 +110,17 @@ def test_question_sets_match_upstream_frozen_hashes() -> None:
     assert HASHES.boundary_sha256 == (
         "6bc55ed002689ef165f8a6252c45dcee2f9583d05d43e55a6656f3405a0cf0fc"
     )
+
+
+def test_question_set_hash_is_independent_of_checkout_line_endings(
+    tmp_path: Path,
+) -> None:
+    lf = tmp_path / "lf.jsonl"
+    crlf = tmp_path / "crlf.jsonl"
+    lf.write_bytes(b'{"schema_version":1}\n{"schema_version":1}\n')
+    crlf.write_bytes(b'{"schema_version":1}\r\n{"schema_version":1}\r\n')
+
+    assert question_set_sha256(lf) == question_set_sha256(crlf)
 
 
 def test_paired_report_requires_human_review_after_positive_scored_delta() -> None:

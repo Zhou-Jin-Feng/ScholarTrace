@@ -14,6 +14,7 @@ from scholartrace.scholargraph.evaluation import (
     QuestionSetHashes,
     file_sha256,
     load_question_sets,
+    question_set_sha256,
 )
 from scholartrace.scholargraph.experiment import (
     B3B4ExecutionManifest,
@@ -53,8 +54,8 @@ async def run_fixture() -> dict[str, object]:
         for question_id in questions
     }
     hashes = QuestionSetHashes(
-        eligible_sha256=file_sha256(ELIGIBLE),
-        boundary_sha256=file_sha256(BOUNDARY),
+        eligible_sha256=question_set_sha256(ELIGIBLE),
+        boundary_sha256=question_set_sha256(BOUNDARY),
     )
     scopes_payload = json.loads(SCOPES.read_text("utf-8"))
     scopes = TypeAdapter(dict[str, ScholarGraphScope]).validate_python(

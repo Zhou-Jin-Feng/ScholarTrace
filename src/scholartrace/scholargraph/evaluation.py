@@ -164,6 +164,13 @@ def file_sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def question_set_sha256(path: Path) -> str:
+    """Hash JSONL question sets with stable line endings across platforms."""
+
+    normalized = path.read_text("utf-8").replace("\n", "\r\n")
+    return hashlib.sha256(normalized.encode("utf-8")).hexdigest()
+
+
 def load_question_sets(
     eligible_path: Path,
     boundary_path: Path,

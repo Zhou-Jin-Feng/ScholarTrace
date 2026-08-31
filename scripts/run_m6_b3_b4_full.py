@@ -30,8 +30,8 @@ from scholartrace.scholargraph.client import ScholarGraphClient
 from scholartrace.scholargraph.evaluation import (
     EvaluationQuestion,
     QuestionSetHashes,
-    file_sha256,
     load_question_sets,
+    question_set_sha256,
 )
 from scholartrace.scholargraph.evaluation_input import (
     PreparedEvidenceInput,
@@ -651,8 +651,8 @@ async def run(args: argparse.Namespace) -> dict[str, object]:
 
     questions = load_question_sets(ELIGIBLE, BOUNDARY)
     question_hashes = QuestionSetHashes(
-        eligible_sha256=file_sha256(ELIGIBLE),
-        boundary_sha256=file_sha256(BOUNDARY),
+        eligible_sha256=question_set_sha256(ELIGIBLE),
+        boundary_sha256=question_set_sha256(BOUNDARY),
     )
     packets = _load_packets()
     scope_payload = json.loads(SCOPES.read_text("utf-8"))["scopes"]

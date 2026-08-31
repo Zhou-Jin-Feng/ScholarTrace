@@ -27,8 +27,8 @@ from scholartrace.scholargraph.blind_review import prepare_blind_review
 from scholartrace.scholargraph.client import ScholarGraphClient
 from scholartrace.scholargraph.evaluation import (
     QuestionSetHashes,
-    file_sha256,
     load_question_sets,
+    question_set_sha256,
 )
 from scholartrace.scholargraph.evaluation_input import (
     PreparedEvidenceInput,
@@ -257,8 +257,8 @@ async def run(args: argparse.Namespace) -> dict[str, object]:
         )
         write_text(boundary_seed, "")
         hashes = QuestionSetHashes(
-            eligible_sha256=file_sha256(eligible_seed),
-            boundary_sha256=file_sha256(boundary_seed),
+            eligible_sha256=question_set_sha256(eligible_seed),
+            boundary_sha256=question_set_sha256(boundary_seed),
         )
 
         async with httpx.AsyncClient(trust_env=False, follow_redirects=False) as graph_http:

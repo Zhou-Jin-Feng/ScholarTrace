@@ -17,6 +17,7 @@ from scholartrace.scholargraph.evaluation import (
     QuestionSetHashes,
     file_sha256,
     load_question_sets,
+    question_set_sha256,
 )
 from scholartrace.scholargraph.experiment import (
     B3B4ExecutionManifest,
@@ -40,8 +41,8 @@ CAPABILITIES = ROOT / "tests" / "fixtures" / "m5" / "scholargraph_capabilities.j
 PAPER_POOL = ROOT / "tests" / "fixtures" / "documind" / "m2_three_papers.json"
 QUESTIONS = load_question_sets(ELIGIBLE, BOUNDARY)
 HASHES = QuestionSetHashes(
-    eligible_sha256=file_sha256(ELIGIBLE),
-    boundary_sha256=file_sha256(BOUNDARY),
+    eligible_sha256=question_set_sha256(ELIGIBLE),
+    boundary_sha256=question_set_sha256(BOUNDARY),
 )
 
 
