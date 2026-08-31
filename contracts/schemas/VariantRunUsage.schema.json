@@ -1,0 +1,51 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "duration_seconds": {
+      "minimum": 0,
+      "title": "Duration Seconds",
+      "type": "number"
+    },
+    "input_tokens": {
+      "minimum": 0,
+      "title": "Input Tokens",
+      "type": "integer"
+    },
+    "model_calls": {
+      "minimum": 0,
+      "title": "Model Calls",
+      "type": "integer"
+    },
+    "output_tokens": {
+      "minimum": 0,
+      "title": "Output Tokens",
+      "type": "integer"
+    },
+    "provider_api_calls": {
+      "minimum": 0,
+      "title": "Provider Api Calls",
+      "type": "integer"
+    },
+    "reference_cost_cny": {
+      "minimum": 0,
+      "title": "Reference Cost Cny",
+      "type": "number"
+    },
+    "scholargraph_calls": {
+      "minimum": 0,
+      "title": "Scholargraph Calls",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "model_calls",
+    "provider_api_calls",
+    "scholargraph_calls",
+    "input_tokens",
+    "output_tokens",
+    "reference_cost_cny",
+    "duration_seconds"
+  ],
+  "title": "VariantRunUsage",
+  "type": "object"
+}

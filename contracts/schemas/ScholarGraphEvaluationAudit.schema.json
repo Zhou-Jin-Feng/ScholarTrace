@@ -1,0 +1,69 @@
+{
+  "$defs": {
+    "QueryMethod": {
+      "enum": [
+        "basic",
+        "local",
+        "global",
+        "drift"
+      ],
+      "title": "QueryMethod",
+      "type": "string"
+    },
+    "QueryStatus": {
+      "enum": [
+        "succeeded",
+        "degraded",
+        "timeout",
+        "failed"
+      ],
+      "title": "QueryStatus",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "called": {
+      "title": "Called",
+      "type": "boolean"
+    },
+    "decision": {
+      "enum": [
+        "disabled",
+        "called",
+        "skipped",
+        "rejected"
+      ],
+      "title": "Decision",
+      "type": "string"
+    },
+    "method": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/QueryMethod"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "status": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/QueryStatus"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "called",
+    "decision"
+  ],
+  "title": "ScholarGraphEvaluationAudit",
+  "type": "object"
+}

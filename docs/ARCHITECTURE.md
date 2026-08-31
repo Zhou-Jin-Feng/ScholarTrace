@@ -1,7 +1,7 @@
 # ScholarTrace 架构设计
 
-> 版本：M4 / 1.4
-> 决策状态：引用网络、确定性核验与报告门禁已冻结，停在 M5 开始前
+> 版本：M6 / 1.6
+> 决策状态：交付 API、工作台、导出和评测矩阵已装配，停在 M7 开始前
 
 ## 1. 架构目标
 
@@ -33,6 +33,7 @@ flowchart LR
     GRAPH --> ARTIFACTS[(Artifact Store)]
     GRAPH --> CHECKPOINT[(Checkpoint Store)]
     VERIFY --> REPORT[Evidence-Grounded Report]
+    API --> EXPORT[Markdown/HTML/PDF/JSON Export]
 ```
 
 ## 4. 运行流程
@@ -56,7 +57,8 @@ flowchart LR
 src/scholartrace/
 ├─ agents/             # 只负责决策与结构化输出
 ├─ graph/              # LangGraph 构建、路由、Reducer、恢复
-├─ integrations/       # 学术 API、DocuMind、ScholarGraph Client
+├─ scholargraph/       # ScholarGraph 契约、Client、能力路由和 B3/B4 评测
+├─ integrations/       # 其他学术 API 与工具服务 Client
 ├─ schemas/            # Pydantic 业务对象与 API 对象
 ├─ services/           # 归一化、预算、证据校验、报告
 ├─ repositories/       # SQLite/Artifact Store 抽象
@@ -64,7 +66,7 @@ src/scholartrace/
 └─ observability/      # 安全日志、事件、指标、Trace
 ```
 
-M0 建立 `contracts.py` 和核心契约；M1 已实现 `src/scholartrace/search/`；M2 已实现 `src/scholartrace/evidence/`；M3 已实现 `src/scholartrace/workflow/` 的 Coordinator 门禁、动态 Search Agent、持久图、Worker Runner、Artifact/Event/Budget Store，以及 `src/scholartrace/api/events.py` 的 SSE 补发 Router。后续目录仍在对应阶段按需创建，避免空模块伪装完成度。
+M0 建立 `contracts.py` 和核心契约；M1 已实现 `src/scholartrace/search/`；M2 已实现 `src/scholartrace/evidence/`；M3 已实现 `src/scholartrace/workflow/` 的可恢复编排；M4 已实现 `src/scholartrace/citations/` 与 `src/scholartrace/verification/`；M5 已实现 `src/scholartrace/scholargraph/` 的严格 Consumer、Capability Router 和配对评测器；M6 另行实现 `src/scholartrace/delivery/` 的任务元数据、脱敏报告、导出和 B0-B4 交付矩阵，`src/scholartrace/api/app.py` 装配 Research Task API，`frontend/` 提供 React + Vite 工作台。
 
 ### 5.1 M1 搜索数据流
 
@@ -152,6 +154,7 @@ Reducer 只做以下操作：
 | DocuMind 无 Chunk | 记录成功空结果，不触发 LLM 猜测 |
 | ScholarGraph 越界 | Capability Router 确定性跳过，回退 B3 |
 | ScholarGraph 超时 | 丢弃部分答案，记录 timed_out，回退 B3 |
+| ScholarGraph 契约漂移/错误信封非法 | Consumer fail closed，记录 protocol_error，回退 B3 |
 | Worker 失败 | 隔离到单篇论文，保留其他 Worker Artifact |
 | 预算耗尽 | 停止新增调用，保存已有结果并生成限制说明 |
 | API Profile 未配置 | Coordinator/关键 Verifier/Synthesis 不执行，不静默换模型 |
@@ -206,6 +209,39 @@ OpenAlex explicit references
 - Validator 在任何语义调用前检查 Claim-Evidence 引用、Paper/Binding/版本、内容和 Chunk hash、页码、字符范围、数值与要求的显式引用边；
 - 生产 Verifier 必须匹配 `critical_verifier` Profile；`api-strong` 禁用时 fail closed，测试 Fixture 以独立 `fixture` 类型标识；
 - unsupported Claim 不进入报告，partially_supported/conflicted Claim 必须带可见标记；FollowUp 全局最多一个且固定为第 1 轮、最多 1 个追加查询。
+
+## 13. M5 ScholarGraph 能力受限数据流
+
+```text
+Research question + declared scope + remaining Budget
+  -> frozen CapabilitiesResponse
+  -> deterministic Capability Router
+  -> skip/reject and B3 fallback, or one bounded query
+  -> strict Provider 1.2.0 response validation
+  -> abstract-only auxiliary context
+  -> paired B3/B4 evaluation record
+```
+
+- 路由先检查主题、2020-2025 年份、abstract 证据等级、全文核验需求、索引写入、方法用途和预算；
+- Basic 为默认，Local 只服务实体邻域；Global/DRIFT 在 M5 不在线开放；
+- GET 健康/能力/指标探针最多两次，昂贵 POST 查询不自动重试，避免重复本地推理；
+- 所有 Provider 答案都标记为 abstract-only，不能生成 fulltext Evidence；
+- B3/B4 评测要求问题集、模型、论文池、预算和报告限制完全一致；正式盲审显示 eligible 平均质量增益为 0 且 B4 延迟更高，因此 ScholarGraph 保持默认关闭。
+
+## 14. M6 交付数据流
+
+```text
+POST task -> waiting_approval -> approve/modify/reject
+  -> durable task metadata + Runtime Ledger events
+  -> deterministic delivery demo or explicit production-unavailable degradation
+  -> sanitized JSON/Markdown/HTML/PDF artifacts
+  -> React Workspace and SSE replay
+```
+
+- M6 API 只暴露任务状态、阶段、计数、降级原因和工件 hash；不把论文正文、Prompt、模型原始回答或凭据写入导出；
+- 相同 `Idempotency-Key` 且请求体相同不会重复创建任务；工件内容 hash 冲突 fail closed；
+- Docker Compose 将 API 与 UI 分离，M6 数据卷仅保存本地任务元数据和交付工件；
+- M6 B0-B4 矩阵记录已评分的 B3/B4 质量证据和无明确收益结论；交付状态 `delivery_ready_with_notes` 不等价于 B4 质量通过。
 
 ## 恢复与资源隔离约束
 

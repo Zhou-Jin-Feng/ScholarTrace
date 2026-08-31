@@ -1,0 +1,49 @@
+{
+  "answer_bytes": 1834,
+  "answer_sha256": "4957193126546949f94b8804d1bd27b236a641eff3a27c301298963eb9de35ae",
+  "basic_request_count_delta": 1,
+  "boundary_question_count": 6,
+  "boundary_reason_codes": [
+    "full_text_required",
+    "index_write_not_supported",
+    "topic_out_of_scope",
+    "verified_full_text_required",
+    "year_out_of_scope"
+  ],
+  "boundary_routing_pass": true,
+  "corpus_id": "openalex-rag-abstracts-2020-2025-v1",
+  "corpus_manifest_sha256": "168671c6f9f68ed2c8017e8d3d14396a455559a6a55628a7b0c40d32a80ea36c",
+  "document_count": 198,
+  "evidence_level": "abstract",
+  "fixture_kind": "bounded_scholargraph_basic_live_smoke",
+  "generated_at": "2026-08-30T15:44:39.959868+00:00",
+  "graphrag_version": "3.1.2",
+  "method": "basic",
+  "notes": [
+    "The public report stores no question, answer, prompt, or raw diagnostics.",
+    "ScholarGraph output remains abstract-level auxiliary context.",
+    "This smoke does not establish B4 quality benefit or default-enable approval.",
+    "Global and DRIFT were not enabled or called."
+  ],
+  "paid_model_api_calls": 0,
+  "passed": true,
+  "provider_duration_seconds": 32.806,
+  "provider_reported_cost_cny": 0.0,
+  "provider_status": "succeeded",
+  "quality_scope": "Online compatibility smoke; not a B3/B4 quality comparison.",
+  "query_attempts": 1,
+  "query_http_duration_seconds": 32.832,
+  "readiness_checks": {
+    "container_runtime": true,
+    "index_files": true,
+    "index_identity": true,
+    "workspace_config": true
+  },
+  "readiness_status": "ready",
+  "schema_version": "1.0",
+  "service_version": "1.2.0",
+  "source_ref_count": 0,
+  "token_coverage": "visible_lower_bound",
+  "tokens_visible_lower_bound_delta": 19,
+  "wall_duration_seconds": 34.059
+}

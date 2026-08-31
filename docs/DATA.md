@@ -1,7 +1,7 @@
 # ScholarTrace 数据契约
 
-> 核心契约版本：`1.0`；M1 搜索契约版本：`1.0`；M2 证据契约版本：`1.0`；M3 图状态版本：`1.0`；M4 引用与核验契约版本：`1.0`
-> 代码源：`src/scholartrace/contracts.py`、`src/scholartrace/search/models.py`、`src/scholartrace/evidence/models.py`、`src/scholartrace/workflow/models.py`、`src/scholartrace/citations/models.py`、`src/scholartrace/verification/models.py`
+> 核心契约版本：`1.0`；M1-M5 各阶段契约版本：`1.0`
+> 代码源：`src/scholartrace/contracts.py`、`src/scholartrace/search/models.py`、`src/scholartrace/evidence/models.py`、`src/scholartrace/workflow/models.py`、`src/scholartrace/citations/models.py`、`src/scholartrace/verification/models.py`、`src/scholartrace/scholargraph/models.py`、`src/scholartrace/scholargraph/evaluation.py`、`src/scholartrace/delivery/models.py`
 > 机器格式：`contracts/schemas/*.schema.json`
 
 ## 1. 设计原则
@@ -79,6 +79,27 @@ M4 引用与核验对象：
 | ReportGateResult | dispositions、blocked critical IDs、report_safe | unsupported 不包含；partial/conflicted 必须有可见 marker |
 | FollowUpRequest | task/claim/subquestion、missing type、targets、round/query | 全局最多一个；round 和追加查询数都固定为 1 |
 
+M5 ScholarGraph 与对照评测对象：
+
+| 对象 | 关键字段 | 约束 |
+|---|---|---|
+| CapabilitiesResponse | service/GraphRAG/corpus、methods、limits | 服务 1.2.0、GraphRAG 3.1.2、198 篇、Basic 唯一默认 |
+| QueryRequest | corpus、question、method、purpose、timeout、evidence level | 问题最多 2,000 字符；证据等级仅 abstract |
+| QueryResponse | status、duration、answer、source refs、safe diagnostics | 版本和语料必须精确匹配；M5 拒绝非空 source refs |
+| CapabilityDecision | action、eligible、reason、method、purpose、timeout | 路由理由稳定；越界/预算不足不得调用 Provider |
+| ScholarGraphToolResult | decision、status、abstract-only、fallback、attempts | 永不作为全文 Evidence；失败必须回退 B3 |
+| B3B4EvaluationResult | variant、question、conditions、quality/coverage/latency、audit | B3 禁用 ScholarGraph；B4 边界问题必须跳过/拒绝 |
+| B3B4ComparisonReport | 配对结果、汇总、问题集 hash、enable decision | 条件不一致或覆盖不全 fail closed；缺质量分保持关闭 |
+
+M6 交付对象：
+
+| 对象 | 关键字段 | 约束 |
+|---|---|---|
+| TaskCreateRequest | question、title、demo_mode | 问题 3-2,000 字符；演示模式显式枚举 |
+| TaskSummary | task/thread、status/phase、metrics、degradations | 不包含正文；事件和工件数量来自持久存储 |
+| ArtifactSummary | task、artifact、media type、SHA-256、大小 | 列表只返回元数据，正文走报告下载端点 |
+| EvaluationMatrix | B0-B4 phase status、evidence report、quality evidence、blockers | `delivery_ready_with_notes` 不代表质量通过 |
+
 M0 默认 Budget 上限：输入 160,000 Token、输出 40,000 Token、总计 200,000 Token、60 次模型调用、16 次 API/工具调用、1,800 秒、10 CNY。达到任一限制即停止新增调用；10 CNY 是硬上限，不是预计花费。
 
 ## 3. ID 规则
@@ -118,7 +139,7 @@ M0 默认 Budget 上限：输入 160,000 Token、输出 40,000 Token、总计 20
 5. unsupported Claim 不进入无标记结论；
 6. conflicted Claim 同时展示支持和反证；
 7. abstract Evidence 不得表述成已核对全文；
-8. ScholarGraph 只产生 abstract 辅助证据或检索线索；
+8. ScholarGraph 只产生 abstract 辅助上下文或检索线索，不产生 Evidence；
 9. 同一输入的幂等重试不得产生不同 Artifact ID；
 10. 内容哈希变化必须生成新 Artifact 或新版本。
 11. Evidence `content_sha256` 必须等于 quote 的 UTF-8 SHA-256；模型短引用只能解析到本次单论文输入。
@@ -148,7 +169,7 @@ uv run python scripts/export_schemas.py
 uv run pytest tests/test_contract_models.py
 ```
 
-`contracts/examples/m0_bundle.json` 覆盖核心对象；`contracts/schemas/` 同时包含 M1 搜索、M2 证据和 M4 引用/核验对象的独立 Schema。M3 TypedDict 是 LangGraph 内部控制契约，不作为跨服务 JSON Schema。M3/M4 脱敏 Fixture 指标分别位于 `evaluation/reports/m3_workflow_fixture_smoke.json` 和 `evaluation/reports/m4_reliability_fixture_smoke.json`；Checkpoint 和完整业务 Artifact 不进入 Git。
+`contracts/examples/m0_bundle.json` 覆盖核心对象；`contracts/schemas/` 同时包含 M1 搜索、M2 证据、M4 引用/核验、M5 ScholarGraph/评测和 M6 交付对象的独立 Schema。M3 TypedDict 是 LangGraph 内部控制契约，不作为跨服务 JSON Schema。各阶段脱敏报告位于 `evaluation/reports/`；Checkpoint、完整业务 Artifact 和 Provider 原始答案不进入 Git。
 
 ## 学术来源与访问约束
 

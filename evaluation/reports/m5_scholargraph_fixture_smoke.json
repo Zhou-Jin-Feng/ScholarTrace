@@ -1,0 +1,20 @@
+{
+  "b4_scholargraph_calls": 6,
+  "boundary_count": 6,
+  "boundary_routing_pass": true,
+  "comparability_pass": true,
+  "default_enable_decision": "keep_disabled_insufficient_quality_evidence",
+  "eligible_count": 6,
+  "eligible_quality_delta_mean": null,
+  "fixture_kind": "deterministic_m5_comparability_and_routing",
+  "model_provider_calls": 0,
+  "notes": [
+    "Fixture rows validate the evaluator; they are not model answers.",
+    "No quality benefit is claimed without paired blind-review scores.",
+    "ScholarGraph remains disabled by default."
+  ],
+  "passed": true,
+  "provider_calls": 0,
+  "question_count": 12,
+  "schema_version": "1.0"
+}

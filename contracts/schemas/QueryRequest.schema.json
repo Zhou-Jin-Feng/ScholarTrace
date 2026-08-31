@@ -1,0 +1,80 @@
+{
+  "$defs": {
+    "EvidenceLevel": {
+      "enum": [
+        "abstract",
+        "full_text"
+      ],
+      "title": "EvidenceLevel",
+      "type": "string"
+    },
+    "QueryMethod": {
+      "enum": [
+        "basic",
+        "local",
+        "global",
+        "drift"
+      ],
+      "title": "QueryMethod",
+      "type": "string"
+    },
+    "QueryPurpose": {
+      "enum": [
+        "general",
+        "entity_neighborhood",
+        "experiment",
+        "offline_evaluation",
+        "long_task_approved"
+      ],
+      "title": "QueryPurpose",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "corpus_id": {
+      "default": "openalex-rag-abstracts-2020-2025-v1",
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Corpus Id",
+      "type": "string"
+    },
+    "method": {
+      "$ref": "#/$defs/QueryMethod",
+      "default": "basic"
+    },
+    "purpose": {
+      "$ref": "#/$defs/QueryPurpose",
+      "default": "general"
+    },
+    "question": {
+      "maxLength": 2000,
+      "minLength": 1,
+      "title": "Question",
+      "type": "string"
+    },
+    "required_evidence_level": {
+      "$ref": "#/$defs/EvidenceLevel",
+      "default": "abstract"
+    },
+    "timeout_seconds": {
+      "anyOf": [
+        {
+          "maximum": 3600,
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Timeout Seconds"
+    }
+  },
+  "required": [
+    "question"
+  ],
+  "title": "QueryRequest",
+  "type": "object"
+}

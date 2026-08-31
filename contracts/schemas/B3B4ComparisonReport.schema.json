@@ -1,0 +1,329 @@
+{
+  "$defs": {
+    "PairedResult": {
+      "additionalProperties": false,
+      "properties": {
+        "b3_status": {
+          "enum": [
+            "succeeded",
+            "degraded",
+            "failed",
+            "timeout",
+            "skipped",
+            "rejected"
+          ],
+          "title": "B3 Status",
+          "type": "string"
+        },
+        "b4_status": {
+          "enum": [
+            "succeeded",
+            "degraded",
+            "failed",
+            "timeout",
+            "skipped",
+            "rejected"
+          ],
+          "title": "B4 Status",
+          "type": "string"
+        },
+        "latency_delta_seconds": {
+          "title": "Latency Delta Seconds",
+          "type": "number"
+        },
+        "quality_delta_b4_minus_b3": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Quality Delta B4 Minus B3"
+        },
+        "question_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Question Id",
+          "type": "string"
+        },
+        "scholargraph_decision": {
+          "enum": [
+            "disabled",
+            "called",
+            "skipped",
+            "rejected"
+          ],
+          "title": "Scholargraph Decision",
+          "type": "string"
+        },
+        "scholargraph_method": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/QueryMethod"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "subset": {
+          "enum": [
+            "scholargraph_eligible_eval",
+            "boundary_eval"
+          ],
+          "title": "Subset",
+          "type": "string"
+        }
+      },
+      "required": [
+        "question_id",
+        "subset",
+        "b3_status",
+        "b4_status",
+        "latency_delta_seconds",
+        "scholargraph_decision"
+      ],
+      "title": "PairedResult",
+      "type": "object"
+    },
+    "QueryMethod": {
+      "enum": [
+        "basic",
+        "local",
+        "global",
+        "drift"
+      ],
+      "title": "QueryMethod",
+      "type": "string"
+    },
+    "QuestionSetHashes": {
+      "additionalProperties": false,
+      "properties": {
+        "boundary_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Boundary Sha256",
+          "type": "string"
+        },
+        "eligible_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Eligible Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "eligible_sha256",
+        "boundary_sha256"
+      ],
+      "title": "QuestionSetHashes",
+      "type": "object"
+    },
+    "VariantSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "coverage_mean": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Coverage Mean"
+        },
+        "degraded_rate": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Degraded Rate",
+          "type": "number"
+        },
+        "failure_rate": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Failure Rate",
+          "type": "number"
+        },
+        "latency_p50_seconds": {
+          "minimum": 0,
+          "title": "Latency P50 Seconds",
+          "type": "number"
+        },
+        "latency_p95_seconds": {
+          "minimum": 0,
+          "title": "Latency P95 Seconds",
+          "type": "number"
+        },
+        "n": {
+          "minimum": 1,
+          "title": "N",
+          "type": "integer"
+        },
+        "quality_mean": {
+          "anyOf": [
+            {
+              "maximum": 4,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Quality Mean"
+        },
+        "quality_n": {
+          "minimum": 0,
+          "title": "Quality N",
+          "type": "integer"
+        },
+        "scholargraph_calls": {
+          "minimum": 0,
+          "title": "Scholargraph Calls",
+          "type": "integer"
+        },
+        "tokens_visible_lower_bound": {
+          "minimum": 0,
+          "title": "Tokens Visible Lower Bound",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "n",
+        "quality_n",
+        "latency_p50_seconds",
+        "latency_p95_seconds",
+        "failure_rate",
+        "degraded_rate",
+        "tokens_visible_lower_bound",
+        "scholargraph_calls"
+      ],
+      "title": "VariantSummary",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "b3": {
+      "$ref": "#/$defs/VariantSummary"
+    },
+    "b4": {
+      "$ref": "#/$defs/VariantSummary"
+    },
+    "boundary_count": {
+      "minimum": 1,
+      "title": "Boundary Count",
+      "type": "integer"
+    },
+    "boundary_routing_pass": {
+      "const": true,
+      "default": true,
+      "title": "Boundary Routing Pass",
+      "type": "boolean"
+    },
+    "comparability_pass": {
+      "const": true,
+      "default": true,
+      "title": "Comparability Pass",
+      "type": "boolean"
+    },
+    "default_enable_decision": {
+      "enum": [
+        "keep_disabled_insufficient_quality_evidence",
+        "keep_disabled_no_clear_benefit",
+        "human_review_required"
+      ],
+      "title": "Default Enable Decision",
+      "type": "string"
+    },
+    "eligible_count": {
+      "minimum": 1,
+      "title": "Eligible Count",
+      "type": "integer"
+    },
+    "eligible_quality_delta_mean": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Eligible Quality Delta Mean"
+    },
+    "limitations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "paired_results": {
+      "items": {
+        "$ref": "#/$defs/PairedResult"
+      },
+      "title": "Paired Results",
+      "type": "array"
+    },
+    "purpose": {
+      "const": "scholartrace-b3-b4-paired-comparison",
+      "default": "scholartrace-b3-b4-paired-comparison",
+      "title": "Purpose",
+      "type": "string"
+    },
+    "question_count": {
+      "minimum": 1,
+      "title": "Question Count",
+      "type": "integer"
+    },
+    "question_sets": {
+      "$ref": "#/$defs/QuestionSetHashes"
+    },
+    "run_ids": {
+      "additionalProperties": {
+        "maxLength": 160,
+        "minLength": 3,
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+        "type": "string"
+      },
+      "propertyNames": {
+        "enum": [
+          "b3",
+          "b4"
+        ]
+      },
+      "title": "Run Ids",
+      "type": "object"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "run_ids",
+    "question_count",
+    "eligible_count",
+    "boundary_count",
+    "b3",
+    "b4",
+    "paired_results",
+    "default_enable_decision",
+    "question_sets",
+    "limitations"
+  ],
+  "title": "B3B4ComparisonReport",
+  "type": "object"
+}

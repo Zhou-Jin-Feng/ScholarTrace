@@ -1,0 +1,48 @@
+{
+  "full_reference_cap_cny": 22.5,
+  "full_report_call_count": 24,
+  "limitations": [
+    "These are official-reference arithmetic estimates, not Provider bills.",
+    "The Provider does not expose an account multiplier or billed-cost field.",
+    "The full cap covers final report generation only.",
+    "api-strong Coordinator and critical Verifier calls require a separate ledger.",
+    "A two-call B3/B4 pilot must precede the 24-call run to validate actual usage.",
+    "The user-approved execution caps include a 50 percent contingency."
+  ],
+  "local_scholargraph_basic_calls": 6,
+  "model_identifier": "gpt-5.6-terra",
+  "pilot_reference_cap_cny": 3.0,
+  "purpose": "scholartrace-b3-b4-report-generation-reference-budget",
+  "reference_rates": {
+    "input_usd_per_million": 2.0,
+    "output_usd_per_million": 12.0,
+    "usd_to_cny": 7.5
+  },
+  "scenarios": [
+    {
+      "call_count": 24,
+      "input_tokens_per_call": 5005,
+      "interpretation": "Arithmetic projection of the earlier one-call plan smoke; report inputs will usually be larger, so this is not a safe cap.",
+      "name": "observed_plan_smoke_shape",
+      "output_tokens_per_call": 406,
+      "reference_cost_cny": 2.67876
+    },
+    {
+      "call_count": 24,
+      "input_tokens_per_call": 15000,
+      "interpretation": "Planning estimate for a bounded Evidence packet and short report.",
+      "name": "planning_shape",
+      "output_tokens_per_call": 800,
+      "reference_cost_cny": 7.128
+    },
+    {
+      "call_count": 24,
+      "input_tokens_per_call": 30000,
+      "interpretation": "Maximum reference envelope for the 24 final report calls before Coordinator or Verifier usage.",
+      "name": "hard_report_envelope",
+      "output_tokens_per_call": 1200,
+      "reference_cost_cny": 13.392
+    }
+  ],
+  "schema_version": "1.0"
+}

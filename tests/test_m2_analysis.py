@@ -205,6 +205,40 @@ def test_local_analyzer_retries_invalid_quote_and_builds_full_provenance() -> No
     assert calls == 2
 
 
+def test_local_analyzer_repairs_claim_number_absent_from_quote() -> None:
+    calls = 0
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        nonlocal calls
+        calls += 1
+        request_payload = json.loads(request.content)
+        if calls == 2:
+            assert len(request_payload["messages"]) == 3
+            assert "numeric token" in request_payload["messages"][2]["content"]
+        payload = _draft(0)
+        if calls == 1:
+            payload["claims"][0]["text"] = "Retrieval is 20% more adaptive."
+        return httpx.Response(
+            200,
+            json={"message": {"role": "assistant", "content": json.dumps(payload)}},
+            request=request,
+        )
+
+    async def scenario() -> None:
+        async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as http:
+            generated = await OllamaPaperAnalyzer(client=http).analyze(
+                paper=_paper(),
+                binding=_binding(),
+                retrieval=_retrieval(),
+                question="How is retrieval adapted?",
+            )
+        assert generated.usage.call_count == 2
+        assert generated.usage.structured_repair_count == 1
+
+    asyncio.run(scenario())
+    assert calls == 2
+
+
 def test_local_analyzer_fails_closed_on_unknown_chunk() -> None:
     def handler(request: httpx.Request) -> httpx.Response:
         return httpx.Response(

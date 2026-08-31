@@ -1,7 +1,7 @@
 # ScholarTrace 模型与成本策略
 
-> 状态：M0 本地路线与预算已冻结；人工确认本阶段保持付费 API Profile 禁用  
-> 日期：2026-08-29  
+> 状态：M6 api-strong 结构化兼容性 smoke 与 12 题 B3/B4 受控评测完成；生产付费 Profile 继续禁用，ScholarGraph 默认关闭
+> 日期：2026-08-30
 > 原则：确定性逻辑不用 LLM；高频低风险任务优先本地模型；少量关键判断使用 API 强模型；所有模型选择由评测决定
 
 ## 1. 决策结论
@@ -18,7 +18,7 @@ ScholarGraph                  -> 保持已评测的本地 qwen3:8b 基线
 
 M0 实机核验后，本地生成模型冻结为 Ollama `qwen3:8b`（模型 ID `500a1f067a9f`、8.2B、Q4_K_M、上下文上限 40,960），Embedding 冻结为 `qwen3-embedding:latest`（模型 ID `64b933495768`、7.6B、Q4_K_M、上下文上限 40,960）。GPU 基线为 8 GB RTX 3070 Ti Laptop。
 
-用户已确认 M0 不配置付费 API。`api-strong` Profile 保持 `enabled=false`，Provider、模型版本、上下文和价格快照留空；未来启用时必须先经用户确认并以官方资料核验后填写。未配置时 Coordinator、关键 Verifier 和 Synthesis fail closed；不得静默改用任意 API，也不得自动升级到更贵价格层级。
+M0 时用户确认不配置付费 API。M6 已由用户批准自定义 Provider、`gpt-5.6-terra`、有界 smoke 和 B3/B4 独立预算，并完成 Responses 严格结构化调用、12 题受控评测和人工盲审。该结果不自动打开生产 Profile：Provider 实际倍率/账单不可观测，eligible 的 B4-B3 平均质量差为 0 且 B4 延迟更高，Coordinator、关键 Verifier 和 Synthesis 继续 fail closed；不得静默改用任意 API，也不得自动升级到更贵价格层级。
 
 ## 2. 节点分配
 
@@ -115,9 +115,19 @@ RunManifest 至少记录：
 ### ScholarGraph
 
 - 保持当前 GraphRAG 3.1.2、`qwen3:8b` 和 `qwen3-embedding` 评测基线；
-- 现有实测说明本地模型可实现零新增 API 费用，但会产生较长墙钟时间和 GPU 占用；
-- Basic 是正常路径候选；Global/DRIFT 继续受预算和能力路由限制；
+- M5 真实 Basic 一次调用的 Provider 耗时为 35.043 秒、端到端 36.857 秒、Provider 报告成本 0 CNY；这只是单次兼容 smoke，不是延迟容量或质量基准；
+- Basic 是正常路径候选，Local 仅用于实体邻域；Global/DRIFT 在 M5 禁用；
+- ScholarGraph 输出只作为 abstract-level 辅助上下文，不替代 DocuMind 全文 Evidence；失败或越界回退 B3；
+- 真实同条件 B3/B4 和人工盲审已完成；B3/B4 总体均分为 4.000000/3.916667，eligible 平均质量差为 0，因此生产默认保持关闭；
 - 若替换 ScholarGraph 的补全模型，既有 B4 对比结论不可直接沿用，必须重新评测。
+
+### api-strong
+
+- 当前候选固定为 `gpt-5.6-terra`，Provider 为 `https://www.mxou.ai`；Key 仅存本地未跟踪 `.env`；
+- 2026-08-30 Responses 严格结构化 smoke 一次成功，无重试/回退，输入 5,005、输出 406 Token，耗时 20.161 秒；
+- 按官方 Terra $2/$12 每百万输入/输出 Token 和 7.5 规划汇率估算 0.111615 CNY；Provider 响应未返回实际账单或倍率，因此该数值不是账单；
+- `OpenAICompatiblePlanGenerator` 只允许模型生成计划草稿；任务身份、截止日期、Budget 和审批状态由确定性代码注入；
+- 生产 Profile 在实际计费口径和人工质量证据确认前继续禁用。
 
 ## 7. 模型选择验收指标
 

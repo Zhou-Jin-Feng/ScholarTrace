@@ -1,0 +1,45 @@
+{
+  "$defs": {
+    "DemoMode": {
+      "enum": [
+        "success",
+        "degraded",
+        "production_unavailable"
+      ],
+      "title": "DemoMode",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "demo_mode": {
+      "$ref": "#/$defs/DemoMode",
+      "default": "success"
+    },
+    "question": {
+      "maxLength": 2000,
+      "minLength": 3,
+      "title": "Question",
+      "type": "string"
+    },
+    "title": {
+      "anyOf": [
+        {
+          "maxLength": 300,
+          "minLength": 3,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Title"
+    }
+  },
+  "required": [
+    "question"
+  ],
+  "title": "TaskCreateRequest",
+  "type": "object"
+}

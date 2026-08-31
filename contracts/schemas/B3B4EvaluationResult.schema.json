@@ -1,0 +1,221 @@
+{
+  "$defs": {
+    "EvaluationConditions": {
+      "additionalProperties": false,
+      "properties": {
+        "budget_limit_cny": {
+          "minimum": 0,
+          "title": "Budget Limit Cny",
+          "type": "number"
+        },
+        "model_profile": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Model Profile",
+          "type": "string"
+        },
+        "paper_pool_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Paper Pool Sha256",
+          "type": "string"
+        },
+        "report_length_limit": {
+          "maximum": 100000,
+          "minimum": 1,
+          "title": "Report Length Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "model_profile",
+        "paper_pool_sha256",
+        "budget_limit_cny",
+        "report_length_limit"
+      ],
+      "title": "EvaluationConditions",
+      "type": "object"
+    },
+    "QueryMethod": {
+      "enum": [
+        "basic",
+        "local",
+        "global",
+        "drift"
+      ],
+      "title": "QueryMethod",
+      "type": "string"
+    },
+    "QueryStatus": {
+      "enum": [
+        "succeeded",
+        "degraded",
+        "timeout",
+        "failed"
+      ],
+      "title": "QueryStatus",
+      "type": "string"
+    },
+    "ScholarGraphEvaluationAudit": {
+      "additionalProperties": false,
+      "properties": {
+        "called": {
+          "title": "Called",
+          "type": "boolean"
+        },
+        "decision": {
+          "enum": [
+            "disabled",
+            "called",
+            "skipped",
+            "rejected"
+          ],
+          "title": "Decision",
+          "type": "string"
+        },
+        "method": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/QueryMethod"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "status": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/QueryStatus"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "called",
+        "decision"
+      ],
+      "title": "ScholarGraphEvaluationAudit",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "conditions": {
+      "$ref": "#/$defs/EvaluationConditions"
+    },
+    "coverage_score": {
+      "anyOf": [
+        {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Coverage Score"
+    },
+    "latency_seconds": {
+      "minimum": 0,
+      "title": "Latency Seconds",
+      "type": "number"
+    },
+    "quality_score": {
+      "anyOf": [
+        {
+          "maximum": 4,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Quality Score"
+    },
+    "question_id": {
+      "maxLength": 160,
+      "minLength": 3,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+      "title": "Question Id",
+      "type": "string"
+    },
+    "report_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Report Sha256",
+      "type": "string"
+    },
+    "run_id": {
+      "maxLength": 160,
+      "minLength": 3,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+      "title": "Run Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "scholargraph": {
+      "$ref": "#/$defs/ScholarGraphEvaluationAudit"
+    },
+    "status": {
+      "enum": [
+        "succeeded",
+        "degraded",
+        "failed",
+        "timeout",
+        "skipped",
+        "rejected"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "subset": {
+      "enum": [
+        "scholargraph_eligible_eval",
+        "boundary_eval"
+      ],
+      "title": "Subset",
+      "type": "string"
+    },
+    "tokens_visible_lower_bound": {
+      "minimum": 0,
+      "title": "Tokens Visible Lower Bound",
+      "type": "integer"
+    },
+    "variant": {
+      "enum": [
+        "B3",
+        "B4"
+      ],
+      "title": "Variant",
+      "type": "string"
+    }
+  },
+  "required": [
+    "run_id",
+    "variant",
+    "question_id",
+    "subset",
+    "conditions",
+    "status",
+    "latency_seconds",
+    "tokens_visible_lower_bound",
+    "report_sha256",
+    "scholargraph"
+  ],
+  "title": "B3B4EvaluationResult",
+  "type": "object"
+}

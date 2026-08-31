@@ -1,0 +1,122 @@
+{
+  "documents_cleaned_up": 0,
+  "documents_retained": false,
+  "documind_version": "2.2.0",
+  "duration_seconds": 0,
+  "embedding_dimension": 4096,
+  "embedding_model": "qwen3-embedding",
+  "embedding_warmup_seconds_this_run": 0,
+  "generated_at": "2026-08-30T17:43:31.790350+00:00",
+  "indexed_chunk_count_this_run": 0,
+  "local_analysis_model": "qwen3:8b",
+  "local_analysis_prompt_sha256": "be4174a0e0ca3dfd1ab67f7b91e56992ec7f6dd273fbd1e1c1cad89220df05d4",
+  "new_documents": 0,
+  "numeric_claims_filtered_this_run": 1,
+  "paid_provider_calls": 0,
+  "passed": true,
+  "quality_scope": "Real DocuMind full-text Evidence coverage; no paid calls.",
+  "question_count": 5,
+  "questions": [
+    {
+      "claim_count": 9,
+      "deterministic_validation_outcome": "succeeded",
+      "evidence_count": 8,
+      "local_input_tokens": 2968,
+      "local_model_calls": 3,
+      "local_output_tokens": 1550,
+      "paper_count": 3,
+      "paper_ids": [
+        "doi:10.48550/arxiv.2404.16130",
+        "doi:10.48550/arxiv.2405.14831",
+        "doi:10.48550/arxiv.2410.05779"
+      ],
+      "paper_pool_sha256": "b3476792f2cd41aeecd96025c9003f1ee793a3c0d07cc7dcc144814a0d5274e8",
+      "question_id": "sg-eligible-01",
+      "retrieval_calls": 3,
+      "source_report_sha256": "f18bfee7affb0500dc7bc931a9e91ab59721ba9fa19d6d4dde1440b03e098bb9"
+    },
+    {
+      "claim_count": 11,
+      "deterministic_validation_outcome": "succeeded",
+      "evidence_count": 6,
+      "local_input_tokens": 2947,
+      "local_model_calls": 3,
+      "local_output_tokens": 1445,
+      "paper_count": 3,
+      "paper_ids": [
+        "doi:10.48550/arxiv.2309.01431",
+        "doi:10.48550/arxiv.2309.15217",
+        "doi:10.48550/arxiv.2311.09476"
+      ],
+      "paper_pool_sha256": "13060deda22c131f48af46342aaf9f36cb387a598c94844d7463389487989066",
+      "question_id": "sg-eligible-03",
+      "retrieval_calls": 3,
+      "source_report_sha256": "36e60ea4176fa51baab6dbcbe3e1cf532bb581fbb7e721aee7823168e8dc8d0e"
+    },
+    {
+      "claim_count": 9,
+      "deterministic_validation_outcome": "succeeded",
+      "evidence_count": 7,
+      "local_input_tokens": 3264,
+      "local_model_calls": 3,
+      "local_output_tokens": 1299,
+      "paper_count": 3,
+      "paper_ids": [
+        "doi:10.48550/arxiv.2312.14197",
+        "doi:10.48550/arxiv.2402.07867",
+        "doi:10.48550/arxiv.2409.10102"
+      ],
+      "paper_pool_sha256": "e7c64b9c2ee911e5e2cd9c3c8ac8bb56d5281388de3fa96c8b9384bcf0ef6067",
+      "question_id": "sg-eligible-04",
+      "retrieval_calls": 3,
+      "source_report_sha256": "5c2d22d29dce16d71ddfa40015efd84db9d834569866b404fd4fea8ddb315e21"
+    },
+    {
+      "claim_count": 16,
+      "deterministic_validation_outcome": "succeeded",
+      "evidence_count": 14,
+      "local_input_tokens": 4992,
+      "local_model_calls": 5,
+      "local_output_tokens": 2176,
+      "paper_count": 5,
+      "paper_ids": [
+        "doi:10.48550/arxiv.2309.15217",
+        "doi:10.48550/arxiv.2312.10997",
+        "doi:10.48550/arxiv.2401.15884",
+        "doi:10.48550/arxiv.2405.14831",
+        "doi:10.48550/arxiv.2410.05779"
+      ],
+      "paper_pool_sha256": "80a6e3fce80155137209a51bd0f853466463308d49f0e639c980044d4b71c957",
+      "question_id": "sg-eligible-05",
+      "retrieval_calls": 5,
+      "source_report_sha256": "9af9fa62aa37867c8321aef0ed6be9809e1fdf2ccc2849b68212d20634de3c27"
+    },
+    {
+      "claim_count": 11,
+      "deterministic_validation_outcome": "succeeded",
+      "evidence_count": 10,
+      "local_input_tokens": 3048,
+      "local_model_calls": 3,
+      "local_output_tokens": 2008,
+      "paper_count": 3,
+      "paper_ids": [
+        "doi:10.48550/arxiv.2404.16130",
+        "doi:10.48550/arxiv.2405.14831",
+        "doi:10.48550/arxiv.2410.05779"
+      ],
+      "paper_pool_sha256": "674a28292e3e351e4bec363d1ac35dd78ff354ac1802df0866ea18280026b2c1",
+      "question_id": "sg-eligible-06",
+      "retrieval_calls": 3,
+      "source_report_sha256": "a30bd5cd1bfeba3f90e66d49ab07509765cbd63991e187841fc3fa93688ca8c0"
+    }
+  ],
+  "questions_collected_this_run": [],
+  "raw_evidence_stored_publicly": false,
+  "retrieval_barrier_at_this_run": null,
+  "retrieval_phase_completed_before_generation": true,
+  "retrieval_schema_version": "1.0",
+  "schema_version": "1.0",
+  "source_kind": "versioned_public_arxiv_pdf",
+  "source_plan_sha256": "388f20b82e809c813ebb14e839c4688f2420a4ab9e20705757b20295778920f1",
+  "unique_paper_count": 11
+}

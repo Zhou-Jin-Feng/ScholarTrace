@@ -1,0 +1,112 @@
+{
+  "$defs": {
+    "DemoMode": {
+      "enum": [
+        "success",
+        "degraded",
+        "production_unavailable"
+      ],
+      "title": "DemoMode",
+      "type": "string"
+    },
+    "TaskPhase": {
+      "enum": [
+        "plan",
+        "search",
+        "evidence",
+        "citations",
+        "verification",
+        "synthesis",
+        "done"
+      ],
+      "title": "TaskPhase",
+      "type": "string"
+    },
+    "TaskStatus": {
+      "enum": [
+        "created",
+        "waiting_approval",
+        "running",
+        "completed",
+        "degraded",
+        "rejected",
+        "failed"
+      ],
+      "title": "TaskStatus",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "artifact_count": {
+      "minimum": 0,
+      "title": "Artifact Count",
+      "type": "integer"
+    },
+    "created_at": {
+      "title": "Created At",
+      "type": "string"
+    },
+    "degradations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Degradations",
+      "type": "array"
+    },
+    "demo_mode": {
+      "$ref": "#/$defs/DemoMode"
+    },
+    "event_count": {
+      "minimum": 0,
+      "title": "Event Count",
+      "type": "integer"
+    },
+    "metrics": {
+      "additionalProperties": true,
+      "title": "Metrics",
+      "type": "object"
+    },
+    "phase": {
+      "$ref": "#/$defs/TaskPhase"
+    },
+    "question": {
+      "title": "Question",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/TaskStatus"
+    },
+    "task_id": {
+      "title": "Task Id",
+      "type": "string"
+    },
+    "thread_id": {
+      "title": "Thread Id",
+      "type": "string"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    },
+    "updated_at": {
+      "title": "Updated At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "task_id",
+    "thread_id",
+    "title",
+    "question",
+    "status",
+    "phase",
+    "demo_mode",
+    "created_at",
+    "updated_at",
+    "event_count",
+    "artifact_count"
+  ],
+  "title": "TaskSummary",
+  "type": "object"
+}

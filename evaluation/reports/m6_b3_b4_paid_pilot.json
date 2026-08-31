@@ -1,0 +1,171 @@
+{
+  "approved_total_reference_cost_cny": 3.0,
+  "blind_mapping_stored": false,
+  "blind_review": {
+    "mapping_disclosed": false,
+    "review_sha256": "aa129c06ed1fde516f3139a378f429900cf224bb2c58c2ade3bf1ac09036ba39",
+    "row_count": 1,
+    "score_scale": {
+      "integer_only": true,
+      "maximum": 4,
+      "minimum": 0
+    }
+  },
+  "deterministic_validation_outcome": "succeeded",
+  "documind_source_report_sha256": "6e6dd304d2739bf7605ce0dc94a7f5f46056efc5005ad9cdf239a6a5dfd9a926",
+  "evidence_count": 10,
+  "included_claim_count": 11,
+  "manifest": {
+    "budget": {
+      "max_cost_cny": 0.837495,
+      "max_duration_seconds": 600,
+      "max_llm_input_tokens": 30000,
+      "max_llm_output_tokens": 1200,
+      "max_model_calls": 1,
+      "max_provider_api_calls": 1,
+      "max_scholargraph_calls": 1
+    },
+    "experiment_id": "m6-b3-b4-paid-pilot-v1",
+    "model_identifier": "gpt-5.6-terra",
+    "model_profile": "api-strong",
+    "paper_pool_sha256": "5ec33154719a6c27df567b57e29a463baf91fc082ef0bcb7519b79010d806f96",
+    "prompt_template_sha256": "5b8a733323769954288df57efd09e045180cbaeb2fe366bdd327f328da1a6cd2",
+    "provider_protocol": "responses",
+    "question_input_sha256": {
+      "sg-eligible-02": "77323abc63da52947a8fa248f143e6e9e201c7bf67e92101c525abc267286cb0"
+    },
+    "question_sets": {
+      "boundary_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "eligible_sha256": "921459484f3d3c1830fe57bec1a82102b8f1153373fa161aabe1fbaabf77c51a"
+    },
+    "report_length_limit": 5000,
+    "schema_version": "1.0",
+    "scholargraph_corpus_manifest_sha256": "168671c6f9f68ed2c8017e8d3d14396a455559a6a55628a7b0c40d32a80ea36c",
+    "scholargraph_service_version": "1.2.0"
+  },
+  "manifest_sha256": "844dcea0c9313d855878d3a1d8e8c81af646fafc726b46b320202cfa57801d00",
+  "notes": [
+    "Raw answers and blind mappings are restricted to the ignored agent directory.",
+    "ScholarGraph context is abstract-only auxiliary material, never full-text Evidence.",
+    "Fixture runs and unscored runs cannot establish B4 quality benefit."
+  ],
+  "paper_pool_sha256": "5ec33154719a6c27df567b57e29a463baf91fc082ef0bcb7519b79010d806f96",
+  "passed": true,
+  "pilot_kind": "one_question_paid_b3_b4_with_real_documind_evidence",
+  "prior_attempt_reference_upper_bound_cny": 1.32501,
+  "provider_billed_cost_cny": null,
+  "provider_billing_observability": "unavailable_in_response",
+  "purpose": "scholartrace-b3-b4-sanitized-run-audit",
+  "quality_scope": "Paid protocol, semantic-verification, cost, and blind-review pilot; one question cannot establish default-enable quality benefit.",
+  "raw_answers_stored": false,
+  "raw_prompt_stored_publicly": false,
+  "raw_response_stored_publicly": false,
+  "report_reference_cost_cny": 0.43029,
+  "runs": {
+    "b3": {
+      "results": [
+        {
+          "conditions": {
+            "budget_limit_cny": 0.837495,
+            "model_profile": "api-strong",
+            "paper_pool_sha256": "5ec33154719a6c27df567b57e29a463baf91fc082ef0bcb7519b79010d806f96",
+            "report_length_limit": 5000
+          },
+          "coverage_score": null,
+          "latency_seconds": 16.117935,
+          "quality_score": null,
+          "question_id": "sg-eligible-02",
+          "report_sha256": "9335ba81cb94f2f14f123234784688f15d4ad290c5fc812123a52e4a5c579903",
+          "run_id": "run:m6:paid-pilot:b3",
+          "schema_version": "1.0",
+          "scholargraph": {
+            "called": false,
+            "decision": "disabled",
+            "method": null,
+            "status": null
+          },
+          "status": "succeeded",
+          "subset": "scholargraph_eligible_eval",
+          "tokens_visible_lower_bound": 10324,
+          "variant": "B3"
+        }
+      ],
+      "usage": {
+        "duration_seconds": 16.120744,
+        "input_tokens": 9621,
+        "model_calls": 1,
+        "output_tokens": 703,
+        "provider_api_calls": 1,
+        "reference_cost_cny": 0.207585,
+        "scholargraph_calls": 0
+      }
+    },
+    "b4": {
+      "results": [
+        {
+          "conditions": {
+            "budget_limit_cny": 0.837495,
+            "model_profile": "api-strong",
+            "paper_pool_sha256": "5ec33154719a6c27df567b57e29a463baf91fc082ef0bcb7519b79010d806f96",
+            "report_length_limit": 5000
+          },
+          "coverage_score": null,
+          "latency_seconds": 49.305485,
+          "quality_score": null,
+          "question_id": "sg-eligible-02",
+          "report_sha256": "02f071deee06b62c2cc247dcdda952843db7a446623dd04deb74fbc36c6643a7",
+          "run_id": "run:m6:paid-pilot:b4",
+          "schema_version": "1.0",
+          "scholargraph": {
+            "called": true,
+            "decision": "called",
+            "method": "basic",
+            "status": "succeeded"
+          },
+          "status": "succeeded",
+          "subset": "scholargraph_eligible_eval",
+          "tokens_visible_lower_bound": 10792,
+          "variant": "B4"
+        }
+      ],
+      "usage": {
+        "duration_seconds": 49.307114,
+        "input_tokens": 9981,
+        "model_calls": 1,
+        "output_tokens": 811,
+        "provider_api_calls": 1,
+        "reference_cost_cny": 0.222705,
+        "scholargraph_calls": 1
+      }
+    }
+  },
+  "schema_version": "1.0",
+  "total_reference_cost_cny": null,
+  "total_reference_cost_upper_bound_cny": 1.7553,
+  "unscored_comparison": {
+    "boundary_count": 0,
+    "default_enable_decision": "keep_disabled_insufficient_quality_evidence",
+    "eligible_count": 1,
+    "limitations": [
+      "A one-question pilot is not the frozen 12-question comparison.",
+      "Blind scores have not been imported.",
+      "The full comparison contract requires eligible and boundary coverage."
+    ],
+    "quality_scores_present": false,
+    "question_count": 1
+  },
+  "verifier": {
+    "calls": 12,
+    "duration_seconds": null,
+    "input_tokens": null,
+    "output_tokens": null,
+    "reference_cost_cny": null,
+    "reference_cost_upper_bound_cny": 1.32501,
+    "status_counts": {
+      "partially_supported": 1,
+      "supported": 10,
+      "unsupported": 1
+    },
+    "usage_observability": "not_persisted_before_first_report_failure"
+  }
+}

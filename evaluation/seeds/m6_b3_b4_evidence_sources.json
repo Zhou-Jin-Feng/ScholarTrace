@@ -1,0 +1,246 @@
+{
+  "schema_version": "1.0",
+  "purpose": "Frozen public full-text sources for the remaining M6 B3/B4 eligible questions.",
+  "retrieved_at": "2026-08-30T16:57:55Z",
+  "existing_fixture": "tests/fixtures/documind/m2_three_papers.json",
+  "questions": [
+    {
+      "question_id": "sg-eligible-01",
+      "question": "What evidence compares graph-enhanced RAG with vector retrieval for global or multi-hop questions?",
+      "paper_ids": [
+        "doi:10.48550/arxiv.2404.16130",
+        "doi:10.48550/arxiv.2405.14831",
+        "doi:10.48550/arxiv.2410.05779"
+      ]
+    },
+    {
+      "question_id": "sg-eligible-03",
+      "question": "Which evaluation dimensions are used to separate retrieval quality from generation quality in RAG research?",
+      "paper_ids": [
+        "doi:10.48550/arxiv.2309.01431",
+        "doi:10.48550/arxiv.2309.15217",
+        "doi:10.48550/arxiv.2311.09476"
+      ]
+    },
+    {
+      "question_id": "sg-eligible-04",
+      "question": "What security threats and mitigation directions are reported for retrieval-augmented generation systems?",
+      "paper_ids": [
+        "doi:10.48550/arxiv.2312.14197",
+        "doi:10.48550/arxiv.2402.07867",
+        "doi:10.48550/arxiv.2409.10102"
+      ]
+    },
+    {
+      "question_id": "sg-eligible-05",
+      "question": "What recurring trade-offs connect retrieval relevance, context construction, latency, and answer faithfulness?",
+      "paper_ids": [
+        "doi:10.48550/arxiv.2309.15217",
+        "doi:10.48550/arxiv.2312.10997",
+        "doi:10.48550/arxiv.2401.15884",
+        "doi:10.48550/arxiv.2405.14831",
+        "doi:10.48550/arxiv.2410.05779"
+      ]
+    },
+    {
+      "question_id": "sg-eligible-06",
+      "question": "How do knowledge-graph and hybrid retrieval approaches describe their advantages and scalability costs?",
+      "paper_ids": [
+        "doi:10.48550/arxiv.2404.16130",
+        "doi:10.48550/arxiv.2405.14831",
+        "doi:10.48550/arxiv.2410.05779"
+      ]
+    }
+  ],
+  "papers": [
+    {
+      "paper": {
+        "schema_version": "1.0",
+        "canonical_paper_id": "doi:10.48550/arxiv.2309.01431",
+        "title": "Benchmarking Large Language Models in Retrieval-Augmented Generation",
+        "normalized_title": "benchmarking large language models in retrieval augmented generation",
+        "authors": ["Jiawei Chen", "Hongyu Lin", "Xianpei Han", "Le Sun"],
+        "publication_year": 2023,
+        "doi": "10.48550/arxiv.2309.01431",
+        "arxiv_id": "2309.01431",
+        "access_level": "fulltext",
+        "sources": [
+          {
+            "source": "arxiv",
+            "source_id": "http://arxiv.org/abs/2309.01431v2",
+            "retrieved_at": "2026-08-30T16:57:55Z",
+            "record_sha256": "6ca0eddd30d76fa6ded8bff7c43aa01d58d8ce1dd0b1d6b99ed6ae1f12f8646c"
+          }
+        ]
+      }
+    },
+    {
+      "paper": {
+        "schema_version": "1.0",
+        "canonical_paper_id": "doi:10.48550/arxiv.2309.15217",
+        "title": "Ragas: Automated Evaluation of Retrieval Augmented Generation",
+        "normalized_title": "ragas automated evaluation of retrieval augmented generation",
+        "authors": ["Shahul Es", "Jithin James", "Luis Espinosa-Anke", "Steven Schockaert"],
+        "publication_year": 2023,
+        "doi": "10.48550/arxiv.2309.15217",
+        "arxiv_id": "2309.15217",
+        "access_level": "fulltext",
+        "sources": [
+          {
+            "source": "arxiv",
+            "source_id": "http://arxiv.org/abs/2309.15217v2",
+            "retrieved_at": "2026-08-30T16:57:55Z",
+            "record_sha256": "a17ef493feb73a3e15d9b51fdf1ce284330ccf7b9bf9005fcf13494461490bab"
+          }
+        ]
+      }
+    },
+    {
+      "paper": {
+        "schema_version": "1.0",
+        "canonical_paper_id": "doi:10.48550/arxiv.2311.09476",
+        "title": "ARES: An Automated Evaluation Framework for Retrieval-Augmented Generation Systems",
+        "normalized_title": "ares an automated evaluation framework for retrieval augmented generation systems",
+        "authors": ["Jon Saad-Falcon", "Omar Khattab", "Christopher Potts", "Matei Zaharia"],
+        "publication_year": 2023,
+        "doi": "10.48550/arxiv.2311.09476",
+        "arxiv_id": "2311.09476",
+        "access_level": "fulltext",
+        "sources": [
+          {
+            "source": "arxiv",
+            "source_id": "http://arxiv.org/abs/2311.09476v2",
+            "retrieved_at": "2026-08-30T16:57:55Z",
+            "record_sha256": "c4120209404f1dda74b7380fb1c6bb1b4161c206498353836e39c2cbc341baaa"
+          }
+        ]
+      }
+    },
+    {
+      "paper": {
+        "schema_version": "1.0",
+        "canonical_paper_id": "doi:10.48550/arxiv.2312.14197",
+        "title": "Benchmarking and Defending Against Indirect Prompt Injection Attacks on Large Language Models",
+        "normalized_title": "benchmarking and defending against indirect prompt injection attacks on large language models",
+        "authors": ["Jingwei Yi", "Yueqi Xie", "Bin Zhu", "Emre Kiciman", "Guangzhong Sun", "Xing Xie", "Fangzhao Wu"],
+        "publication_year": 2023,
+        "doi": "10.48550/arxiv.2312.14197",
+        "arxiv_id": "2312.14197",
+        "access_level": "fulltext",
+        "sources": [
+          {
+            "source": "arxiv",
+            "source_id": "http://arxiv.org/abs/2312.14197v4",
+            "retrieved_at": "2026-08-30T16:57:55Z",
+            "record_sha256": "5f19f4e92cd163b882e9b43c57f02e52d68278749c732a9dd8b7c4ca761fe1bf"
+          }
+        ]
+      }
+    },
+    {
+      "paper": {
+        "schema_version": "1.0",
+        "canonical_paper_id": "doi:10.48550/arxiv.2402.07867",
+        "title": "PoisonedRAG: Knowledge Corruption Attacks to Retrieval-Augmented Generation of Large Language Models",
+        "normalized_title": "poisonedrag knowledge corruption attacks to retrieval augmented generation of large language models",
+        "authors": ["Wei Zou", "Runpeng Geng", "Binghui Wang", "Jinyuan Jia"],
+        "publication_year": 2024,
+        "doi": "10.48550/arxiv.2402.07867",
+        "arxiv_id": "2402.07867",
+        "access_level": "fulltext",
+        "sources": [
+          {
+            "source": "arxiv",
+            "source_id": "http://arxiv.org/abs/2402.07867v3",
+            "retrieved_at": "2026-08-30T16:57:55Z",
+            "record_sha256": "ab49df07bc6773d7e4b7fc5d1b1bc4273d013e0ef85e12911ac2f2cc381d5819"
+          }
+        ]
+      }
+    },
+    {
+      "paper": {
+        "schema_version": "1.0",
+        "canonical_paper_id": "doi:10.48550/arxiv.2404.16130",
+        "title": "From Local to Global: A Graph RAG Approach to Query-Focused Summarization",
+        "normalized_title": "from local to global a graph rag approach to query focused summarization",
+        "authors": ["Darren Edge", "Ha Trinh", "Newman Cheng", "Joshua Bradley", "Alex Chao", "Apurva Mody", "Steven Truitt", "Dasha Metropolitansky", "Robert Osazuwa Ness", "Jonathan Larson"],
+        "publication_year": 2024,
+        "doi": "10.48550/arxiv.2404.16130",
+        "arxiv_id": "2404.16130",
+        "access_level": "fulltext",
+        "sources": [
+          {
+            "source": "arxiv",
+            "source_id": "http://arxiv.org/abs/2404.16130v2",
+            "retrieved_at": "2026-08-30T16:57:55Z",
+            "record_sha256": "eda47451ebf52218883a640c978b958e2bdd0cf9ff6cc79b680757d0d718fc8f"
+          }
+        ]
+      }
+    },
+    {
+      "paper": {
+        "schema_version": "1.0",
+        "canonical_paper_id": "doi:10.48550/arxiv.2405.14831",
+        "title": "HippoRAG: Neurobiologically Inspired Long-Term Memory for Large Language Models",
+        "normalized_title": "hipporag neurobiologically inspired long term memory for large language models",
+        "authors": ["Bernal Jimenez Gutierrez", "Yiheng Shu", "Yu Gu", "Michihiro Yasunaga", "Yu Su"],
+        "publication_year": 2024,
+        "doi": "10.48550/arxiv.2405.14831",
+        "arxiv_id": "2405.14831",
+        "access_level": "fulltext",
+        "sources": [
+          {
+            "source": "arxiv",
+            "source_id": "http://arxiv.org/abs/2405.14831v3",
+            "retrieved_at": "2026-08-30T16:57:55Z",
+            "record_sha256": "cc6001410c9af910da47c267a8b15a0bc5ebbf7359207dfbb0a7420eddf692ef"
+          }
+        ]
+      }
+    },
+    {
+      "paper": {
+        "schema_version": "1.0",
+        "canonical_paper_id": "doi:10.48550/arxiv.2409.10102",
+        "title": "Trustworthiness in Retrieval-Augmented Generation Systems: A Survey",
+        "normalized_title": "trustworthiness in retrieval augmented generation systems a survey",
+        "authors": ["Yujia Zhou", "Wenbo Zhang", "Jingying Shao", "Yan Liu", "Xiaoxi Li", "Jiajie Jin", "Hongjin Qian", "Zheng Liu", "Chaozhuo Li", "Jason Chen Zhang", "Zhicheng Dou", "Philip S. Yu", "Jiaxin Mao"],
+        "publication_year": 2024,
+        "doi": "10.48550/arxiv.2409.10102",
+        "arxiv_id": "2409.10102",
+        "access_level": "fulltext",
+        "sources": [
+          {
+            "source": "arxiv",
+            "source_id": "http://arxiv.org/abs/2409.10102v2",
+            "retrieved_at": "2026-08-30T16:57:55Z",
+            "record_sha256": "85037a81eda9540f8ff291eba92a0dd4f1fdb6d72a04de1144595732c2d2ff52"
+          }
+        ]
+      }
+    },
+    {
+      "paper": {
+        "schema_version": "1.0",
+        "canonical_paper_id": "doi:10.48550/arxiv.2410.05779",
+        "title": "LightRAG: Simple and Fast Retrieval-Augmented Generation",
+        "normalized_title": "lightrag simple and fast retrieval augmented generation",
+        "authors": ["Zirui Guo", "Lianghao Xia", "Yanhua Yu", "Tu Ao", "Chao Huang"],
+        "publication_year": 2024,
+        "doi": "10.48550/arxiv.2410.05779",
+        "arxiv_id": "2410.05779",
+        "access_level": "fulltext",
+        "sources": [
+          {
+            "source": "arxiv",
+            "source_id": "http://arxiv.org/abs/2410.05779v3",
+            "retrieved_at": "2026-08-30T16:57:55Z",
+            "record_sha256": "097b7fa13d01d818c4a70dd8266b3a745644481ec892882e2095183619bcbaf4"
+          }
+        ]
+      }
+    }
+  ]
+}

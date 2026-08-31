@@ -1,0 +1,72 @@
+{
+  "$defs": {
+    "ReadinessChecks": {
+      "additionalProperties": false,
+      "properties": {
+        "container_runtime": {
+          "title": "Container Runtime",
+          "type": "boolean"
+        },
+        "index_files": {
+          "title": "Index Files",
+          "type": "boolean"
+        },
+        "index_identity": {
+          "title": "Index Identity",
+          "type": "boolean"
+        },
+        "workspace_config": {
+          "title": "Workspace Config",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "workspace_config",
+        "index_files",
+        "index_identity",
+        "container_runtime"
+      ],
+      "title": "ReadinessChecks",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "checks": {
+      "$ref": "#/$defs/ReadinessChecks"
+    },
+    "request_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Request Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "service_version": {
+      "const": "1.2.0",
+      "default": "1.2.0",
+      "title": "Service Version",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "ready",
+        "not_ready"
+      ],
+      "title": "Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "request_id",
+    "status",
+    "checks"
+  ],
+  "title": "ReadyResponse",
+  "type": "object"
+}

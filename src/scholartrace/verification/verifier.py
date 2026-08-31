@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+from collections.abc import Callable
 from datetime import datetime
 from typing import Literal, Protocol
 
@@ -19,7 +20,9 @@ VerifierKind = Literal["model", "human", "fixture"]
 
 class SemanticVerifierBackend(Protocol):
     verifier_kind: VerifierKind
-    profile_id: str | None
+
+    @property
+    def profile_id(self) -> str | None: ...
 
     async def verify(
         self,
@@ -84,17 +87,35 @@ class VerifierRunner:
         evidence: list[Evidence],
         validations: list[ClaimValidation],
         verified_at: datetime,
+        existing: list[Verification] | None = None,
+        on_result: Callable[[list[Verification]], None] | None = None,
     ) -> list[Verification]:
         validation_by_claim = {item.claim_id: item for item in validations}
         if len(validation_by_claim) != len(validations):
             raise ValueError("Verifier received duplicate validation results")
         evidence_by_id = {item.evidence_id: item for item in evidence}
+        claim_ids = {claim.claim_id for claim in claims}
+        existing_by_claim = {
+            item.claim_id: item for item in (existing or [])
+        }
+        if len(existing_by_claim) != len(existing or []):
+            raise ValueError("Verifier received duplicate existing Verification results")
+        if not set(existing_by_claim) <= claim_ids:
+            raise ValueError("existing Verification references an unknown Claim")
         results: list[Verification] = []
         profile_checked = False
         for claim in sorted(claims, key=lambda item: item.claim_id):
             validation = validation_by_claim.get(claim.claim_id)
             if validation is None:
                 raise ValueError(f"claim has no deterministic validation: {claim.claim_id}")
+            previous = existing_by_claim.get(claim.claim_id)
+            if previous is not None:
+                if set(previous.checked_evidence_ids) != set(validation.checked_evidence_ids):
+                    raise ValueError("existing Verification drifted from deterministic validation")
+                if previous.status == "conflicted" and not claim.counter_evidence_ids:
+                    raise ValueError("existing conflicted Verification has no counter-evidence")
+                results.append(previous)
+                continue
             if not validation.passed:
                 issue_codes = sorted({issue.code for issue in validation.issues})
                 results.append(
@@ -112,6 +133,8 @@ class VerifierRunner:
                         verified_at=verified_at,
                     )
                 )
+                if on_result is not None:
+                    on_result(list(results))
                 continue
             if not profile_checked:
                 VerifierProfileGate.assert_allowed(
@@ -137,6 +160,8 @@ class VerifierRunner:
                     verified_at=verified_at,
                 )
             )
+            if on_result is not None:
+                on_result(list(results))
         return results
 
     @staticmethod

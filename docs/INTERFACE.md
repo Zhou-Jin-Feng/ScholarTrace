@@ -1,6 +1,6 @@
 # ScholarTrace 接口契约
 
-> 状态：M4 内部引用与核验 Provider/Consumer 已实现；完整 Research Task HTTP 装配延后
+> 状态：M5 ScholarGraph Provider/Consumer 已冻结；完整 Research Task HTTP 装配延后
 > 内部协议：版本化 HTTP/JSON + OpenAPI 3.1  
 > 契约目录：`contracts/openapi/`
 
@@ -87,16 +87,17 @@ Client 还必须校验返回的 document、index、source、服务版本、Chunk
 
 `evaluation/reports/m2_documind_compatibility.json` 证明 2.1.0 与 2.2.0 的冻结 Provider Schema 可被 Consumer 接受。最终阶段复审时本机 `127.0.0.1:8001` 运行冻结部署 `2.2.0/212f60a`，OpenAPI 包含 `/api/v1/retrieve`，预热后的 readiness 为 HTTP 200 且 `components.retrieval=ready`，因此 `online_acceptance_passed=true`。`evaluation/reports/m2_live_documind_smoke.json` 另行记录三篇公开全文的真实 upload/status/retrieve 与 Evidence 闭环；Fixture 指标和在线指标保持分离。
 
-## 4. ScholarGraph 待实现接口
+## 4. ScholarGraph `1.2.0` 已实现接口
 
 机器契约：`contracts/openapi/scholargraph-v1.openapi.json`
 
-ScholarGraph commit `953e40b` 当前只有 Python `src.demo_service.run_query` 和 Streamlit Demo。以下 HTTP 端点是 M5 Provider 实现目标，不得在 M0-M3 中写成现有能力：
+冻结 Provider 为 ScholarGraph commit `3aa5e2a`、服务 `1.2.0`、GraphRAG `3.1.2`。M5 Consumer 与 Provider 的 OpenAPI 规范化后完全一致：
 
 ```text
 GET  /api/v1/health/live
 GET  /api/v1/health/ready
 GET  /api/v1/capabilities
+GET  /api/v1/metrics
 POST /api/v1/query
 ```
 
@@ -104,9 +105,9 @@ POST /api/v1/query
 
 必须声明：
 
-- `corpus_id = rag-openalex-2020-2025-198-v1`；
+- `corpus_id = openalex-rag-abstracts-2020-2025-v1`；
 - 主题仅为 retrieval-augmented generation；
-- 年份 2020-2025、198 篇；
+- 年份 2020-2025、198 篇英文摘要；
 - 证据等级 `abstract`；
 - 方法 basic/local/global/drift；
 - 默认方法 `basic`。
@@ -114,15 +115,34 @@ POST /api/v1/query
 ### 4.2 查询规则
 
 - Capability Router 在调用前检查主题、年份、证据等级和预算；
-- Basic 是默认方法；Local/Global 只用于预登记问题；
-- DRIFT 需要显式长任务预算，默认交互路径禁止；
-- `source_refs` 只有在能确定性映射正式语料时填写；
-- 无可验证 source_refs 的 answer 只能作为分析或检索线索；
-- 超时或失败回退 B3，不把部分输出当成成功答案。
+- Basic 是默认方法；Local 只用于 `entity_neighborhood`；
+- Global/DRIFT 在 M5 保持禁用，显式方法请求也会被路由门禁跳过；
+- Capability Router 还检查全文需求、索引写入、API 调用预算和剩余墙钟时间；
+- M5 Consumer 暂不接受非空 `source_refs`，避免把未经独立映射的引用当成 Evidence；
+- 无可验证 source refs 的 answer 只能作为摘要级辅助上下文或检索线索；
+- 轻量 GET 探针最多尝试两次；昂贵查询只尝试一次，Provider timeout 外加 15 秒响应宽限；
+- 超时、失败、503、错误信封或契约漂移全部回退 B3，不把部分输出当成成功答案。
+
+兼容性报告 `evaluation/reports/m5_scholargraph_contract_compatibility.json` 覆盖五个操作，Consumer 与 Provider 精确匹配。真实 Basic 联调报告 `evaluation/reports/m5_scholargraph_live_smoke.json` 只保存脱敏指标，不保存问题、答案、Prompt 或原始诊断。
 
 ## 5. ScholarTrace Research Task API
 
-M3 已实现只读事件补发 Router：
+M6 已装配可运行的 Research Task API：
+
+```text
+GET  /api/v1/health/live
+GET  /api/v1/evaluation/m6
+POST /api/v1/research/tasks
+GET  /api/v1/research/tasks/{task_id}
+POST /api/v1/research/tasks/{task_id}/approve
+GET  /api/v1/research/tasks/{task_id}/events
+GET  /api/v1/research/tasks/{task_id}/artifacts
+GET  /api/v1/research/tasks/{task_id}/report?format=json|markdown|html|pdf
+```
+
+创建接口支持 `Idempotency-Key`；相同 Key 与相同请求体返回原任务，Key 复用但请求体变化返回 409。任务先进入 `waiting_approval`，只有 approve/modify/reject 后才产生终态或显式降级。
+
+M3 的只读事件补发 Router 继续提供：
 
 ```text
 GET /api/v1/research/tasks/{task_id}/events
@@ -130,21 +150,10 @@ Last-Event-ID: event:<sequence>
 Accept: text/event-stream
 ```
 
-事件先以稳定 key 写入 Runtime Ledger，再按单调 `event:<sequence>` 以 SSE 返回。无效 `Last-Event-ID` 返回 HTTP 400；响应禁止代理缓冲和缓存。M3 Router 返回当前已有事件后结束响应，M6 服务装配再加入任务创建/审批 HTTP、持续 tail、heartbeat、认证和 Artifact 授权。
+事件先以稳定 key 写入 Runtime Ledger，再按单调 `event:<sequence>` 以 SSE 返回。无效 `Last-Event-ID` 返回 HTTP 400；响应禁止代理缓冲和缓存。M6 API 返回当前已有事件后结束响应；持续 tail、heartbeat、认证、多用户和 Artifact 授权仍待后续产品化。
 
-完整目标端点：
-
-```text
-POST /api/v1/research/tasks
-GET  /api/v1/research/tasks/{task_id}
-POST /api/v1/research/tasks/{task_id}/approve
-GET  /api/v1/research/tasks/{task_id}/events
-GET  /api/v1/research/tasks/{task_id}/artifacts
-GET  /api/v1/research/tasks/{task_id}/report
-```
-
-- 创建和审批使用 Idempotency-Key；当前通过 `M3Workflow.start/resume` 提供内部应用服务接口；
-- 事件先持久化再通过 SSE 发送，支持 `Last-Event-ID`；M3 已实现有限补发；
+- 创建和审批使用 `Idempotency-Key`（当前为交付 API 的确定性演示装配）；
+- 事件先持久化再通过 SSE 发送，支持 `Last-Event-ID`；
 - 长研究问题放 POST body，不放查询参数；
 - Artifact 响应默认返回元数据和安全摘要，正文使用授权下载端点。
 

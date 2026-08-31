@@ -1,0 +1,184 @@
+{
+  "$defs": {
+    "MethodMetrics": {
+      "additionalProperties": false,
+      "properties": {
+        "degraded_count": {
+          "minimum": 0,
+          "title": "Degraded Count",
+          "type": "integer"
+        },
+        "degraded_rate": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Degraded Rate",
+          "type": "number"
+        },
+        "failed_count": {
+          "minimum": 0,
+          "title": "Failed Count",
+          "type": "integer"
+        },
+        "latency_p50_seconds": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Latency P50 Seconds"
+        },
+        "latency_p95_seconds": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Latency P95 Seconds"
+        },
+        "method": {
+          "$ref": "#/$defs/QueryMethod"
+        },
+        "queue_p50_seconds": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Queue P50 Seconds"
+        },
+        "queue_p95_seconds": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Queue P95 Seconds"
+        },
+        "request_count": {
+          "minimum": 0,
+          "title": "Request Count",
+          "type": "integer"
+        },
+        "succeeded_count": {
+          "minimum": 0,
+          "title": "Succeeded Count",
+          "type": "integer"
+        },
+        "success_rate": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Success Rate",
+          "type": "number"
+        },
+        "timeout_count": {
+          "minimum": 0,
+          "title": "Timeout Count",
+          "type": "integer"
+        },
+        "token_coverage": {
+          "enum": [
+            "unavailable",
+            "visible_lower_bound"
+          ],
+          "title": "Token Coverage",
+          "type": "string"
+        },
+        "tokens_visible_lower_bound": {
+          "minimum": 0,
+          "title": "Tokens Visible Lower Bound",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "method",
+        "request_count",
+        "succeeded_count",
+        "degraded_count",
+        "timeout_count",
+        "failed_count",
+        "success_rate",
+        "degraded_rate",
+        "tokens_visible_lower_bound",
+        "token_coverage"
+      ],
+      "title": "MethodMetrics",
+      "type": "object"
+    },
+    "QueryMethod": {
+      "enum": [
+        "basic",
+        "local",
+        "global",
+        "drift"
+      ],
+      "title": "QueryMethod",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "graphrag_version": {
+      "const": "3.1.2",
+      "default": "3.1.2",
+      "title": "Graphrag Version",
+      "type": "string"
+    },
+    "methods": {
+      "items": {
+        "$ref": "#/$defs/MethodMetrics"
+      },
+      "title": "Methods",
+      "type": "array"
+    },
+    "request_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Request Id",
+      "type": "string"
+    },
+    "sample_window_size": {
+      "minimum": 1,
+      "title": "Sample Window Size",
+      "type": "integer"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "service_version": {
+      "const": "1.2.0",
+      "default": "1.2.0",
+      "title": "Service Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "request_id",
+    "sample_window_size",
+    "methods"
+  ],
+  "title": "MetricsResponse",
+  "type": "object"
+}

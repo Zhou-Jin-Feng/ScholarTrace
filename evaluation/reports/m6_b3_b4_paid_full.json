@@ -1,0 +1,719 @@
+{
+  "approved_report_reference_cost_cny": 22.5,
+  "approved_verifier_reference_cost_cny": 12.0,
+  "blind_mapping_stored": false,
+  "blind_review": {
+    "mapping_disclosed": false,
+    "review_sha256": "74bb70ab2088891548dd8ebb698bae4b2106a1ba30597d65b23f1a20a69148b2",
+    "row_count": 12,
+    "score_scale": {
+      "integer_only": true,
+      "maximum": 4,
+      "minimum": 0
+    }
+  },
+  "boundary_explicit_empty_inputs": 6,
+  "default_enable_decision": "keep_disabled_pending_human_blind_review",
+  "eligible_real_evidence_inputs": 6,
+  "manifest": {
+    "budget": {
+      "max_cost_cny": 11.25,
+      "max_duration_seconds": 7200,
+      "max_llm_input_tokens": 360000,
+      "max_llm_output_tokens": 14400,
+      "max_model_calls": 12,
+      "max_provider_api_calls": 12,
+      "max_scholargraph_calls": 6
+    },
+    "experiment_id": "m6-b3-b4-paid-full-v1",
+    "model_identifier": "gpt-5.6-terra",
+    "model_profile": "api-strong",
+    "paper_pool_sha256": "6cc8d7f66aa7fb71da005435e96130dd3b4b5443db9e26858140fe009e8d5ec0",
+    "prompt_template_sha256": "5b8a733323769954288df57efd09e045180cbaeb2fe366bdd327f328da1a6cd2",
+    "provider_protocol": "responses",
+    "question_input_sha256": {
+      "sg-boundary-01": "363f21ea5cecf2568d46892ae124f73822732f552de6823507a39ca9ece31447",
+      "sg-boundary-02": "278ae24406a9f44cba19e43ece64715a6ef9810b8efc710d05299dd0716baea6",
+      "sg-boundary-03": "712ee15dff3657c4cbb9f2e2ae495e133381541cd221ebe9bb0b9e8567bbba7a",
+      "sg-boundary-04": "4f71d55d9a1ea0e6e90927e6fe9548613c3d79a4d4a5c28adfd8e599612e62f7",
+      "sg-boundary-05": "9003b4b001c9c395e5636d16596fbcf91127cf9306ee5b10bc73ef1877638124",
+      "sg-boundary-06": "4efe25b0840f9a77618f12fdaecc8b780f0c2cca1de1db768aeb3ff0e61f72ff",
+      "sg-eligible-01": "8c1ba1e75726bc7eec31f5fa19344c4ba114faa211acdbe7a711efecacbcf07e",
+      "sg-eligible-02": "38e626602df955bc6ef3ed512743aa5f91da48ba8b173e665a41489165d6ecef",
+      "sg-eligible-03": "0a074071602a7718ca132d46a0c7c36c2451d170dc5fa9c09a3062d2dd7794fc",
+      "sg-eligible-04": "b7286aa4bc93b0152487ef8de7b531db40872ca417066669e09c19677d156637",
+      "sg-eligible-05": "a6c4931c96da0693717ad3017eb8d75e18b8a31921beb81cb46623f8104c567a",
+      "sg-eligible-06": "b80feff35f866dc3058d00451adb43b4c857cd25cfb5bc549cb0119534595ce4"
+    },
+    "question_sets": {
+      "boundary_sha256": "6bc55ed002689ef165f8a6252c45dcee2f9583d05d43e55a6656f3405a0cf0fc",
+      "eligible_sha256": "91d19770d3fee134036f88e0614f45b91d1a9d2642a00a5e5fae695482cb2a00"
+    },
+    "report_length_limit": 5000,
+    "schema_version": "1.0",
+    "scholargraph_corpus_manifest_sha256": "168671c6f9f68ed2c8017e8d3d14396a455559a6a55628a7b0c40d32a80ea36c",
+    "scholargraph_service_version": "1.2.0"
+  },
+  "manifest_sha256": "1f8db6e50f20731df5845d60ec7fab81cc6e7ae8b692ef8ba7ea98b6cc68d46d",
+  "notes": [
+    "Raw answers and blind mappings are restricted to the ignored agent directory.",
+    "ScholarGraph context is abstract-only auxiliary material, never full-text Evidence.",
+    "Fixture runs and unscored runs cannot establish B4 quality benefit."
+  ],
+  "passed": true,
+  "provider_billed_cost_cny": null,
+  "provider_billing_observability": "unavailable_in_response",
+  "purpose": "scholartrace-b3-b4-sanitized-run-audit",
+  "quality_scope": "Full paid execution and blind-review packet; quality conclusions require human scores and score import.",
+  "quality_scores_present": false,
+  "raw_answers_stored": false,
+  "raw_prompt_stored_publicly": false,
+  "raw_response_stored_publicly": false,
+  "reports": {
+    "calls": 24,
+    "input_tokens": 177720,
+    "output_tokens": 9457,
+    "reference_cost_cny": 3.51693
+  },
+  "run_kind": "full_paid_b3_b4_with_real_documind_evidence",
+  "runs": {
+    "b3": {
+      "results": [
+        {
+          "conditions": {
+            "budget_limit_cny": 11.25,
+            "model_profile": "api-strong",
+            "paper_pool_sha256": "6cc8d7f66aa7fb71da005435e96130dd3b4b5443db9e26858140fe009e8d5ec0",
+            "report_length_limit": 5000
+          },
+          "coverage_score": null,
+          "latency_seconds": 79.649759,
+          "quality_score": null,
+          "question_id": "sg-boundary-01",
+          "report_sha256": "58917c3674471996f332a94ca11d6f63b4acc7476941aab783a6049c814a4510",
+          "run_id": "run:m6:paid-full:b3",
+          "schema_version": "1.0",
+          "scholargraph": {
+            "called": false,
+            "decision": "disabled",
+            "method": null,
+            "status": null
+          },
+          "status": "succeeded",
+          "subset": "boundary_eval",
+          "tokens_visible_lower_bound": 5290,
+          "variant": "B3"
+        },
+        {
+          "conditions": {
+            "budget_limit_cny": 11.25,
+            "model_profile": "api-strong",
+            "paper_pool_sha256": "6cc8d7f66aa7fb71da005435e96130dd3b4b5443db9e26858140fe009e8d5ec0",
+            "report_length_limit": 5000
+          },
+          "coverage_score": null,
+          "latency_seconds": 92.97289,
+          "quality_score": null,
+          "question_id": "sg-boundary-02",
+          "report_sha256": "540909354b55c8217cee39b0857b1da936514c3738476ec844f69a64f197a1eb",
+          "run_id": "run:m6:paid-full:b3",
+          "schema_version": "1.0",
+          "scholargraph": {
+            "called": false,
+            "decision": "disabled",
+            "method": null,
+            "status": null
+          },
+          "status": "succeeded",
+          "subset": "boundary_eval",
+          "tokens_visible_lower_bound": 5285,
+          "variant": "B3"
+        },
+        {
+          "conditions": {
+            "budget_limit_cny": 11.25,
+            "model_profile": "api-strong",
+            "paper_pool_sha256": "6cc8d7f66aa7fb71da005435e96130dd3b4b5443db9e26858140fe009e8d5ec0",
+            "report_length_limit": 5000
+          },
+          "coverage_score": null,
+          "latency_seconds": 36.321667,
+          "quality_score": null,
+          "question_id": "sg-boundary-03",
+          "report_sha256": "369fad00b848d4bcb2bce853fddf9f8cd58de19e6e5f1464a2c7d88a7b118ff3",
+          "run_id": "run:m6:paid-full:b3",
+          "schema_version": "1.0",
+          "scholargraph": {
+            "called": false,
+            "decision": "disabled",
+            "method": null,
+            "status": null
+          },
+          "status": "succeeded",
+          "subset": "boundary_eval",
+          "tokens_visible_lower_bound": 5289,
+          "variant": "B3"
+        },
+        {
+          "conditions": {
+            "budget_limit_cny": 11.25,
+            "model_profile": "api-strong",
+            "paper_pool_sha256": "6cc8d7f66aa7fb71da005435e96130dd3b4b5443db9e26858140fe009e8d5ec0",
+            "report_length_limit": 5000
+          },
+          "coverage_score": null,
+          "latency_seconds": 70.575354,
+          "quality_score": null,
+          "question_id": "sg-boundary-04",
+          "report_sha256": "ee56d417fa04d8b61441aa5467ea521d96de1d57c9c307fbe43b56a91c62ff30",
+          "run_id": "run:m6:paid-full:b3",
+          "schema_version": "1.0",
+          "scholargraph": {
+            "called": false,
+            "decision": "disabled",
+            "method": null,
+            "status": null
+          },
+          "status": "succeeded",
+          "subset": "boundary_eval",
+          "tokens_visible_lower_bound": 5270,
+          "variant": "B3"
+        },
+        {
+          "conditions": {
+            "budget_limit_cny": 11.25,
+            "model_profile": "api-strong",
+            "paper_pool_sha256": "6cc8d7f66aa7fb71da005435e96130dd3b4b5443db9e26858140fe009e8d5ec0",
+            "report_length_limit": 5000
+          },
+          "coverage_score": null,
+          "latency_seconds": 93.164801,
+          "quality_score": null,
+          "question_id": "sg-boundary-05",
+          "report_sha256": "a6d9c94c21005bca99a98a9f6a7560f8eb6c8ebefe77c75599b15f019c2a5536",
+          "run_id": "run:m6:paid-full:b3",
+          "schema_version": "1.0",
+          "scholargraph": {
+            "called": false,
+            "decision": "disabled",
+            "method": null,
+            "status": null
+          },
+          "status": "succeeded",
+          "subset": "boundary_eval",
+          "tokens_visible_lower_bound": 5272,
+          "variant": "B3"
+        },
+        {
+          "conditions": {
+            "budget_limit_cny": 11.25,
+            "model_profile": "api-strong",
+            "paper_pool_sha256": "6cc8d7f66aa7fb71da005435e96130dd3b4b5443db9e26858140fe009e8d5ec0",
+            "report_length_limit": 5000
+          },
+          "coverage_score": null,
+          "latency_seconds": 10.306927,
+          "quality_score": null,
+          "question_id": "sg-boundary-06",
+          "report_sha256": "36ff7a126f8f5f303d835e7f51f675fab3d3f135f845ae3798ec74bac6dbe0c2",
+          "run_id": "run:m6:paid-full:b3",
+          "schema_version": "1.0",
+          "scholargraph": {
+            "called": false,
+            "decision": "disabled",
+            "method": null,
+            "status": null
+          },
+          "status": "succeeded",
+          "subset": "boundary_eval",
+          "tokens_visible_lower_bound": 5322,
+          "variant": "B3"
+        },
+        {
+          "conditions": {
+            "budget_limit_cny": 11.25,
+            "model_profile": "api-strong",
+            "paper_pool_sha256": "6cc8d7f66aa7fb71da005435e96130dd3b4b5443db9e26858140fe009e8d5ec0",
+            "report_length_limit": 5000
+          },
+          "coverage_score": null,
+          "latency_seconds": 15.31687,
+          "quality_score": null,
+          "question_id": "sg-eligible-01",
+          "report_sha256": "27865113f0a0a8b7c09a0d43862d6812ce0aab6f0c6a4e4d6ec3bc129243fb28",
+          "run_id": "run:m6:paid-full:b3",
+          "schema_version": "1.0",
+          "scholargraph": {
+            "called": false,
+            "decision": "disabled",
+            "method": null,
+            "status": null
+          },
+          "status": "succeeded",
+          "subset": "scholargraph_eligible_eval",
+          "tokens_visible_lower_bound": 9718,
+          "variant": "B3"
+        },
+        {
+          "conditions": {
+            "budget_limit_cny": 11.25,
+            "model_profile": "api-strong",
+            "paper_pool_sha256": "6cc8d7f66aa7fb71da005435e96130dd3b4b5443db9e26858140fe009e8d5ec0",
+            "report_length_limit": 5000
+          },
+          "coverage_score": null,
+          "latency_seconds": 34.084341,
+          "quality_score": null,
+          "question_id": "sg-eligible-02",
+          "report_sha256": "b81aa3a526800ead47ec4809fb0eee378acdbe4bfd57a8be0d833994094e4369",
+          "run_id": "run:m6:paid-full:b3",
+          "schema_version": "1.0",
+          "scholargraph": {
+            "called": false,
+            "decision": "disabled",
+            "method": null,
+            "status": null
+          },
+          "status": "succeeded",
+          "subset": "scholargraph_eligible_eval",
+          "tokens_visible_lower_bound": 10306,
+          "variant": "B3"
+        },
+        {
+          "conditions": {
+            "budget_limit_cny": 11.25,
+            "model_profile": "api-strong",
+            "paper_pool_sha256": "6cc8d7f66aa7fb71da005435e96130dd3b4b5443db9e26858140fe009e8d5ec0",
+            "report_length_limit": 5000
+          },
+          "coverage_score": null,
+          "latency_seconds": 67.032346,
+          "quality_score": null,
+          "question_id": "sg-eligible-03",
+          "report_sha256": "a39c2bafaac08056b4cb394bf063e7dea28e34352b860ad14bab7854d9d24d47",
+          "run_id": "run:m6:paid-full:b3",
+          "schema_version": "1.0",
+          "scholargraph": {
+            "called": false,
+            "decision": "disabled",
+            "method": null,
+            "status": null
+          },
+          "status": "succeeded",
+          "subset": "scholargraph_eligible_eval",
+          "tokens_visible_lower_bound": 8859,
+          "variant": "B3"
+        },
+        {
+          "conditions": {
+            "budget_limit_cny": 11.25,
+            "model_profile": "api-strong",
+            "paper_pool_sha256": "6cc8d7f66aa7fb71da005435e96130dd3b4b5443db9e26858140fe009e8d5ec0",
+            "report_length_limit": 5000
+          },
+          "coverage_score": null,
+          "latency_seconds": 42.278788,
+          "quality_score": null,
+          "question_id": "sg-eligible-04",
+          "report_sha256": "59c8b436b74eb833385803eb50f2af1c0a9a23f23825655daed0c7e4c341dc7e",
+          "run_id": "run:m6:paid-full:b3",
+          "schema_version": "1.0",
+          "scholargraph": {
+            "called": false,
+            "decision": "disabled",
+            "method": null,
+            "status": null
+          },
+          "status": "succeeded",
+          "subset": "scholargraph_eligible_eval",
+          "tokens_visible_lower_bound": 8851,
+          "variant": "B3"
+        },
+        {
+          "conditions": {
+            "budget_limit_cny": 11.25,
+            "model_profile": "api-strong",
+            "paper_pool_sha256": "6cc8d7f66aa7fb71da005435e96130dd3b4b5443db9e26858140fe009e8d5ec0",
+            "report_length_limit": 5000
+          },
+          "coverage_score": null,
+          "latency_seconds": 20.645486,
+          "quality_score": null,
+          "question_id": "sg-eligible-05",
+          "report_sha256": "219a8d34051d60129f35ea83f3c13d32f0fa3e27a53a046175a3e953d1d677a8",
+          "run_id": "run:m6:paid-full:b3",
+          "schema_version": "1.0",
+          "scholargraph": {
+            "called": false,
+            "decision": "disabled",
+            "method": null,
+            "status": null
+          },
+          "status": "succeeded",
+          "subset": "scholargraph_eligible_eval",
+          "tokens_visible_lower_bound": 12562,
+          "variant": "B3"
+        },
+        {
+          "conditions": {
+            "budget_limit_cny": 11.25,
+            "model_profile": "api-strong",
+            "paper_pool_sha256": "6cc8d7f66aa7fb71da005435e96130dd3b4b5443db9e26858140fe009e8d5ec0",
+            "report_length_limit": 5000
+          },
+          "coverage_score": null,
+          "latency_seconds": 34.129849,
+          "quality_score": null,
+          "question_id": "sg-eligible-06",
+          "report_sha256": "6fbdd946f3f6ac9cf7b6350cfb8c6ca0f1da8db464126f9d225e0640c245d7a6",
+          "run_id": "run:m6:paid-full:b3",
+          "schema_version": "1.0",
+          "scholargraph": {
+            "called": false,
+            "decision": "disabled",
+            "method": null,
+            "status": null
+          },
+          "status": "succeeded",
+          "subset": "scholargraph_eligible_eval",
+          "tokens_visible_lower_bound": 10490,
+          "variant": "B3"
+        }
+      ],
+      "usage": {
+        "duration_seconds": 596.528411,
+        "input_tokens": 87918,
+        "model_calls": 12,
+        "output_tokens": 4596,
+        "provider_api_calls": 12,
+        "reference_cost_cny": 1.73241,
+        "scholargraph_calls": 0
+      }
+    },
+    "b4": {
+      "results": [
+        {
+          "conditions": {
+            "budget_limit_cny": 11.25,
+            "model_profile": "api-strong",
+            "paper_pool_sha256": "6cc8d7f66aa7fb71da005435e96130dd3b4b5443db9e26858140fe009e8d5ec0",
+            "report_length_limit": 5000
+          },
+          "coverage_score": null,
+          "latency_seconds": 66.543723,
+          "quality_score": null,
+          "question_id": "sg-boundary-01",
+          "report_sha256": "f9db45e337f2fef61882d55938087b7866bb3775a8048a65aa07054d35c7d2d5",
+          "run_id": "run:m6:paid-full:b4",
+          "schema_version": "1.0",
+          "scholargraph": {
+            "called": false,
+            "decision": "skipped",
+            "method": null,
+            "status": null
+          },
+          "status": "succeeded",
+          "subset": "boundary_eval",
+          "tokens_visible_lower_bound": 5354,
+          "variant": "B4"
+        },
+        {
+          "conditions": {
+            "budget_limit_cny": 11.25,
+            "model_profile": "api-strong",
+            "paper_pool_sha256": "6cc8d7f66aa7fb71da005435e96130dd3b4b5443db9e26858140fe009e8d5ec0",
+            "report_length_limit": 5000
+          },
+          "coverage_score": null,
+          "latency_seconds": 129.351057,
+          "quality_score": null,
+          "question_id": "sg-boundary-02",
+          "report_sha256": "362873b4b3213295e5f2cb71a6893936a7f7e3e878d32df2bbe7e7e08604acc0",
+          "run_id": "run:m6:paid-full:b4",
+          "schema_version": "1.0",
+          "scholargraph": {
+            "called": false,
+            "decision": "skipped",
+            "method": null,
+            "status": null
+          },
+          "status": "succeeded",
+          "subset": "boundary_eval",
+          "tokens_visible_lower_bound": 5152,
+          "variant": "B4"
+        },
+        {
+          "conditions": {
+            "budget_limit_cny": 11.25,
+            "model_profile": "api-strong",
+            "paper_pool_sha256": "6cc8d7f66aa7fb71da005435e96130dd3b4b5443db9e26858140fe009e8d5ec0",
+            "report_length_limit": 5000
+          },
+          "coverage_score": null,
+          "latency_seconds": 74.80346,
+          "quality_score": null,
+          "question_id": "sg-boundary-03",
+          "report_sha256": "e6b7d19343403d1961648ff69b2b2b782523b709df2e3f514984792a76d9e0b9",
+          "run_id": "run:m6:paid-full:b4",
+          "schema_version": "1.0",
+          "scholargraph": {
+            "called": false,
+            "decision": "skipped",
+            "method": null,
+            "status": null
+          },
+          "status": "succeeded",
+          "subset": "boundary_eval",
+          "tokens_visible_lower_bound": 5288,
+          "variant": "B4"
+        },
+        {
+          "conditions": {
+            "budget_limit_cny": 11.25,
+            "model_profile": "api-strong",
+            "paper_pool_sha256": "6cc8d7f66aa7fb71da005435e96130dd3b4b5443db9e26858140fe009e8d5ec0",
+            "report_length_limit": 5000
+          },
+          "coverage_score": null,
+          "latency_seconds": 128.4722,
+          "quality_score": null,
+          "question_id": "sg-boundary-04",
+          "report_sha256": "43a6fc61974895981ef8621712f05b42dc266dd2812f21e0ff34f11cef8169c6",
+          "run_id": "run:m6:paid-full:b4",
+          "schema_version": "1.0",
+          "scholargraph": {
+            "called": false,
+            "decision": "skipped",
+            "method": null,
+            "status": null
+          },
+          "status": "succeeded",
+          "subset": "boundary_eval",
+          "tokens_visible_lower_bound": 5085,
+          "variant": "B4"
+        },
+        {
+          "conditions": {
+            "budget_limit_cny": 11.25,
+            "model_profile": "api-strong",
+            "paper_pool_sha256": "6cc8d7f66aa7fb71da005435e96130dd3b4b5443db9e26858140fe009e8d5ec0",
+            "report_length_limit": 5000
+          },
+          "coverage_score": null,
+          "latency_seconds": 38.90439,
+          "quality_score": null,
+          "question_id": "sg-boundary-05",
+          "report_sha256": "1d59abcb8f67fd58ee08a33309a3bca9215b2dfc7fd6afbbfb35d7b825bcab51",
+          "run_id": "run:m6:paid-full:b4",
+          "schema_version": "1.0",
+          "scholargraph": {
+            "called": false,
+            "decision": "rejected",
+            "method": null,
+            "status": null
+          },
+          "status": "succeeded",
+          "subset": "boundary_eval",
+          "tokens_visible_lower_bound": 5278,
+          "variant": "B4"
+        },
+        {
+          "conditions": {
+            "budget_limit_cny": 11.25,
+            "model_profile": "api-strong",
+            "paper_pool_sha256": "6cc8d7f66aa7fb71da005435e96130dd3b4b5443db9e26858140fe009e8d5ec0",
+            "report_length_limit": 5000
+          },
+          "coverage_score": null,
+          "latency_seconds": 69.737458,
+          "quality_score": null,
+          "question_id": "sg-boundary-06",
+          "report_sha256": "0da2716300d2860159ea1894d64fdbc9aa0fcaafd5bc9be309f658e7a0908655",
+          "run_id": "run:m6:paid-full:b4",
+          "schema_version": "1.0",
+          "scholargraph": {
+            "called": false,
+            "decision": "skipped",
+            "method": null,
+            "status": null
+          },
+          "status": "succeeded",
+          "subset": "boundary_eval",
+          "tokens_visible_lower_bound": 5284,
+          "variant": "B4"
+        },
+        {
+          "conditions": {
+            "budget_limit_cny": 11.25,
+            "model_profile": "api-strong",
+            "paper_pool_sha256": "6cc8d7f66aa7fb71da005435e96130dd3b4b5443db9e26858140fe009e8d5ec0",
+            "report_length_limit": 5000
+          },
+          "coverage_score": null,
+          "latency_seconds": 75.40457,
+          "quality_score": null,
+          "question_id": "sg-eligible-01",
+          "report_sha256": "cb4f814642560c0079dd947ef25049d1bb8027bcccbd7d1522d3620c20331bbd",
+          "run_id": "run:m6:paid-full:b4",
+          "schema_version": "1.0",
+          "scholargraph": {
+            "called": true,
+            "decision": "called",
+            "method": "basic",
+            "status": "succeeded"
+          },
+          "status": "succeeded",
+          "subset": "scholargraph_eligible_eval",
+          "tokens_visible_lower_bound": 10373,
+          "variant": "B4"
+        },
+        {
+          "conditions": {
+            "budget_limit_cny": 11.25,
+            "model_profile": "api-strong",
+            "paper_pool_sha256": "6cc8d7f66aa7fb71da005435e96130dd3b4b5443db9e26858140fe009e8d5ec0",
+            "report_length_limit": 5000
+          },
+          "coverage_score": null,
+          "latency_seconds": 71.649825,
+          "quality_score": null,
+          "question_id": "sg-eligible-02",
+          "report_sha256": "d2c45c56b7e4169d7c0cfecdc3f2a3931e40c833deef8d6c6481ebd95cff6b07",
+          "run_id": "run:m6:paid-full:b4",
+          "schema_version": "1.0",
+          "scholargraph": {
+            "called": true,
+            "decision": "called",
+            "method": "basic",
+            "status": "succeeded"
+          },
+          "status": "succeeded",
+          "subset": "scholargraph_eligible_eval",
+          "tokens_visible_lower_bound": 10788,
+          "variant": "B4"
+        },
+        {
+          "conditions": {
+            "budget_limit_cny": 11.25,
+            "model_profile": "api-strong",
+            "paper_pool_sha256": "6cc8d7f66aa7fb71da005435e96130dd3b4b5443db9e26858140fe009e8d5ec0",
+            "report_length_limit": 5000
+          },
+          "coverage_score": null,
+          "latency_seconds": 168.0845,
+          "quality_score": null,
+          "question_id": "sg-eligible-03",
+          "report_sha256": "8a4de13710a264d13ee06b62d89584881c6f08381d9ae36b8205342291feb421",
+          "run_id": "run:m6:paid-full:b4",
+          "schema_version": "1.0",
+          "scholargraph": {
+            "called": true,
+            "decision": "called",
+            "method": "basic",
+            "status": "succeeded"
+          },
+          "status": "succeeded",
+          "subset": "scholargraph_eligible_eval",
+          "tokens_visible_lower_bound": 9065,
+          "variant": "B4"
+        },
+        {
+          "conditions": {
+            "budget_limit_cny": 11.25,
+            "model_profile": "api-strong",
+            "paper_pool_sha256": "6cc8d7f66aa7fb71da005435e96130dd3b4b5443db9e26858140fe009e8d5ec0",
+            "report_length_limit": 5000
+          },
+          "coverage_score": null,
+          "latency_seconds": 43.129669,
+          "quality_score": null,
+          "question_id": "sg-eligible-04",
+          "report_sha256": "dfdc8805268603e047c0bb4b35bca1e659c1418847744a0c6125ba56fa17b21e",
+          "run_id": "run:m6:paid-full:b4",
+          "schema_version": "1.0",
+          "scholargraph": {
+            "called": true,
+            "decision": "called",
+            "method": "basic",
+            "status": "succeeded"
+          },
+          "status": "succeeded",
+          "subset": "scholargraph_eligible_eval",
+          "tokens_visible_lower_bound": 9240,
+          "variant": "B4"
+        },
+        {
+          "conditions": {
+            "budget_limit_cny": 11.25,
+            "model_profile": "api-strong",
+            "paper_pool_sha256": "6cc8d7f66aa7fb71da005435e96130dd3b4b5443db9e26858140fe009e8d5ec0",
+            "report_length_limit": 5000
+          },
+          "coverage_score": null,
+          "latency_seconds": 48.603389,
+          "quality_score": null,
+          "question_id": "sg-eligible-05",
+          "report_sha256": "90d79edbdc2cb9c8c3641d5ffce9a9c5e1c95a34d89d1bae1c66daaed92f48d2",
+          "run_id": "run:m6:paid-full:b4",
+          "schema_version": "1.0",
+          "scholargraph": {
+            "called": true,
+            "decision": "called",
+            "method": "basic",
+            "status": "succeeded"
+          },
+          "status": "succeeded",
+          "subset": "scholargraph_eligible_eval",
+          "tokens_visible_lower_bound": 12872,
+          "variant": "B4"
+        },
+        {
+          "conditions": {
+            "budget_limit_cny": 11.25,
+            "model_profile": "api-strong",
+            "paper_pool_sha256": "6cc8d7f66aa7fb71da005435e96130dd3b4b5443db9e26858140fe009e8d5ec0",
+            "report_length_limit": 5000
+          },
+          "coverage_score": null,
+          "latency_seconds": 63.880146,
+          "quality_score": null,
+          "question_id": "sg-eligible-06",
+          "report_sha256": "34f91fa75f33a49b88a5e077b654986029205eca4d7d2cc697d533925fd2d899",
+          "run_id": "run:m6:paid-full:b4",
+          "schema_version": "1.0",
+          "scholargraph": {
+            "called": true,
+            "decision": "called",
+            "method": "basic",
+            "status": "succeeded"
+          },
+          "status": "succeeded",
+          "subset": "scholargraph_eligible_eval",
+          "tokens_visible_lower_bound": 10884,
+          "variant": "B4"
+        }
+      ],
+      "usage": {
+        "duration_seconds": 978.618883,
+        "input_tokens": 89802,
+        "model_calls": 12,
+        "output_tokens": 4861,
+        "provider_api_calls": 12,
+        "reference_cost_cny": 1.78452,
+        "scholargraph_calls": 6
+      }
+    }
+  },
+  "schema_version": "1.0",
+  "total_new_reference_cost_cny": 8.15013,
+  "verifier": {
+    "input_tokens": 283974,
+    "new_successful_calls": 56,
+    "output_tokens": 4151,
+    "reference_cost_cny": 4.6332,
+    "reserved_reference_cost_cny": 4.297755,
+    "reused_pilot_question_count": 1,
+    "reused_pilot_usage_observability": "exact_usage_unavailable",
+    "successful_call_usage_observability": "complete"
+  }
+}

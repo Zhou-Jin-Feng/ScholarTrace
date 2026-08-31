@@ -301,6 +301,56 @@ def test_partially_supported_claim_is_included_with_visible_marker() -> None:
     assert gate.dispositions[0].marker == "[PARTIALLY SUPPORTED]"
 
 
+def test_verifier_resumes_existing_results_and_checkpoints_only_new_calls() -> None:
+    first = _claim("claim:m4:resume-first")
+    second = _claim("claim:m4:resume-second")
+    evidence = _evidence()
+    first_validation = _validate([first], [evidence])
+    first_backend = _FixtureVerifier(
+        {
+            first.claim_id: SemanticVerificationDraft(
+                status="supported",
+                reason="The Evidence supports the first Claim.",
+                recommended_action="keep",
+            )
+        }
+    )
+    existing = asyncio.run(
+        VerifierRunner(backend=first_backend, policy=None, allow_fixture=True).verify(
+            claims=[first],
+            evidence=[evidence],
+            validations=first_validation.results,
+            verified_at=NOW,
+        )
+    )
+
+    validation = _validate([first, second], [evidence])
+    backend = _FixtureVerifier(
+        {
+            second.claim_id: SemanticVerificationDraft(
+                status="supported",
+                reason="The Evidence supports the second Claim.",
+                recommended_action="keep",
+            )
+        }
+    )
+    checkpoints: list[list[str]] = []
+    resumed = asyncio.run(
+        VerifierRunner(backend=backend, policy=None, allow_fixture=True).verify(
+            claims=[first, second],
+            evidence=[evidence],
+            validations=validation.results,
+            verified_at=NOW,
+            existing=existing,
+            on_result=lambda rows: checkpoints.append([item.claim_id for item in rows]),
+        )
+    )
+
+    assert backend.calls == [second.claim_id]
+    assert [item.claim_id for item in resumed] == [first.claim_id, second.claim_id]
+    assert checkpoints == [[first.claim_id, second.claim_id]]
+
+
 def test_reliability_pipeline_creates_only_one_budgeted_follow_up() -> None:
     supported = _claim("claim:m4:valid")
     unsupported = _claim(

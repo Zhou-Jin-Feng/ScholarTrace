@@ -1,0 +1,110 @@
+{
+  "$defs": {
+    "EvaluationPhase": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence_report": {
+          "title": "Evidence Report",
+          "type": "string"
+        },
+        "failure_analysis": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Failure Analysis",
+          "type": "array"
+        },
+        "phase": {
+          "enum": [
+            "B0",
+            "B1",
+            "B2",
+            "B3",
+            "B4"
+          ],
+          "title": "Phase",
+          "type": "string"
+        },
+        "quality_evidence": {
+          "enum": [
+            "measured",
+            "limited",
+            "missing"
+          ],
+          "title": "Quality Evidence",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "validated",
+            "compatibility_only",
+            "limited",
+            "blocked"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "phase",
+        "status",
+        "evidence_report",
+        "quality_evidence",
+        "failure_analysis"
+      ],
+      "title": "EvaluationPhase",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "blocking_reasons": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Blocking Reasons",
+      "type": "array"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    },
+    "limitations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "overall_status": {
+      "enum": [
+        "delivery_ready_with_notes",
+        "blocked"
+      ],
+      "title": "Overall Status",
+      "type": "string"
+    },
+    "phases": {
+      "items": {
+        "$ref": "#/$defs/EvaluationPhase"
+      },
+      "title": "Phases",
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "generated_at",
+    "phases",
+    "overall_status",
+    "blocking_reasons",
+    "limitations"
+  ],
+  "title": "EvaluationMatrix",
+  "type": "object"
+}

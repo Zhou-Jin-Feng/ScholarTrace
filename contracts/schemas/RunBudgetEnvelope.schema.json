@@ -1,0 +1,56 @@
+{
+  "additionalProperties": false,
+  "description": "Identical per-variant limits applied to B3 and B4.",
+  "properties": {
+    "max_cost_cny": {
+      "minimum": 0,
+      "title": "Max Cost Cny",
+      "type": "number"
+    },
+    "max_duration_seconds": {
+      "maximum": 86400,
+      "minimum": 30,
+      "title": "Max Duration Seconds",
+      "type": "integer"
+    },
+    "max_llm_input_tokens": {
+      "minimum": 0,
+      "title": "Max Llm Input Tokens",
+      "type": "integer"
+    },
+    "max_llm_output_tokens": {
+      "minimum": 0,
+      "title": "Max Llm Output Tokens",
+      "type": "integer"
+    },
+    "max_model_calls": {
+      "maximum": 500,
+      "minimum": 0,
+      "title": "Max Model Calls",
+      "type": "integer"
+    },
+    "max_provider_api_calls": {
+      "maximum": 500,
+      "minimum": 0,
+      "title": "Max Provider Api Calls",
+      "type": "integer"
+    },
+    "max_scholargraph_calls": {
+      "maximum": 100,
+      "minimum": 0,
+      "title": "Max Scholargraph Calls",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "max_model_calls",
+    "max_provider_api_calls",
+    "max_scholargraph_calls",
+    "max_llm_input_tokens",
+    "max_llm_output_tokens",
+    "max_cost_cny",
+    "max_duration_seconds"
+  ],
+  "title": "RunBudgetEnvelope",
+  "type": "object"
+}

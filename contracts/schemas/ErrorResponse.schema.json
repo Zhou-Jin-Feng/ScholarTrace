@@ -1,0 +1,97 @@
+{
+  "$defs": {
+    "ErrorCode": {
+      "enum": [
+        "invalid_request",
+        "corpus_not_found",
+        "evidence_level_unsupported",
+        "method_not_allowed",
+        "method_purpose_mismatch",
+        "timeout_out_of_range",
+        "capacity_exhausted",
+        "service_not_ready",
+        "route_not_found",
+        "internal_error"
+      ],
+      "title": "ErrorCode",
+      "type": "string"
+    },
+    "ErrorDetail": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "$ref": "#/$defs/ErrorCode"
+        },
+        "field": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Field"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        },
+        "retryable": {
+          "title": "Retryable",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "code",
+        "message",
+        "retryable"
+      ],
+      "title": "ErrorDetail",
+      "type": "object"
+    },
+    "ErrorStatus": {
+      "enum": [
+        "failed",
+        "unsupported"
+      ],
+      "title": "ErrorStatus",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "error": {
+      "$ref": "#/$defs/ErrorDetail"
+    },
+    "request_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Request Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "service_version": {
+      "const": "1.2.0",
+      "default": "1.2.0",
+      "title": "Service Version",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/ErrorStatus"
+    }
+  },
+  "required": [
+    "request_id",
+    "status",
+    "error"
+  ],
+  "title": "ErrorResponse",
+  "type": "object"
+}

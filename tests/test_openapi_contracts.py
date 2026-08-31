@@ -42,7 +42,13 @@ def test_scholargraph_contract_declares_fixed_abstract_corpus() -> None:
     schema = spec["components"]["schemas"]["CorpusCapability"]  # type: ignore[index]
     properties = schema["properties"]
 
-    assert properties["corpus_id"]["const"] == "rag-openalex-2020-2025-198-v1"
+    assert spec["info"]["version"] == "1.2.0"
+    assert "/api/v1/metrics" in spec["paths"]
+    assert (
+        properties["corpus_id"]["const"]
+        == "openalex-rag-abstracts-2020-2025-v1"
+    )
     assert properties["document_count"]["const"] == 198
     assert properties["evidence_level"]["const"] == "abstract"
-    assert properties["default_method"]["const"] == "basic"
+    capabilities = spec["components"]["schemas"]["CapabilitiesResponse"]  # type: ignore[index]
+    assert capabilities["properties"]["default_method"]["const"] == "basic"

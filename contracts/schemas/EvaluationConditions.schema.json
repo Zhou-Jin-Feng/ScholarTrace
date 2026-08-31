@@ -1,0 +1,36 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "budget_limit_cny": {
+      "minimum": 0,
+      "title": "Budget Limit Cny",
+      "type": "number"
+    },
+    "model_profile": {
+      "maxLength": 160,
+      "minLength": 3,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+      "title": "Model Profile",
+      "type": "string"
+    },
+    "paper_pool_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Paper Pool Sha256",
+      "type": "string"
+    },
+    "report_length_limit": {
+      "maximum": 100000,
+      "minimum": 1,
+      "title": "Report Length Limit",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "model_profile",
+    "paper_pool_sha256",
+    "budget_limit_cny",
+    "report_length_limit"
+  ],
+  "title": "EvaluationConditions",
+  "type": "object"
+}

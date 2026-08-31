@@ -1,0 +1,177 @@
+{
+  "blind_mapping_stored": false,
+  "comparison": {
+    "b3": {
+      "coverage_mean": null,
+      "degraded_rate": 0.0,
+      "failure_rate": 0.0,
+      "latency_p50_seconds": 36.321667,
+      "latency_p95_seconds": 93.164801,
+      "n": 12,
+      "quality_mean": 4.0,
+      "quality_n": 12,
+      "scholargraph_calls": 0,
+      "tokens_visible_lower_bound": 92514
+    },
+    "b4": {
+      "coverage_mean": null,
+      "degraded_rate": 0.0,
+      "failure_rate": 0.0,
+      "latency_p50_seconds": 69.737458,
+      "latency_p95_seconds": 168.0845,
+      "n": 12,
+      "quality_mean": 3.916667,
+      "quality_n": 12,
+      "scholargraph_calls": 6,
+      "tokens_visible_lower_bound": 94663
+    },
+    "boundary_count": 6,
+    "boundary_routing_pass": true,
+    "comparability_pass": true,
+    "default_enable_decision": "keep_disabled_no_clear_benefit",
+    "eligible_count": 6,
+    "eligible_quality_delta_mean": 0.0,
+    "limitations": [
+      "Token totals are visible lower bounds, not complete usage.",
+      "Automatic deltas do not replace blind review or cost acceptance.",
+      "ScholarGraph answers are abstract-level auxiliary context, not full-text Evidence."
+    ],
+    "paired_results": [
+      {
+        "b3_status": "succeeded",
+        "b4_status": "succeeded",
+        "latency_delta_seconds": -13.106036,
+        "quality_delta_b4_minus_b3": null,
+        "question_id": "sg-boundary-01",
+        "scholargraph_decision": "skipped",
+        "scholargraph_method": null,
+        "subset": "boundary_eval"
+      },
+      {
+        "b3_status": "succeeded",
+        "b4_status": "succeeded",
+        "latency_delta_seconds": 36.378167,
+        "quality_delta_b4_minus_b3": null,
+        "question_id": "sg-boundary-02",
+        "scholargraph_decision": "skipped",
+        "scholargraph_method": null,
+        "subset": "boundary_eval"
+      },
+      {
+        "b3_status": "succeeded",
+        "b4_status": "succeeded",
+        "latency_delta_seconds": 38.481793,
+        "quality_delta_b4_minus_b3": null,
+        "question_id": "sg-boundary-03",
+        "scholargraph_decision": "skipped",
+        "scholargraph_method": null,
+        "subset": "boundary_eval"
+      },
+      {
+        "b3_status": "succeeded",
+        "b4_status": "succeeded",
+        "latency_delta_seconds": 57.896846,
+        "quality_delta_b4_minus_b3": null,
+        "question_id": "sg-boundary-04",
+        "scholargraph_decision": "skipped",
+        "scholargraph_method": null,
+        "subset": "boundary_eval"
+      },
+      {
+        "b3_status": "succeeded",
+        "b4_status": "succeeded",
+        "latency_delta_seconds": -54.260411,
+        "quality_delta_b4_minus_b3": null,
+        "question_id": "sg-boundary-05",
+        "scholargraph_decision": "rejected",
+        "scholargraph_method": null,
+        "subset": "boundary_eval"
+      },
+      {
+        "b3_status": "succeeded",
+        "b4_status": "succeeded",
+        "latency_delta_seconds": 59.430531,
+        "quality_delta_b4_minus_b3": null,
+        "question_id": "sg-boundary-06",
+        "scholargraph_decision": "skipped",
+        "scholargraph_method": null,
+        "subset": "boundary_eval"
+      },
+      {
+        "b3_status": "succeeded",
+        "b4_status": "succeeded",
+        "latency_delta_seconds": 60.0877,
+        "quality_delta_b4_minus_b3": 0.0,
+        "question_id": "sg-eligible-01",
+        "scholargraph_decision": "called",
+        "scholargraph_method": "basic",
+        "subset": "scholargraph_eligible_eval"
+      },
+      {
+        "b3_status": "succeeded",
+        "b4_status": "succeeded",
+        "latency_delta_seconds": 37.565484,
+        "quality_delta_b4_minus_b3": 0.0,
+        "question_id": "sg-eligible-02",
+        "scholargraph_decision": "called",
+        "scholargraph_method": "basic",
+        "subset": "scholargraph_eligible_eval"
+      },
+      {
+        "b3_status": "succeeded",
+        "b4_status": "succeeded",
+        "latency_delta_seconds": 101.052154,
+        "quality_delta_b4_minus_b3": 0.0,
+        "question_id": "sg-eligible-03",
+        "scholargraph_decision": "called",
+        "scholargraph_method": "basic",
+        "subset": "scholargraph_eligible_eval"
+      },
+      {
+        "b3_status": "succeeded",
+        "b4_status": "succeeded",
+        "latency_delta_seconds": 0.850881,
+        "quality_delta_b4_minus_b3": 0.0,
+        "question_id": "sg-eligible-04",
+        "scholargraph_decision": "called",
+        "scholargraph_method": "basic",
+        "subset": "scholargraph_eligible_eval"
+      },
+      {
+        "b3_status": "succeeded",
+        "b4_status": "succeeded",
+        "latency_delta_seconds": 27.957903,
+        "quality_delta_b4_minus_b3": 0.0,
+        "question_id": "sg-eligible-05",
+        "scholargraph_decision": "called",
+        "scholargraph_method": "basic",
+        "subset": "scholargraph_eligible_eval"
+      },
+      {
+        "b3_status": "succeeded",
+        "b4_status": "succeeded",
+        "latency_delta_seconds": 29.750297,
+        "quality_delta_b4_minus_b3": 0.0,
+        "question_id": "sg-eligible-06",
+        "scholargraph_decision": "called",
+        "scholargraph_method": "basic",
+        "subset": "scholargraph_eligible_eval"
+      }
+    ],
+    "purpose": "scholartrace-b3-b4-paired-comparison",
+    "question_count": 12,
+    "question_sets": {
+      "boundary_sha256": "6bc55ed002689ef165f8a6252c45dcee2f9583d05d43e55a6656f3405a0cf0fc",
+      "eligible_sha256": "91d19770d3fee134036f88e0614f45b91d1a9d2642a00a5e5fae695482cb2a00"
+    },
+    "run_ids": {
+      "b3": "run:m6:paid-full:b3",
+      "b4": "run:m6:paid-full:b4"
+    },
+    "schema_version": "1.0"
+  },
+  "manifest_sha256": "1f8db6e50f20731df5845d60ec7fab81cc6e7ae8b692ef8ba7ea98b6cc68d46d",
+  "purpose": "scholartrace-b3-b4-scored-comparison",
+  "raw_answers_stored": false,
+  "schema_version": "1.0"
+}

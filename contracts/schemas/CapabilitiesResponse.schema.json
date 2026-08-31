@@ -1,0 +1,262 @@
+{
+  "$defs": {
+    "CorpusCapability": {
+      "additionalProperties": false,
+      "properties": {
+        "corpus_id": {
+          "const": "openalex-rag-abstracts-2020-2025-v1",
+          "default": "openalex-rag-abstracts-2020-2025-v1",
+          "title": "Corpus Id",
+          "type": "string"
+        },
+        "corpus_manifest_sha256": {
+          "const": "168671c6f9f68ed2c8017e8d3d14396a455559a6a55628a7b0c40d32a80ea36c",
+          "default": "168671c6f9f68ed2c8017e8d3d14396a455559a6a55628a7b0c40d32a80ea36c",
+          "title": "Corpus Manifest Sha256",
+          "type": "string"
+        },
+        "corpus_version": {
+          "const": "formal-2026-08-26",
+          "default": "formal-2026-08-26",
+          "title": "Corpus Version",
+          "type": "string"
+        },
+        "document_count": {
+          "const": 198,
+          "default": 198,
+          "title": "Document Count",
+          "type": "integer"
+        },
+        "evidence_level": {
+          "const": "abstract",
+          "default": "abstract",
+          "title": "Evidence Level",
+          "type": "string"
+        },
+        "language": {
+          "const": "en",
+          "default": "en",
+          "title": "Language",
+          "type": "string"
+        },
+        "limitations": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Limitations",
+          "type": "array"
+        },
+        "publication_years": {
+          "$ref": "#/$defs/YearRange",
+          "default": {
+            "end": 2025,
+            "start": 2020
+          }
+        },
+        "topic": {
+          "const": "Retrieval-Augmented Generation",
+          "default": "Retrieval-Augmented Generation",
+          "title": "Topic",
+          "type": "string"
+        }
+      },
+      "required": [
+        "limitations"
+      ],
+      "title": "CorpusCapability",
+      "type": "object"
+    },
+    "MethodCapability": {
+      "additionalProperties": false,
+      "properties": {
+        "allowed_purposes": {
+          "items": {
+            "$ref": "#/$defs/QueryPurpose"
+          },
+          "title": "Allowed Purposes",
+          "type": "array"
+        },
+        "default": {
+          "title": "Default",
+          "type": "boolean"
+        },
+        "default_timeout_seconds": {
+          "title": "Default Timeout Seconds",
+          "type": "integer"
+        },
+        "max_concurrency": {
+          "title": "Max Concurrency",
+          "type": "integer"
+        },
+        "max_timeout_seconds": {
+          "title": "Max Timeout Seconds",
+          "type": "integer"
+        },
+        "method": {
+          "$ref": "#/$defs/QueryMethod"
+        },
+        "min_timeout_seconds": {
+          "title": "Min Timeout Seconds",
+          "type": "integer"
+        },
+        "online_allowed": {
+          "title": "Online Allowed",
+          "type": "boolean"
+        },
+        "restriction_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Restriction Reason"
+        }
+      },
+      "required": [
+        "method",
+        "default",
+        "online_allowed",
+        "allowed_purposes",
+        "default_timeout_seconds",
+        "min_timeout_seconds",
+        "max_timeout_seconds",
+        "max_concurrency"
+      ],
+      "title": "MethodCapability",
+      "type": "object"
+    },
+    "QueryMethod": {
+      "enum": [
+        "basic",
+        "local",
+        "global",
+        "drift"
+      ],
+      "title": "QueryMethod",
+      "type": "string"
+    },
+    "QueryPurpose": {
+      "enum": [
+        "general",
+        "entity_neighborhood",
+        "experiment",
+        "offline_evaluation",
+        "long_task_approved"
+      ],
+      "title": "QueryPurpose",
+      "type": "string"
+    },
+    "ServiceLimits": {
+      "additionalProperties": false,
+      "properties": {
+        "global_max_concurrency": {
+          "title": "Global Max Concurrency",
+          "type": "integer"
+        },
+        "long_running_max_concurrency": {
+          "title": "Long Running Max Concurrency",
+          "type": "integer"
+        },
+        "max_answer_bytes": {
+          "title": "Max Answer Bytes",
+          "type": "integer"
+        },
+        "max_question_characters": {
+          "const": 2000,
+          "default": 2000,
+          "title": "Max Question Characters",
+          "type": "integer"
+        },
+        "queue_timeout_seconds": {
+          "title": "Queue Timeout Seconds",
+          "type": "number"
+        }
+      },
+      "required": [
+        "max_answer_bytes",
+        "global_max_concurrency",
+        "long_running_max_concurrency",
+        "queue_timeout_seconds"
+      ],
+      "title": "ServiceLimits",
+      "type": "object"
+    },
+    "YearRange": {
+      "additionalProperties": false,
+      "properties": {
+        "end": {
+          "title": "End",
+          "type": "integer"
+        },
+        "start": {
+          "title": "Start",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "title": "YearRange",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "corpus": {
+      "$ref": "#/$defs/CorpusCapability"
+    },
+    "default_method": {
+      "const": "basic",
+      "default": "basic",
+      "title": "Default Method",
+      "type": "string"
+    },
+    "graphrag_version": {
+      "const": "3.1.2",
+      "default": "3.1.2",
+      "title": "Graphrag Version",
+      "type": "string"
+    },
+    "limits": {
+      "$ref": "#/$defs/ServiceLimits"
+    },
+    "methods": {
+      "items": {
+        "$ref": "#/$defs/MethodCapability"
+      },
+      "title": "Methods",
+      "type": "array"
+    },
+    "request_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "title": "Request Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "service_version": {
+      "const": "1.2.0",
+      "default": "1.2.0",
+      "title": "Service Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "request_id",
+    "corpus",
+    "methods",
+    "limits"
+  ],
+  "title": "CapabilitiesResponse",
+  "type": "object"
+}

@@ -1,0 +1,185 @@
+{
+  "$defs": {
+    "QuestionSetHashes": {
+      "additionalProperties": false,
+      "properties": {
+        "boundary_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Boundary Sha256",
+          "type": "string"
+        },
+        "eligible_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Eligible Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "eligible_sha256",
+        "boundary_sha256"
+      ],
+      "title": "QuestionSetHashes",
+      "type": "object"
+    },
+    "RunBudgetEnvelope": {
+      "additionalProperties": false,
+      "description": "Identical per-variant limits applied to B3 and B4.",
+      "properties": {
+        "max_cost_cny": {
+          "minimum": 0,
+          "title": "Max Cost Cny",
+          "type": "number"
+        },
+        "max_duration_seconds": {
+          "maximum": 86400,
+          "minimum": 30,
+          "title": "Max Duration Seconds",
+          "type": "integer"
+        },
+        "max_llm_input_tokens": {
+          "minimum": 0,
+          "title": "Max Llm Input Tokens",
+          "type": "integer"
+        },
+        "max_llm_output_tokens": {
+          "minimum": 0,
+          "title": "Max Llm Output Tokens",
+          "type": "integer"
+        },
+        "max_model_calls": {
+          "maximum": 500,
+          "minimum": 0,
+          "title": "Max Model Calls",
+          "type": "integer"
+        },
+        "max_provider_api_calls": {
+          "maximum": 500,
+          "minimum": 0,
+          "title": "Max Provider Api Calls",
+          "type": "integer"
+        },
+        "max_scholargraph_calls": {
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Max Scholargraph Calls",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "max_model_calls",
+        "max_provider_api_calls",
+        "max_scholargraph_calls",
+        "max_llm_input_tokens",
+        "max_llm_output_tokens",
+        "max_cost_cny",
+        "max_duration_seconds"
+      ],
+      "title": "RunBudgetEnvelope",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Frozen conditions that are stricter than the upstream comparison contract.",
+  "properties": {
+    "budget": {
+      "$ref": "#/$defs/RunBudgetEnvelope"
+    },
+    "experiment_id": {
+      "maxLength": 160,
+      "minLength": 3,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+      "title": "Experiment Id",
+      "type": "string"
+    },
+    "model_identifier": {
+      "maxLength": 160,
+      "minLength": 3,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+      "title": "Model Identifier",
+      "type": "string"
+    },
+    "model_profile": {
+      "maxLength": 160,
+      "minLength": 3,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+      "title": "Model Profile",
+      "type": "string"
+    },
+    "paper_pool_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Paper Pool Sha256",
+      "type": "string"
+    },
+    "prompt_template_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Prompt Template Sha256",
+      "type": "string"
+    },
+    "provider_protocol": {
+      "enum": [
+        "responses",
+        "chat_completions",
+        "fixture"
+      ],
+      "title": "Provider Protocol",
+      "type": "string"
+    },
+    "question_input_sha256": {
+      "maxProperties": 100,
+      "minProperties": 1,
+      "patternProperties": {
+        "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        }
+      },
+      "propertyNames": {
+        "maxLength": 160,
+        "minLength": 3
+      },
+      "title": "Question Input Sha256",
+      "type": "object"
+    },
+    "question_sets": {
+      "$ref": "#/$defs/QuestionSetHashes"
+    },
+    "report_length_limit": {
+      "maximum": 100000,
+      "minimum": 1,
+      "title": "Report Length Limit",
+      "type": "integer"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "scholargraph_corpus_manifest_sha256": {
+      "const": "168671c6f9f68ed2c8017e8d3d14396a455559a6a55628a7b0c40d32a80ea36c",
+      "default": "168671c6f9f68ed2c8017e8d3d14396a455559a6a55628a7b0c40d32a80ea36c",
+      "title": "Scholargraph Corpus Manifest Sha256",
+      "type": "string"
+    },
+    "scholargraph_service_version": {
+      "const": "1.2.0",
+      "default": "1.2.0",
+      "title": "Scholargraph Service Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "experiment_id",
+    "model_profile",
+    "model_identifier",
+    "provider_protocol",
+    "prompt_template_sha256",
+    "paper_pool_sha256",
+    "question_input_sha256",
+    "report_length_limit",
+    "budget",
+    "question_sets"
+  ],
+  "title": "B3B4ExecutionManifest",
+  "type": "object"
+}

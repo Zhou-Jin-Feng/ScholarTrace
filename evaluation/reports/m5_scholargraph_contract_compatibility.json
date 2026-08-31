@@ -1,0 +1,18 @@
+{
+  "consumer": {
+    "operation_count": 5,
+    "service_version": "1.2.0",
+    "sha256": "a7bdd2b6c179e2c9b66578dcfdbbbeffd8b35001bb3b99e4d29f175597a4130d"
+  },
+  "consumer_only_operations": [],
+  "exact_match": true,
+  "mismatches": [],
+  "missing_operations": [],
+  "provider": {
+    "operation_count": 5,
+    "service_version": "1.2.0",
+    "sha256": "a7bdd2b6c179e2c9b66578dcfdbbbeffd8b35001bb3b99e4d29f175597a4130d"
+  },
+  "schema_version": 1,
+  "status": "compatible"
+}

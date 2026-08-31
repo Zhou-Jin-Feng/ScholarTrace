@@ -1,0 +1,81 @@
+{
+  "schema_version": "1.0.0",
+  "service_version": "1.2.0",
+  "request_id": "fixture-capabilities",
+  "graphrag_version": "3.1.2",
+  "default_method": "basic",
+  "corpus": {
+    "corpus_id": "openalex-rag-abstracts-2020-2025-v1",
+    "topic": "Retrieval-Augmented Generation",
+    "language": "en",
+    "publication_years": {"start": 2020, "end": 2025},
+    "document_count": 198,
+    "corpus_version": "formal-2026-08-26",
+    "corpus_manifest_sha256": "168671c6f9f68ed2c8017e8d3d14396a455559a6a55628a7b0c40d32a80ea36c",
+    "evidence_level": "abstract",
+    "limitations": [
+      "Evidence is limited to validated metadata, titles, and abstracts.",
+      "The corpus covers English RAG publications from 2020 through 2025.",
+      "Generated semantic edges are not deterministic citation edges."
+    ]
+  },
+  "methods": [
+    {
+      "method": "basic",
+      "default": true,
+      "online_allowed": true,
+      "allowed_purposes": [
+        "entity_neighborhood",
+        "experiment",
+        "general",
+        "long_task_approved",
+        "offline_evaluation"
+      ],
+      "default_timeout_seconds": 180,
+      "min_timeout_seconds": 30,
+      "max_timeout_seconds": 600,
+      "max_concurrency": 2,
+      "restriction_reason": null
+    },
+    {
+      "method": "local",
+      "default": false,
+      "online_allowed": true,
+      "allowed_purposes": ["entity_neighborhood"],
+      "default_timeout_seconds": 300,
+      "min_timeout_seconds": 30,
+      "max_timeout_seconds": 900,
+      "max_concurrency": 1,
+      "restriction_reason": "Local requires an entity-neighborhood query purpose."
+    },
+    {
+      "method": "global",
+      "default": false,
+      "online_allowed": false,
+      "allowed_purposes": ["experiment", "long_task_approved"],
+      "default_timeout_seconds": 900,
+      "min_timeout_seconds": 120,
+      "max_timeout_seconds": 1800,
+      "max_concurrency": 1,
+      "restriction_reason": "Global is disabled by default and limited to experiments or approved tasks."
+    },
+    {
+      "method": "drift",
+      "default": false,
+      "online_allowed": false,
+      "allowed_purposes": ["long_task_approved", "offline_evaluation"],
+      "default_timeout_seconds": 1800,
+      "min_timeout_seconds": 300,
+      "max_timeout_seconds": 3600,
+      "max_concurrency": 1,
+      "restriction_reason": "DRIFT is disabled by default and limited to approved offline or long tasks."
+    }
+  ],
+  "limits": {
+    "max_question_characters": 2000,
+    "max_answer_bytes": 65536,
+    "global_max_concurrency": 2,
+    "long_running_max_concurrency": 1,
+    "queue_timeout_seconds": 5.0
+  }
+}

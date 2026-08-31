@@ -14,7 +14,7 @@
 
 - 状态：Accepted
 - 决策：仅对固定 RAG 摘要语料范围内的问题开放 B4 实验。
-- 当前基线：ScholarGraph `1.0.0`，commit `953e40b`，GraphRAG `3.1.2`。
+- 当前基线：ScholarGraph `1.2.0`，commit `3aa5e2a`，GraphRAG `3.1.2`。
 - 原因：正式语料只有 198 篇 2020-2025 RAG 摘要；Basic 当前评测最好，DRIFT 延迟高。
 - 代价：需要 Capability Router 和 eligible/boundary 两套评测。
 
@@ -122,3 +122,11 @@
 - 原因：概率模型不能修复或猜测字节级 provenance；Analysis 也不能自证 Claim。
 - 约束：`api-strong` 未启用时生产 Verifier fail closed；Fixture Verifier 明确标记为 fixture；unsupported Claim 排除，partial/conflicted Claim 带可见标记；FollowUp 全局最多一轮一个查询。
 - 代价：当前可验证工程门禁，但真实语义准确率和费用必须在启用强模型后单独评测。
+
+## ADR-017：ScholarGraph 查询不自动重试且默认保持关闭
+
+- 状态：Accepted
+- 决策：轻量健康、能力和指标 GET 最多尝试两次；昂贵查询只执行一次。Basic 是默认候选，Local 仅实体邻域，Global/DRIFT 保持禁用；任何越界、失败、超时或协议漂移都回退 B3。
+- 原因：ScholarGraph 查询会触发本地 GraphRAG 生成，自动重试可能重复长耗时推理；固定语料只有摘要，当前真实联调只证明兼容性，未证明 B4 质量收益。
+- 约束：输出不得变成 fulltext Evidence；B3/B4 必须同问题、模型、论文池、预算和报告限制配对；缺少盲评质量分时默认启用决策只能是关闭。
+- 代价：短暂查询故障不会在 Consumer 内自动恢复，调用方得到 B3 结果；正式启用 ScholarGraph 需要 M6 的真实配对评测和人工决策。

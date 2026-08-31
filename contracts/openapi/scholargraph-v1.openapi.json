@@ -1,365 +1,1054 @@
 {
-  "openapi": "3.1.0",
-  "info": {
-    "title": "ScholarGraph Read-Only Query API",
-    "version": "0.1.0-draft",
-    "description": "M0 draft for a future thin HTTP adapter over ScholarGraph run_query. This API is not implemented in ScholarGraph commit 953e40b."
-  },
-  "servers": [
-    {
-      "url": "http://127.0.0.1:8002"
-    }
-  ],
-  "paths": {
-    "/api/v1/health/live": {
-      "get": {
-        "operationId": "getScholarGraphLiveness",
-        "responses": {
-          "200": {
-            "description": "The adapter process is alive.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HealthResponse"
-                }
-              }
-            }
+  "components": {
+    "schemas": {
+      "CapabilitiesResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "corpus": {
+            "$ref": "#/components/schemas/CorpusCapability"
+          },
+          "default_method": {
+            "const": "basic",
+            "default": "basic",
+            "title": "Default Method",
+            "type": "string"
+          },
+          "graphrag_version": {
+            "const": "3.1.2",
+            "default": "3.1.2",
+            "title": "Graphrag Version",
+            "type": "string"
+          },
+          "limits": {
+            "$ref": "#/components/schemas/ServiceLimits"
+          },
+          "methods": {
+            "items": {
+              "$ref": "#/components/schemas/MethodCapability"
+            },
+            "title": "Methods",
+            "type": "array"
+          },
+          "request_id": {
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          },
+          "schema_version": {
+            "const": "1.0.0",
+            "default": "1.0.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "service_version": {
+            "const": "1.2.0",
+            "default": "1.2.0",
+            "title": "Service Version",
+            "type": "string"
           }
-        }
-      }
-    },
-    "/api/v1/health/ready": {
-      "get": {
-        "operationId": "getScholarGraphReadiness",
-        "responses": {
-          "200": {
-            "description": "The fixed corpus and read-only index are available.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HealthResponse"
-                }
-              }
+        },
+        "required": [
+          "request_id",
+          "corpus",
+          "methods",
+          "limits"
+        ],
+        "title": "CapabilitiesResponse",
+        "type": "object"
+      },
+      "CorpusCapability": {
+        "additionalProperties": false,
+        "properties": {
+          "corpus_id": {
+            "const": "openalex-rag-abstracts-2020-2025-v1",
+            "default": "openalex-rag-abstracts-2020-2025-v1",
+            "title": "Corpus Id",
+            "type": "string"
+          },
+          "corpus_manifest_sha256": {
+            "const": "168671c6f9f68ed2c8017e8d3d14396a455559a6a55628a7b0c40d32a80ea36c",
+            "default": "168671c6f9f68ed2c8017e8d3d14396a455559a6a55628a7b0c40d32a80ea36c",
+            "title": "Corpus Manifest Sha256",
+            "type": "string"
+          },
+          "corpus_version": {
+            "const": "formal-2026-08-26",
+            "default": "formal-2026-08-26",
+            "title": "Corpus Version",
+            "type": "string"
+          },
+          "document_count": {
+            "const": 198,
+            "default": 198,
+            "title": "Document Count",
+            "type": "integer"
+          },
+          "evidence_level": {
+            "const": "abstract",
+            "default": "abstract",
+            "title": "Evidence Level",
+            "type": "string"
+          },
+          "language": {
+            "const": "en",
+            "default": "en",
+            "title": "Language",
+            "type": "string"
+          },
+          "limitations": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Limitations",
+            "type": "array"
+          },
+          "publication_years": {
+            "$ref": "#/components/schemas/YearRange",
+            "default": {
+              "end": 2025,
+              "start": 2020
             }
           },
-          "503": {
-            "$ref": "#/components/responses/ErrorResponse"
+          "topic": {
+            "const": "Retrieval-Augmented Generation",
+            "default": "Retrieval-Augmented Generation",
+            "title": "Topic",
+            "type": "string"
           }
-        }
+        },
+        "required": [
+          "limitations"
+        ],
+        "title": "CorpusCapability",
+        "type": "object"
+      },
+      "ErrorCode": {
+        "enum": [
+          "invalid_request",
+          "corpus_not_found",
+          "evidence_level_unsupported",
+          "method_not_allowed",
+          "method_purpose_mismatch",
+          "timeout_out_of_range",
+          "capacity_exhausted",
+          "service_not_ready",
+          "route_not_found",
+          "internal_error"
+        ],
+        "title": "ErrorCode",
+        "type": "string"
+      },
+      "ErrorDetail": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "$ref": "#/components/schemas/ErrorCode"
+          },
+          "field": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Field"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "retryable": {
+            "title": "Retryable",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "retryable"
+        ],
+        "title": "ErrorDetail",
+        "type": "object"
+      },
+      "ErrorResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ErrorDetail"
+          },
+          "request_id": {
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          },
+          "schema_version": {
+            "const": "1.0.0",
+            "default": "1.0.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "service_version": {
+            "const": "1.2.0",
+            "default": "1.2.0",
+            "title": "Service Version",
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ErrorStatus"
+          }
+        },
+        "required": [
+          "request_id",
+          "status",
+          "error"
+        ],
+        "title": "ErrorResponse",
+        "type": "object"
+      },
+      "ErrorStatus": {
+        "enum": [
+          "failed",
+          "unsupported"
+        ],
+        "title": "ErrorStatus",
+        "type": "string"
+      },
+      "EvidenceLevel": {
+        "enum": [
+          "abstract",
+          "full_text"
+        ],
+        "title": "EvidenceLevel",
+        "type": "string"
+      },
+      "LiveResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "request_id": {
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          },
+          "schema_version": {
+            "const": "1.0.0",
+            "default": "1.0.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "service_version": {
+            "const": "1.2.0",
+            "default": "1.2.0",
+            "title": "Service Version",
+            "type": "string"
+          },
+          "status": {
+            "const": "live",
+            "default": "live",
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "request_id"
+        ],
+        "title": "LiveResponse",
+        "type": "object"
+      },
+      "MethodCapability": {
+        "additionalProperties": false,
+        "properties": {
+          "allowed_purposes": {
+            "items": {
+              "$ref": "#/components/schemas/QueryPurpose"
+            },
+            "title": "Allowed Purposes",
+            "type": "array"
+          },
+          "default": {
+            "title": "Default",
+            "type": "boolean"
+          },
+          "default_timeout_seconds": {
+            "title": "Default Timeout Seconds",
+            "type": "integer"
+          },
+          "max_concurrency": {
+            "title": "Max Concurrency",
+            "type": "integer"
+          },
+          "max_timeout_seconds": {
+            "title": "Max Timeout Seconds",
+            "type": "integer"
+          },
+          "method": {
+            "$ref": "#/components/schemas/QueryMethod"
+          },
+          "min_timeout_seconds": {
+            "title": "Min Timeout Seconds",
+            "type": "integer"
+          },
+          "online_allowed": {
+            "title": "Online Allowed",
+            "type": "boolean"
+          },
+          "restriction_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Restriction Reason"
+          }
+        },
+        "required": [
+          "method",
+          "default",
+          "online_allowed",
+          "allowed_purposes",
+          "default_timeout_seconds",
+          "min_timeout_seconds",
+          "max_timeout_seconds",
+          "max_concurrency"
+        ],
+        "title": "MethodCapability",
+        "type": "object"
+      },
+      "MethodMetrics": {
+        "additionalProperties": false,
+        "properties": {
+          "degraded_count": {
+            "minimum": 0.0,
+            "title": "Degraded Count",
+            "type": "integer"
+          },
+          "degraded_rate": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Degraded Rate",
+            "type": "number"
+          },
+          "failed_count": {
+            "minimum": 0.0,
+            "title": "Failed Count",
+            "type": "integer"
+          },
+          "latency_p50_seconds": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latency P50 Seconds"
+          },
+          "latency_p95_seconds": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latency P95 Seconds"
+          },
+          "method": {
+            "$ref": "#/components/schemas/QueryMethod"
+          },
+          "queue_p50_seconds": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Queue P50 Seconds"
+          },
+          "queue_p95_seconds": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Queue P95 Seconds"
+          },
+          "request_count": {
+            "minimum": 0.0,
+            "title": "Request Count",
+            "type": "integer"
+          },
+          "succeeded_count": {
+            "minimum": 0.0,
+            "title": "Succeeded Count",
+            "type": "integer"
+          },
+          "success_rate": {
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Success Rate",
+            "type": "number"
+          },
+          "timeout_count": {
+            "minimum": 0.0,
+            "title": "Timeout Count",
+            "type": "integer"
+          },
+          "token_coverage": {
+            "enum": [
+              "unavailable",
+              "visible_lower_bound"
+            ],
+            "title": "Token Coverage",
+            "type": "string"
+          },
+          "tokens_visible_lower_bound": {
+            "minimum": 0.0,
+            "title": "Tokens Visible Lower Bound",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "method",
+          "request_count",
+          "succeeded_count",
+          "degraded_count",
+          "timeout_count",
+          "failed_count",
+          "success_rate",
+          "degraded_rate",
+          "tokens_visible_lower_bound",
+          "token_coverage"
+        ],
+        "title": "MethodMetrics",
+        "type": "object"
+      },
+      "MetricsResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "graphrag_version": {
+            "const": "3.1.2",
+            "default": "3.1.2",
+            "title": "Graphrag Version",
+            "type": "string"
+          },
+          "methods": {
+            "items": {
+              "$ref": "#/components/schemas/MethodMetrics"
+            },
+            "title": "Methods",
+            "type": "array"
+          },
+          "request_id": {
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          },
+          "sample_window_size": {
+            "minimum": 1.0,
+            "title": "Sample Window Size",
+            "type": "integer"
+          },
+          "schema_version": {
+            "const": "1.0.0",
+            "default": "1.0.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "service_version": {
+            "const": "1.2.0",
+            "default": "1.2.0",
+            "title": "Service Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "request_id",
+          "sample_window_size",
+          "methods"
+        ],
+        "title": "MetricsResponse",
+        "type": "object"
+      },
+      "QueryMethod": {
+        "enum": [
+          "basic",
+          "local",
+          "global",
+          "drift"
+        ],
+        "title": "QueryMethod",
+        "type": "string"
+      },
+      "QueryPurpose": {
+        "enum": [
+          "general",
+          "entity_neighborhood",
+          "experiment",
+          "offline_evaluation",
+          "long_task_approved"
+        ],
+        "title": "QueryPurpose",
+        "type": "string"
+      },
+      "QueryRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "corpus_id": {
+            "default": "openalex-rag-abstracts-2020-2025-v1",
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Corpus Id",
+            "type": "string"
+          },
+          "method": {
+            "$ref": "#/components/schemas/QueryMethod",
+            "default": "basic"
+          },
+          "purpose": {
+            "$ref": "#/components/schemas/QueryPurpose",
+            "default": "general"
+          },
+          "question": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Question",
+            "type": "string"
+          },
+          "required_evidence_level": {
+            "$ref": "#/components/schemas/EvidenceLevel",
+            "default": "abstract"
+          },
+          "timeout_seconds": {
+            "anyOf": [
+              {
+                "maximum": 3600.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Timeout Seconds"
+          }
+        },
+        "required": [
+          "question"
+        ],
+        "title": "QueryRequest",
+        "type": "object"
+      },
+      "QueryResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "answer": {
+            "title": "Answer",
+            "type": "string"
+          },
+          "corpus_id": {
+            "const": "openalex-rag-abstracts-2020-2025-v1",
+            "default": "openalex-rag-abstracts-2020-2025-v1",
+            "title": "Corpus Id",
+            "type": "string"
+          },
+          "diagnostics": {
+            "$ref": "#/components/schemas/SafeDiagnostics"
+          },
+          "duration_seconds": {
+            "minimum": 0.0,
+            "title": "Duration Seconds",
+            "type": "number"
+          },
+          "evidence_level": {
+            "const": "abstract",
+            "default": "abstract",
+            "title": "Evidence Level",
+            "type": "string"
+          },
+          "graphrag_version": {
+            "const": "3.1.2",
+            "default": "3.1.2",
+            "title": "Graphrag Version",
+            "type": "string"
+          },
+          "method": {
+            "$ref": "#/components/schemas/QueryMethod"
+          },
+          "purpose": {
+            "$ref": "#/components/schemas/QueryPurpose"
+          },
+          "request_id": {
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          },
+          "schema_version": {
+            "const": "1.0.0",
+            "default": "1.0.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "service_version": {
+            "const": "1.2.0",
+            "default": "1.2.0",
+            "title": "Service Version",
+            "type": "string"
+          },
+          "source_refs": {
+            "items": {
+              "$ref": "#/components/schemas/SourceRef"
+            },
+            "title": "Source Refs",
+            "type": "array"
+          },
+          "status": {
+            "$ref": "#/components/schemas/QueryStatus"
+          }
+        },
+        "required": [
+          "request_id",
+          "method",
+          "purpose",
+          "status",
+          "duration_seconds",
+          "answer",
+          "source_refs",
+          "diagnostics"
+        ],
+        "title": "QueryResponse",
+        "type": "object"
+      },
+      "QueryStatus": {
+        "enum": [
+          "succeeded",
+          "degraded",
+          "timeout",
+          "failed"
+        ],
+        "title": "QueryStatus",
+        "type": "string"
+      },
+      "ReadinessChecks": {
+        "additionalProperties": false,
+        "properties": {
+          "container_runtime": {
+            "title": "Container Runtime",
+            "type": "boolean"
+          },
+          "index_files": {
+            "title": "Index Files",
+            "type": "boolean"
+          },
+          "index_identity": {
+            "title": "Index Identity",
+            "type": "boolean"
+          },
+          "workspace_config": {
+            "title": "Workspace Config",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "workspace_config",
+          "index_files",
+          "index_identity",
+          "container_runtime"
+        ],
+        "title": "ReadinessChecks",
+        "type": "object"
+      },
+      "ReadyResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "checks": {
+            "$ref": "#/components/schemas/ReadinessChecks"
+          },
+          "request_id": {
+            "maxLength": 128,
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          },
+          "schema_version": {
+            "const": "1.0.0",
+            "default": "1.0.0",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "service_version": {
+            "const": "1.2.0",
+            "default": "1.2.0",
+            "title": "Service Version",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "ready",
+              "not_ready"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "request_id",
+          "status",
+          "checks"
+        ],
+        "title": "ReadyResponse",
+        "type": "object"
+      },
+      "SafeDiagnostics": {
+        "additionalProperties": false,
+        "properties": {
+          "container_cleanup_succeeded": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Container Cleanup Succeeded"
+          },
+          "exit_code": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exit Code"
+          },
+          "internal_error_events": {
+            "minimum": 0.0,
+            "title": "Internal Error Events",
+            "type": "integer"
+          },
+          "public_message": {
+            "title": "Public Message",
+            "type": "string"
+          },
+          "response_truncated": {
+            "title": "Response Truncated",
+            "type": "boolean"
+          },
+          "stderr_present": {
+            "title": "Stderr Present",
+            "type": "boolean"
+          },
+          "warning_events": {
+            "minimum": 0.0,
+            "title": "Warning Events",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "public_message",
+          "exit_code",
+          "stderr_present",
+          "internal_error_events",
+          "warning_events",
+          "container_cleanup_succeeded",
+          "response_truncated"
+        ],
+        "title": "SafeDiagnostics",
+        "type": "object"
+      },
+      "ServiceLimits": {
+        "additionalProperties": false,
+        "properties": {
+          "global_max_concurrency": {
+            "title": "Global Max Concurrency",
+            "type": "integer"
+          },
+          "long_running_max_concurrency": {
+            "title": "Long Running Max Concurrency",
+            "type": "integer"
+          },
+          "max_answer_bytes": {
+            "title": "Max Answer Bytes",
+            "type": "integer"
+          },
+          "max_question_characters": {
+            "const": 2000,
+            "default": 2000,
+            "title": "Max Question Characters",
+            "type": "integer"
+          },
+          "queue_timeout_seconds": {
+            "title": "Queue Timeout Seconds",
+            "type": "number"
+          }
+        },
+        "required": [
+          "max_answer_bytes",
+          "global_max_concurrency",
+          "long_running_max_concurrency",
+          "queue_timeout_seconds"
+        ],
+        "title": "ServiceLimits",
+        "type": "object"
+      },
+      "SourceRef": {
+        "additionalProperties": false,
+        "properties": {
+          "document_id": {
+            "maxLength": 256,
+            "minLength": 1,
+            "title": "Document Id",
+            "type": "string"
+          },
+          "openalex_id": {
+            "anyOf": [
+              {
+                "maxLength": 64,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Openalex Id"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "maxLength": 1000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          }
+        },
+        "required": [
+          "document_id"
+        ],
+        "title": "SourceRef",
+        "type": "object"
+      },
+      "YearRange": {
+        "additionalProperties": false,
+        "properties": {
+          "end": {
+            "title": "End",
+            "type": "integer"
+          },
+          "start": {
+            "title": "Start",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "start",
+          "end"
+        ],
+        "title": "YearRange",
+        "type": "object"
       }
-    },
+    }
+  },
+  "info": {
+    "title": "ScholarGraph Read-only API",
+    "version": "1.2.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
     "/api/v1/capabilities": {
       "get": {
-        "operationId": "getScholarGraphCapabilities",
+        "operationId": "capabilities_api_v1_capabilities_get",
         "responses": {
           "200": {
-            "description": "Versioned fixed-corpus capability declaration.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CapabilitiesResponse"
-                },
-                "example": {
-                  "schema_version": "1.0",
-                  "service_version": "1.0.0",
-                  "graphrag_version": "3.1.2",
-                  "corpora": [
-                    {
-                      "corpus_id": "rag-openalex-2020-2025-198-v1",
-                      "topic": "retrieval-augmented generation",
-                      "year_from": 2020,
-                      "year_to": 2025,
-                      "document_count": 198,
-                      "evidence_level": "abstract",
-                      "methods": ["basic", "local", "global", "drift"],
-                      "default_method": "basic"
-                    }
-                  ]
                 }
               }
-            }
+            },
+            "description": "Successful Response"
           }
-        }
+        },
+        "summary": "Capabilities"
+      }
+    },
+    "/api/v1/health/live": {
+      "get": {
+        "operationId": "live_api_v1_health_live_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LiveResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Live"
+      }
+    },
+    "/api/v1/health/ready": {
+      "get": {
+        "operationId": "ready_api_v1_health_ready_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadyResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "503": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadyResponse"
+                }
+              }
+            },
+            "description": "Service dependencies are not ready."
+          }
+        },
+        "summary": "Ready"
+      }
+    },
+    "/api/v1/metrics": {
+      "get": {
+        "operationId": "service_metrics_api_v1_metrics_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MetricsResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Service Metrics"
       }
     },
     "/api/v1/query": {
       "post": {
-        "operationId": "queryScholarGraph",
-        "description": "Execute a validated read-only query against one declared fixed corpus.",
+        "operationId": "query_api_v1_query_post",
         "requestBody": {
-          "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/QueryRequest"
               }
             }
-          }
+          },
+          "required": true
         },
         "responses": {
           "200": {
-            "description": "Query completed or returned a stable non-success status.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/QueryResponse"
                 }
               }
-            }
+            },
+            "description": "Successful Response"
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The configured method policy rejected the query."
           },
           "404": {
-            "$ref": "#/components/responses/ErrorResponse"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The requested corpus is not available."
           },
           "422": {
-            "$ref": "#/components/responses/ErrorResponse"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The request or method-specific limits are invalid."
+          },
+          "429": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Query capacity is currently exhausted."
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "The service returned a safe internal error."
           },
           "503": {
-            "$ref": "#/components/responses/ErrorResponse"
-          }
-        }
-      }
-    }
-  },
-  "components": {
-    "responses": {
-      "ErrorResponse": {
-        "description": "Stable public error envelope.",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/ErrorEnvelope"
-            }
-          }
-        }
-      }
-    },
-    "schemas": {
-      "HealthResponse": {
-        "type": "object",
-        "required": ["status", "service_version", "ready"],
-        "properties": {
-          "status": {
-            "type": "string",
-            "enum": ["alive", "ready", "not_ready"]
-          },
-          "service_version": {
-            "type": "string"
-          },
-          "ready": {
-            "type": "boolean"
-          }
-        },
-        "additionalProperties": false
-      },
-      "CorpusCapability": {
-        "type": "object",
-        "required": [
-          "corpus_id",
-          "topic",
-          "year_from",
-          "year_to",
-          "document_count",
-          "evidence_level",
-          "methods",
-          "default_method"
-        ],
-        "properties": {
-          "corpus_id": {
-            "const": "rag-openalex-2020-2025-198-v1"
-          },
-          "topic": {
-            "const": "retrieval-augmented generation"
-          },
-          "year_from": {
-            "const": 2020
-          },
-          "year_to": {
-            "const": 2025
-          },
-          "document_count": {
-            "const": 198
-          },
-          "evidence_level": {
-            "const": "abstract"
-          },
-          "methods": {
-            "type": "array",
-            "prefixItems": [
-              {"const": "basic"},
-              {"const": "local"},
-              {"const": "global"},
-              {"const": "drift"}
-            ],
-            "items": false
-          },
-          "default_method": {
-            "const": "basic"
-          }
-        },
-        "additionalProperties": false
-      },
-      "CapabilitiesResponse": {
-        "type": "object",
-        "required": ["schema_version", "service_version", "graphrag_version", "corpora"],
-        "properties": {
-          "schema_version": {
-            "const": "1.0"
-          },
-          "service_version": {
-            "type": "string"
-          },
-          "graphrag_version": {
-            "const": "3.1.2"
-          },
-          "corpora": {
-            "type": "array",
-            "minItems": 1,
-            "maxItems": 1,
-            "items": {
-              "$ref": "#/components/schemas/CorpusCapability"
-            }
-          }
-        },
-        "additionalProperties": false
-      },
-      "QueryRequest": {
-        "type": "object",
-        "required": ["schema_version", "corpus_id", "question", "method", "timeout_seconds"],
-        "properties": {
-          "schema_version": {
-            "const": "1.0"
-          },
-          "corpus_id": {
-            "const": "rag-openalex-2020-2025-198-v1"
-          },
-          "question": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 4000
-          },
-          "method": {
-            "type": "string",
-            "enum": ["basic", "local", "global", "drift"],
-            "default": "basic"
-          },
-          "timeout_seconds": {
-            "type": "number",
-            "minimum": 5,
-            "maximum": 3600
-          }
-        },
-        "additionalProperties": false
-      },
-      "SourceRef": {
-        "type": "object",
-        "required": ["canonical_paper_id", "openalex_id", "evidence_level"],
-        "properties": {
-          "canonical_paper_id": {
-            "type": "string",
-            "minLength": 3
-          },
-          "openalex_id": {
-            "type": "string",
-            "pattern": "^W[0-9]+$"
-          },
-          "evidence_level": {
-            "const": "abstract"
-          }
-        },
-        "additionalProperties": false
-      },
-      "QueryResponse": {
-        "type": "object",
-        "required": [
-          "schema_version",
-          "service_version",
-          "graphrag_version",
-          "corpus_id",
-          "method",
-          "status",
-          "duration_seconds",
-          "evidence_level",
-          "answer",
-          "source_refs",
-          "diagnostics"
-        ],
-        "properties": {
-          "schema_version": {
-            "const": "1.0"
-          },
-          "service_version": {
-            "type": "string"
-          },
-          "graphrag_version": {
-            "const": "3.1.2"
-          },
-          "corpus_id": {
-            "const": "rag-openalex-2020-2025-198-v1"
-          },
-          "method": {
-            "type": "string",
-            "enum": ["basic", "local", "global", "drift"]
-          },
-          "status": {
-            "type": "string",
-            "enum": ["succeeded", "failed", "timed_out", "unavailable"]
-          },
-          "duration_seconds": {
-            "type": "number",
-            "minimum": 0
-          },
-          "evidence_level": {
-            "const": "abstract"
-          },
-          "answer": {
-            "type": "string"
-          },
-          "source_refs": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SourceRef"
-            }
-          },
-          "diagnostics": {
-            "type": "object",
-            "required": ["public_message"],
-            "properties": {
-              "public_message": {
-                "type": "string"
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
               }
             },
-            "additionalProperties": true
+            "description": "The configured query runtime is not ready."
           }
         },
-        "additionalProperties": false
-      },
-      "ErrorEnvelope": {
-        "type": "object",
-        "required": ["error"],
-        "properties": {
-          "error": {
-            "type": "object",
-            "required": ["code", "message"],
-            "properties": {
-              "code": {
-                "type": "string",
-                "enum": [
-                  "corpus_not_found",
-                  "method_not_allowed",
-                  "validation_error",
-                  "index_unavailable",
-                  "query_service_unavailable"
-                ]
-              },
-              "message": {
-                "type": "string",
-                "minLength": 1
-              }
-            },
-            "additionalProperties": false
-          }
-        },
-        "additionalProperties": false
+        "summary": "Query"
       }
     }
   }

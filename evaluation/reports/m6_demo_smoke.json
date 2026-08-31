@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0",
+  "passed": true,
+  "status": "completed",
+  "phase": "done",
+  "event_count": 9,
+  "artifact_count": 4,
+  "export_formats": [
+    "json",
+    "markdown",
+    "html",
+    "pdf"
+  ],
+  "sse_contains_terminal_event": true,
+  "execution_mode": "deterministic_delivery_demo",
+  "notes": [
+    "Deterministic local delivery demo; no model or external provider calls.",
+    "Task identifiers and report content are not stored in this summary."
+  ]
+}

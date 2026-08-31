@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0",
+  "scopes": {
+    "sg-eligible-01": {"topic": "retrieval_augmented_generation"},
+    "sg-eligible-02": {"topic": "retrieval_augmented_generation"},
+    "sg-eligible-03": {"topic": "retrieval_augmented_generation"},
+    "sg-eligible-04": {"topic": "retrieval_augmented_generation"},
+    "sg-eligible-05": {"topic": "retrieval_augmented_generation"},
+    "sg-eligible-06": {"topic": "retrieval_augmented_generation"},
+    "sg-boundary-01": {
+      "topic": "other",
+      "publication_year_from": 2026,
+      "publication_year_to": 2026
+    },
+    "sg-boundary-02": {
+      "topic": "retrieval_augmented_generation",
+      "publication_year_from": 2026,
+      "publication_year_to": 2026
+    },
+    "sg-boundary-03": {
+      "topic": "retrieval_augmented_generation",
+      "required_evidence_level": "full_text"
+    },
+    "sg-boundary-04": {
+      "topic": "retrieval_augmented_generation",
+      "requires_verified_full_text": true
+    },
+    "sg-boundary-05": {
+      "topic": "retrieval_augmented_generation",
+      "requires_index_write": true
+    },
+    "sg-boundary-06": {"topic": "other"}
+  }
+}

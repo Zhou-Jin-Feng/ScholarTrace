@@ -1,0 +1,35 @@
+services:
+  scholartrace-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      SCHOLARTRACE_DATA_DIR: /var/lib/scholartrace
+    ports:
+      - "8000:8000"
+    volumes:
+      - scholartrace-data:/var/lib/scholartrace
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - >-
+          import urllib.request;
+          urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health/live', timeout=3)
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  scholartrace-ui:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    depends_on:
+      scholartrace-api:
+        condition: service_healthy
+    ports:
+      - "5173:80"
+
+volumes:
+  scholartrace-data:
