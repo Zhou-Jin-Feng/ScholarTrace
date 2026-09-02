@@ -12,6 +12,7 @@ from scholartrace.evidence.models import EVIDENCE_CONTRACT_MODELS
 from scholartrace.scholargraph.evaluation import M5_EVALUATION_CONTRACT_MODELS
 from scholartrace.scholargraph.experiment import M6_EXPERIMENT_CONTRACT_MODELS
 from scholartrace.scholargraph.models import SCHOLARGRAPH_CONTRACT_MODELS
+from scholartrace.scholargraph.real_miss import M9_P0_PUBLIC_CONTRACT_MODELS
 from scholartrace.search.models import SEARCH_CONTRACT_MODELS
 from scholartrace.verification.models import VERIFICATION_CONTRACT_MODELS
 
@@ -31,6 +32,7 @@ def main() -> None:
         **M5_EVALUATION_CONTRACT_MODELS,
         **M6_EXPERIMENT_CONTRACT_MODELS,
         **M6_DELIVERY_CONTRACT_MODELS,
+        **M9_P0_PUBLIC_CONTRACT_MODELS,
     }
     for name, model in models.items():
         schema = model.model_json_schema(mode="validation")

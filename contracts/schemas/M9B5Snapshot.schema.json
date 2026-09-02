@@ -1,0 +1,115 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "algorithm_commit": {
+      "const": "37e00cfdafbd21612de9e9c60807ed0aeac28783",
+      "default": "37e00cfdafbd21612de9e9c60807ed0aeac28783",
+      "title": "Algorithm Commit",
+      "type": "string"
+    },
+    "algorithm_id": {
+      "const": "m8-b5-title-text-top3",
+      "default": "m8-b5-title-text-top3",
+      "title": "Algorithm Id",
+      "type": "string"
+    },
+    "candidate_openalex_ids": {
+      "items": {
+        "pattern": "^W[0-9]+$",
+        "type": "string"
+      },
+      "maxItems": 3,
+      "title": "Candidate Openalex Ids",
+      "type": "array"
+    },
+    "config_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Config Sha256",
+      "type": "string"
+    },
+    "corpus_id": {
+      "const": "openalex-rag-abstracts-2020-2025-v1",
+      "default": "openalex-rag-abstracts-2020-2025-v1",
+      "title": "Corpus Id",
+      "type": "string"
+    },
+    "corpus_manifest_sha256": {
+      "const": "168671c6f9f68ed2c8017e8d3d14396a455559a6a55628a7b0c40d32a80ea36c",
+      "default": "168671c6f9f68ed2c8017e8d3d14396a455559a6a55628a7b0c40d32a80ea36c",
+      "title": "Corpus Manifest Sha256",
+      "type": "string"
+    },
+    "corpus_version": {
+      "const": "formal-2026-08-26",
+      "default": "formal-2026-08-26",
+      "title": "Corpus Version",
+      "type": "string"
+    },
+    "document_count": {
+      "const": 198,
+      "default": 198,
+      "title": "Document Count",
+      "type": "integer"
+    },
+    "parquet_bundle_sha256": {
+      "const": "c837792525d387ff3257a3e7d0504a7ec73fc28e2f09399e96a339ef2a25617b",
+      "title": "Parquet Bundle Sha256",
+      "type": "string"
+    },
+    "parquet_read_only_pass": {
+      "const": true,
+      "default": true,
+      "title": "Parquet Read Only Pass",
+      "type": "boolean"
+    },
+    "question_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Question Sha256",
+      "type": "string"
+    },
+    "reason": {
+      "enum": [
+        "matched",
+        "no_catalog_match"
+      ],
+      "title": "Reason",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "snapshot_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Snapshot Sha256",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "succeeded",
+        "no_match"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "top_k": {
+      "const": 3,
+      "default": 3,
+      "title": "Top K",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "question_sha256",
+    "status",
+    "reason",
+    "candidate_openalex_ids",
+    "parquet_bundle_sha256",
+    "config_sha256",
+    "snapshot_sha256"
+  ],
+  "title": "M9B5Snapshot",
+  "type": "object"
+}

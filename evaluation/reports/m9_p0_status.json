@@ -1,0 +1,53 @@
+{
+  "blockers": [
+    "Collect 30 more consecutive graph-eligible real subquestions for the initial window.",
+    "Fewer than 8 confirmed B5 misses have been observed.",
+    "Fewer than 6 frozen-corpus B5 miss opportunities exist.",
+    "Fewer than 4 misses have a graph-fixable primary cause.",
+    "Graph-fixable misses cover fewer than two root-cause classes."
+  ],
+  "counts": {
+    "confirmed_b5_misses": 0,
+    "distinct_graph_root_causes": 0,
+    "eligible_real_observations": 0,
+    "fixture_observations_excluded": 0,
+    "frozen_corpus_miss_opportunities": 0,
+    "graph_fixable_misses": 0,
+    "pending_eligible_reviews": 0,
+    "real_observations": 0,
+    "reviewed_eligible_observations": 0
+  },
+  "criteria": {
+    "all_eligible_reviewed": false,
+    "all_included_records_reproducible": true,
+    "capture_chain_valid": true,
+    "fixtures_excluded_from_gate": true,
+    "initial_window_complete": false,
+    "minimum_confirmed_misses": false,
+    "minimum_corpus_opportunities": false,
+    "minimum_graph_fixable_misses": false,
+    "minimum_graph_root_causes": false
+  },
+  "decision": "COLLECT_MORE",
+  "limitations": [
+    "Only consecutive records marked real can affect the P0 gate.",
+    "Question text, source event identity, reviewer notes, and review history stay private.",
+    "P0 GO permits a treatment proposal only; it does not enable ScholarGraph.",
+    "Fixture validation cannot establish real product need or retrieval gain."
+  ],
+  "protocol": "docs/M9_REAL_MISS_PROTOCOL.md",
+  "public_payload_contains_raw_questions": false,
+  "purpose": "m9-p0-real-miss-observation-gate",
+  "record_chain_head_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "records": [],
+  "root_cause_counts": {},
+  "schema_version": "1.0",
+  "scholargraph_default_enabled": false,
+  "usage": {
+    "documind_calls": 0,
+    "model_calls": 0,
+    "network_calls": 0,
+    "paid_calls": 0,
+    "reference_cost_cny": 0
+  }
+}

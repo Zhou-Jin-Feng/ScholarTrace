@@ -1,0 +1,324 @@
+{
+  "$defs": {
+    "Eligibility": {
+      "enum": [
+        "graph_eligible",
+        "ineligible"
+      ],
+      "title": "Eligibility",
+      "type": "string"
+    },
+    "EligibilityReason": {
+      "enum": [
+        "within_frozen_corpus_scope",
+        "outside_topic",
+        "outside_year_range",
+        "unsupported_language",
+        "fulltext_required",
+        "metadata_only",
+        "ambiguous"
+      ],
+      "title": "EligibilityReason",
+      "type": "string"
+    },
+    "GoldBasisKind": {
+      "enum": [
+        "openalex_metadata",
+        "citation_path",
+        "public_paper_identity",
+        "verified_evidence"
+      ],
+      "title": "GoldBasisKind",
+      "type": "string"
+    },
+    "GraphPathStatus": {
+      "enum": [
+        "path_found",
+        "path_missing",
+        "path_invalid",
+        "not_applicable"
+      ],
+      "title": "GraphPathStatus",
+      "type": "string"
+    },
+    "M9B5Snapshot": {
+      "additionalProperties": false,
+      "properties": {
+        "algorithm_commit": {
+          "const": "37e00cfdafbd21612de9e9c60807ed0aeac28783",
+          "default": "37e00cfdafbd21612de9e9c60807ed0aeac28783",
+          "title": "Algorithm Commit",
+          "type": "string"
+        },
+        "algorithm_id": {
+          "const": "m8-b5-title-text-top3",
+          "default": "m8-b5-title-text-top3",
+          "title": "Algorithm Id",
+          "type": "string"
+        },
+        "candidate_openalex_ids": {
+          "items": {
+            "pattern": "^W[0-9]+$",
+            "type": "string"
+          },
+          "maxItems": 3,
+          "title": "Candidate Openalex Ids",
+          "type": "array"
+        },
+        "config_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Config Sha256",
+          "type": "string"
+        },
+        "corpus_id": {
+          "const": "openalex-rag-abstracts-2020-2025-v1",
+          "default": "openalex-rag-abstracts-2020-2025-v1",
+          "title": "Corpus Id",
+          "type": "string"
+        },
+        "corpus_manifest_sha256": {
+          "const": "168671c6f9f68ed2c8017e8d3d14396a455559a6a55628a7b0c40d32a80ea36c",
+          "default": "168671c6f9f68ed2c8017e8d3d14396a455559a6a55628a7b0c40d32a80ea36c",
+          "title": "Corpus Manifest Sha256",
+          "type": "string"
+        },
+        "corpus_version": {
+          "const": "formal-2026-08-26",
+          "default": "formal-2026-08-26",
+          "title": "Corpus Version",
+          "type": "string"
+        },
+        "document_count": {
+          "const": 198,
+          "default": 198,
+          "title": "Document Count",
+          "type": "integer"
+        },
+        "parquet_bundle_sha256": {
+          "const": "c837792525d387ff3257a3e7d0504a7ec73fc28e2f09399e96a339ef2a25617b",
+          "title": "Parquet Bundle Sha256",
+          "type": "string"
+        },
+        "parquet_read_only_pass": {
+          "const": true,
+          "default": true,
+          "title": "Parquet Read Only Pass",
+          "type": "boolean"
+        },
+        "question_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Question Sha256",
+          "type": "string"
+        },
+        "reason": {
+          "enum": [
+            "matched",
+            "no_catalog_match"
+          ],
+          "title": "Reason",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "snapshot_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Snapshot Sha256",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "succeeded",
+            "no_match"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "top_k": {
+          "const": 3,
+          "default": 3,
+          "title": "Top K",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "question_sha256",
+        "status",
+        "reason",
+        "candidate_openalex_ids",
+        "parquet_bundle_sha256",
+        "config_sha256",
+        "snapshot_sha256"
+      ],
+      "title": "M9B5Snapshot",
+      "type": "object"
+    },
+    "QueryStratum": {
+      "enum": [
+        "alias_bridge",
+        "relation_bridge",
+        "paper_neighbor",
+        "multi_concept",
+        "other"
+      ],
+      "title": "QueryStratum",
+      "type": "string"
+    },
+    "RootCause": {
+      "enum": [
+        "G1_ALIAS",
+        "G2_RELATION",
+        "G3_RANKING",
+        "G4_GRAPH_DATA",
+        "N1_CORPUS_GAP",
+        "N2_FULLTEXT_ONLY",
+        "N3_SOURCE_MISMATCH",
+        "N4_BOUNDARY_AMBIGUOUS"
+      ],
+      "title": "RootCause",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "b5_missed_ids": {
+      "items": {
+        "pattern": "^W[0-9]+$",
+        "type": "string"
+      },
+      "title": "B5 Missed Ids",
+      "type": "array"
+    },
+    "b5_snapshot": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/M9B5Snapshot"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "eligibility": {
+      "$ref": "#/$defs/Eligibility"
+    },
+    "eligibility_reason": {
+      "$ref": "#/$defs/EligibilityReason"
+    },
+    "gold_basis_kinds": {
+      "items": {
+        "$ref": "#/$defs/GoldBasisKind"
+      },
+      "title": "Gold Basis Kinds",
+      "type": "array"
+    },
+    "gold_candidate_ids": {
+      "items": {
+        "pattern": "^W[0-9]+$",
+        "type": "string"
+      },
+      "title": "Gold Candidate Ids",
+      "type": "array"
+    },
+    "gold_in_frozen_corpus_ids": {
+      "items": {
+        "pattern": "^W[0-9]+$",
+        "type": "string"
+      },
+      "title": "Gold In Frozen Corpus Ids",
+      "type": "array"
+    },
+    "graph_path_status": {
+      "$ref": "#/$defs/GraphPathStatus"
+    },
+    "question_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Question Sha256",
+      "type": "string"
+    },
+    "record_id": {
+      "title": "Record Id",
+      "type": "string"
+    },
+    "review_entry_sha256": {
+      "anyOf": [
+        {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Review Entry Sha256"
+    },
+    "review_revision": {
+      "minimum": 0,
+      "title": "Review Revision",
+      "type": "integer"
+    },
+    "review_status": {
+      "enum": [
+        "pending",
+        "confirmed",
+        "rejected",
+        "ambiguous"
+      ],
+      "title": "Review Status",
+      "type": "string"
+    },
+    "root_cause": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RootCause"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "sample_origin": {
+      "const": "real",
+      "default": "real",
+      "title": "Sample Origin",
+      "type": "string"
+    },
+    "sequence_id": {
+      "title": "Sequence Id",
+      "type": "integer"
+    },
+    "stratum": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/QueryStratum"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "record_id",
+    "sequence_id",
+    "question_sha256",
+    "eligibility",
+    "eligibility_reason",
+    "stratum",
+    "b5_snapshot",
+    "review_status",
+    "review_revision",
+    "review_entry_sha256",
+    "gold_candidate_ids",
+    "gold_in_frozen_corpus_ids",
+    "gold_basis_kinds",
+    "b5_missed_ids",
+    "graph_path_status",
+    "root_cause"
+  ],
+  "title": "M9P0PublicRecord",
+  "type": "object"
+}

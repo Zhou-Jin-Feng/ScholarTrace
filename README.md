@@ -2,7 +2,7 @@
 
 ScholarTrace 是一个面向计算机与人工智能技术调研的证据可追溯 Multi-Agent 学术研究工作台，服务学生、开发者和初级研究人员，使关键结论能够回溯到真实论文、页码或 Chunk。
 
-当前仓库已完成 **M0：范围与契约**、**M1：多源搜索**、**M2：DocuMind 证据闭环**、**M3：LangGraph Multi-Agent 编排**、**M4：引用网络与证据核验**、**M5：ScholarGraph 能力受限集成**和 **M6：工作台与交付装配**。M6 的 Research Task API、React 工作台、四种导出、B0-B4 证据矩阵、Compose、CI、本地 Demo、api-strong 结构化适配、12 题真实付费 B3/B4 盲审和三次 Basic 重复测试均已完成，阶段结论为 `PASS WITH NOTES`。B4 在 eligible 子集未取得质量增益且延迟更高，因此 ScholarGraph 继续默认关闭。
+当前仓库已完成 **M0：范围与契约**、**M1：多源搜索**、**M2：DocuMind 证据闭环**、**M3：LangGraph Multi-Agent 编排**、**M4：引用网络与证据核验**、**M5：ScholarGraph 能力受限集成**和 **M6：工作台与交付装配**。M6 的 Research Task API、React 工作台、四种导出、B0-B4 证据矩阵、Compose、CI、本地 Demo、api-strong 结构化适配、12 题真实付费 B3/B4 盲审和三次 Basic 重复测试均已完成，阶段结论为 `PASS WITH NOTES`。M7-G 与 M8-G 的独立 Gate A 均未观察到可泛化的候选增益，因此 ScholarGraph 继续默认关闭；M9-P0 的私有连续采集、人工复核、脱敏报告和冻结 B5 快照工具已就绪，真实样本仍为 `0/30`，当前决策为 `COLLECT_MORE`。
 
 ## 已冻结交付
 

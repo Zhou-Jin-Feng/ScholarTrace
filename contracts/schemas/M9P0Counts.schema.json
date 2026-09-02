@@ -1,0 +1,65 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "confirmed_b5_misses": {
+      "minimum": 0,
+      "title": "Confirmed B5 Misses",
+      "type": "integer"
+    },
+    "distinct_graph_root_causes": {
+      "maximum": 4,
+      "minimum": 0,
+      "title": "Distinct Graph Root Causes",
+      "type": "integer"
+    },
+    "eligible_real_observations": {
+      "maximum": 50,
+      "minimum": 0,
+      "title": "Eligible Real Observations",
+      "type": "integer"
+    },
+    "fixture_observations_excluded": {
+      "minimum": 0,
+      "title": "Fixture Observations Excluded",
+      "type": "integer"
+    },
+    "frozen_corpus_miss_opportunities": {
+      "minimum": 0,
+      "title": "Frozen Corpus Miss Opportunities",
+      "type": "integer"
+    },
+    "graph_fixable_misses": {
+      "minimum": 0,
+      "title": "Graph Fixable Misses",
+      "type": "integer"
+    },
+    "pending_eligible_reviews": {
+      "minimum": 0,
+      "title": "Pending Eligible Reviews",
+      "type": "integer"
+    },
+    "real_observations": {
+      "minimum": 0,
+      "title": "Real Observations",
+      "type": "integer"
+    },
+    "reviewed_eligible_observations": {
+      "minimum": 0,
+      "title": "Reviewed Eligible Observations",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "real_observations",
+    "fixture_observations_excluded",
+    "eligible_real_observations",
+    "reviewed_eligible_observations",
+    "pending_eligible_reviews",
+    "confirmed_b5_misses",
+    "frozen_corpus_miss_opportunities",
+    "graph_fixable_misses",
+    "distinct_graph_root_causes"
+  ],
+  "title": "M9P0Counts",
+  "type": "object"
+}

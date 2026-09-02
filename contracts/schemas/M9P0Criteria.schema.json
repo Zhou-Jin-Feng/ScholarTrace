@@ -1,0 +1,55 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "all_eligible_reviewed": {
+      "title": "All Eligible Reviewed",
+      "type": "boolean"
+    },
+    "all_included_records_reproducible": {
+      "title": "All Included Records Reproducible",
+      "type": "boolean"
+    },
+    "capture_chain_valid": {
+      "title": "Capture Chain Valid",
+      "type": "boolean"
+    },
+    "fixtures_excluded_from_gate": {
+      "const": true,
+      "default": true,
+      "title": "Fixtures Excluded From Gate",
+      "type": "boolean"
+    },
+    "initial_window_complete": {
+      "title": "Initial Window Complete",
+      "type": "boolean"
+    },
+    "minimum_confirmed_misses": {
+      "title": "Minimum Confirmed Misses",
+      "type": "boolean"
+    },
+    "minimum_corpus_opportunities": {
+      "title": "Minimum Corpus Opportunities",
+      "type": "boolean"
+    },
+    "minimum_graph_fixable_misses": {
+      "title": "Minimum Graph Fixable Misses",
+      "type": "boolean"
+    },
+    "minimum_graph_root_causes": {
+      "title": "Minimum Graph Root Causes",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "initial_window_complete",
+    "all_eligible_reviewed",
+    "minimum_confirmed_misses",
+    "minimum_corpus_opportunities",
+    "minimum_graph_fixable_misses",
+    "minimum_graph_root_causes",
+    "capture_chain_valid",
+    "all_included_records_reproducible"
+  ],
+  "title": "M9P0Criteria",
+  "type": "object"
+}

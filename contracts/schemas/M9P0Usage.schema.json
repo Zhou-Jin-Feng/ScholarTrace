@@ -1,0 +1,37 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "documind_calls": {
+      "const": 0,
+      "default": 0,
+      "title": "Documind Calls",
+      "type": "integer"
+    },
+    "model_calls": {
+      "const": 0,
+      "default": 0,
+      "title": "Model Calls",
+      "type": "integer"
+    },
+    "network_calls": {
+      "const": 0,
+      "default": 0,
+      "title": "Network Calls",
+      "type": "integer"
+    },
+    "paid_calls": {
+      "const": 0,
+      "default": 0,
+      "title": "Paid Calls",
+      "type": "integer"
+    },
+    "reference_cost_cny": {
+      "const": 0,
+      "default": 0,
+      "title": "Reference Cost Cny",
+      "type": "integer"
+    }
+  },
+  "title": "M9P0Usage",
+  "type": "object"
+}
