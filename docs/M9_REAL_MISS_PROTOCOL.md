@@ -1,8 +1,8 @@
 # M9 真实漏检审计与定向图修复协议
 
-> 状态：P0 真实采集已完成（`30/30` 已全部审核，10 条 G3_RANKING、1 条 G1_ALIAS、
-> 19 条 ambiguous，另 9 条按边界排除，`GO_IMPLEMENT`；P1 尚未实施）
-> 基线：ScholarTrace P0 基础设施 `0ec8d29`；冻结 B5 / ScholarGraph `37e00cf`
+> 状态：P0 `GO_IMPLEMENT`；P1 单一 G3 排序修复已在 ScholarGraph `04f5327` 冻结；
+> P2 尚未实施，ScholarGraph 仍默认关闭
+> 基线：ScholarTrace P0 冻结 `125fa1c`；冻结 B5 `37e00cf`；P1 B7 `04f5327`
 > 前置结论：M6、M7-G、M8-G 结果保持冻结，ScholarGraph 继续默认关闭
 
 ## 1. 目标
@@ -190,15 +190,23 @@ P3 调用数和人民币上限按 Gate A 实际补回候选数计算，运行前
    按边界排除，决策为 `GO_IMPLEMENT`；
 4. P0 根因分布和最终决策：已完成；11 条语料内图侧漏检覆盖两类根因，主导根因为
    `G3_RANKING`；
-5. 条件性 ScholarGraph 修复、测试和算法冻结：未授权；
+5. 条件性 ScholarGraph 修复、测试和算法冻结：已完成；独立 B7 在 P0 已知 G3 开发集上
+   由 B6 1/10 提高到 4/10，算法清单 SHA-256 为
+   `e673f2d7f405f1fec2741c4e36490fc47f7b4d35cb838853519ab1fb2df5ae58`；
 6. 前瞻 Gate A、Evidence 与最终质量报告：未授权。
 
-当前阶段结论为 **P0 PASS WITH NOTES**。工具、隐私边界和冻结 B5 快照已通过自动化与实际
+P0 阶段结论为 **PASS WITH NOTES**。工具、隐私边界和冻结 B5 快照已通过自动化与实际
 198 篇索引只读 smoke；13 个真实任务产生的 30 条 eligible 观察已全部审核，确认 11 条可计入
 门禁的图侧漏检（10 条 `G3_RANKING`、1 条 `G1_ALIAS`），另有 19 条 ambiguous。初始窗口、
 冻结语料机会、图侧可修复漏检、confirmed miss、两类图侧根因、账本链和快照复现条件全部
 满足，因此 P0 为 `GO_IMPLEMENT`。该结论只允许在项目所有者再次确认后提出一个以
 `G3_RANKING` 为主的最小 P1 treatment；它不是正增益结论，也不启用 ScholarGraph。
+
+P1 阶段结论为 **PASS WITH NOTES**。ScholarGraph `04f5327` 保留 B5 top-3、198 篇语料、
+一跳和每题最多 1 个 GraphHint，只用查询相关性 + GraphPath 特异性重排最终候选。锁定容器
+219 tests、改动文件 Ruff、旧 B6 稳定签名、正式六表只读性和脱敏边界均通过。P0 已知开发
+补回率为 0.40，低于 P2 的至少 0.50 门槛且参与过算法设计；P1 只完成算法冻结，不能据此
+宣称正增益。详细闸门见 `docs/M9_P1_FREEZE_REVIEW.md`。
 
 ## 规划基线
 

@@ -2,7 +2,7 @@
 
 ScholarTrace 是一个面向计算机与人工智能技术调研的证据可追溯 Multi-Agent 学术研究工作台，服务学生、开发者和初级研究人员，使关键结论能够回溯到真实论文、页码或 Chunk。
 
-当前仓库已完成 **M0：范围与契约**、**M1：多源搜索**、**M2：DocuMind 证据闭环**、**M3：LangGraph Multi-Agent 编排**、**M4：引用网络与证据核验**、**M5：ScholarGraph 能力受限集成**和 **M6：工作台与交付装配**。M6 的 Research Task API、React 工作台、四种导出、B0-B4 证据矩阵、Compose、CI、本地 Demo、api-strong 结构化适配、12 题真实付费 B3/B4 盲审和三次 Basic 重复测试均已完成，阶段结论为 `PASS WITH NOTES`。M7-G 与 M8-G 的独立 Gate A 均未观察到可泛化的候选增益，因此 ScholarGraph 继续默认关闭；M9-P0 已用私有连续账本完成 13 个真实任务的 39 条观察，其中 `30/30` 条 graph-eligible 子问题已全部审核：11 条确认为图侧可修复漏检（10 条 `G3_RANKING`、1 条 `G1_ALIAS`）、19 条为 ambiguous；另 9 条按边界排除。P0 决策为 `GO_IMPLEMENT`，只表示证据允许提出一个最小 P1 treatment，不表示 ScholarGraph 已取得正增益或已获准接入；P1 尚未实施。
+当前仓库已完成 **M0：范围与契约**、**M1：多源搜索**、**M2：DocuMind 证据闭环**、**M3：LangGraph Multi-Agent 编排**、**M4：引用网络与证据核验**、**M5：ScholarGraph 能力受限集成**和 **M6：工作台与交付装配**。M6 的 Research Task API、React 工作台、四种导出、B0-B4 证据矩阵、Compose、CI、本地 Demo、api-strong 结构化适配、12 题真实付费 B3/B4 盲审和三次 Basic 重复测试均已完成，阶段结论为 `PASS WITH NOTES`。M7-G 与 M8-G 的独立 Gate A 均未观察到可泛化的候选增益，因此 ScholarGraph 继续默认关闭；M9-P0 已完成 13 个真实任务的 39 条观察及 `30/30` eligible 审核，确认 10 条 `G3_RANKING`、1 条 `G1_ALIAS` 和 19 条 ambiguous，决策为 `GO_IMPLEMENT`。M9-P1 已在 ScholarGraph `04f5327` 冻结独立 B7 重排，P0 已知 G3 开发回放由 B6 1/10 提高到 B7 4/10；该样本参与过开发且补回率仅 0.40，不是前瞻正增益。P2 尚未开始，ScholarGraph 仍未获准接入主流程。
 
 ## 已冻结交付
 
