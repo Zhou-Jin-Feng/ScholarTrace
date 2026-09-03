@@ -1,7 +1,8 @@
 # M9 真实漏检审计与定向图修复协议
 
-> 状态：P0 采集基础设施已完成，真实采集进行中（`0/30`，`COLLECT_MORE`）
-> 基线：ScholarTrace `4ce47e6`；ScholarGraph `37e00cf`
+> 状态：P0 真实采集已完成（`30/30` 已全部审核，10 条 G3_RANKING、1 条 G1_ALIAS、
+> 19 条 ambiguous，另 9 条按边界排除，`GO_IMPLEMENT`；P1 尚未实施）
+> 基线：ScholarTrace P0 基础设施 `0ec8d29`；冻结 B5 / ScholarGraph `37e00cf`
 > 前置结论：M6、M7-G、M8-G 结果保持冻结，ScholarGraph 继续默认关闭
 
 ## 1. 目标
@@ -56,15 +57,18 @@ M9 不重定义或覆盖 M8 的 `B6`。
 | `eligibility` | 语料主题、年份、语言和证据层级边界 |
 | `b5_config_hash` | 冻结 B5 算法、top-k 和语料身份 |
 | `b5_candidate_ids` | B5 返回的 OpenAlex ID |
-| `gold_candidate_ids` | 经人工确认的相关论文 ID |
+| `gold_candidate_ids` | 经所有者确认或按已记录的所有者代理审核授权确认的相关论文 ID |
 | `gold_basis` | OpenAlex、引用链、公开论文身份或已验证 Evidence |
 | `in_frozen_corpus` | gold 是否存在于 198 篇冻结语料 |
 | `graph_path_status` | 是否存在有效实体/关系/文档回链 |
 | `root_cause` | 使用下述互斥主分类，可附一个次分类 |
 | `review_status` | `pending / confirmed / rejected / ambiguous` |
 
-Gold 不能只由生成模型自评产生。至少需要项目所有者人工确认论文相关性、语料身份和主要
-根因；有歧义的记录保留在审计中，但不进入修复机会分母。
+默认情况下，Gold 不能只由生成模型自评产生，至少需要项目所有者人工确认论文相关性、
+语料身份和主要根因。项目所有者可明确授权代理审核按冻结标准处理后续记录；此时必须在
+私有 review notes 中标明授权，只依据冻结权威元数据生成 Gold，确认 Gold 前不得查看
+GraphHint 或 GraphPath，并保留 P0 汇总进入 P1 前的所有者最终批准。代理审核不是独立盲审，
+不得表述成额外人工一致性证据。有歧义的记录保留在审计中，但不进入修复机会分母。
 
 ### 3.3 根因分类
 
@@ -83,7 +87,7 @@ Gold 不能只由生成模型自评产生。至少需要项目所有者人工确
 
 在最多 50 个连续 eligible 子问题内，同时满足以下条件才得到 `GO_IMPLEMENT`：
 
-- 至少 8 个经人工确认的 B5 漏检；
+- 至少 8 个按 3.2 节确认的 B5 漏检；
 - 至少 6 个 gold 位于冻结语料内的 B5 漏检机会；
 - 至少 4 个属于 `G1-G4`，且覆盖至少两类图侧根因；
 - 所有纳入记录均能复现 B5 配置、候选和 gold 身份；
@@ -181,14 +185,20 @@ P3 调用数和人民币上限按 Gate A 实际补回候选数计算，运行前
 
 1. `docs/M9_REAL_MISS_PROTOCOL.md`：本协议，已完成；
 2. 私有连续采样账本、人工审核修订链和公开脱敏 Schema：工具已完成；
-3. `evaluation/reports/m9_p0_status.json`：已生成真实空窗口，当前 `0/30`、`COLLECT_MORE`；
-4. P0 根因分布和最终决策：等待 30-50 个连续真实 eligible 子问题；
+3. `evaluation/reports/m9_p0_status.json`：13 个真实任务共采集 39 条连续观察，`30/30`
+   eligible 已全部审核；已确认 10 条 `G3_RANKING`、1 条 `G1_ALIAS`、19 条 ambiguous，另 9 条
+   按边界排除，决策为 `GO_IMPLEMENT`；
+4. P0 根因分布和最终决策：已完成；11 条语料内图侧漏检覆盖两类根因，主导根因为
+   `G3_RANKING`；
 5. 条件性 ScholarGraph 修复、测试和算法冻结：未授权；
 6. 前瞻 Gate A、Evidence 与最终质量报告：未授权。
 
-当前阶段结论为 **P0 基础设施 PASS WITH NOTES**。工具、隐私边界和冻结 B5 快照已通过
-自动化与实际 198 篇索引只读 smoke，但尚无真实产品证据。下一步只执行连续真实采集与
-人工审核；P0 未得到 `GO_IMPLEMENT` 前不得修改 ScholarGraph treatment。
+当前阶段结论为 **P0 PASS WITH NOTES**。工具、隐私边界和冻结 B5 快照已通过自动化与实际
+198 篇索引只读 smoke；13 个真实任务产生的 30 条 eligible 观察已全部审核，确认 11 条可计入
+门禁的图侧漏检（10 条 `G3_RANKING`、1 条 `G1_ALIAS`），另有 19 条 ambiguous。初始窗口、
+冻结语料机会、图侧可修复漏检、confirmed miss、两类图侧根因、账本链和快照复现条件全部
+满足，因此 P0 为 `GO_IMPLEMENT`。该结论只允许在项目所有者再次确认后提出一个以
+`G3_RANKING` 为主的最小 P1 treatment；它不是正增益结论，也不启用 ScholarGraph。
 
 ## 规划基线
 

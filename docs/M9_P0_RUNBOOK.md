@@ -1,7 +1,8 @@
 # M9-P0 真实漏检采集手册
 
-> 状态：采集工具已就绪；真实 graph-eligible 样本 `0/30`
-> 当前决策：`COLLECT_MORE`
+> 状态：真实 graph-eligible 样本 `30/30`，30 条已审，10 条 G3_RANKING、
+> 1 条 G1_ALIAS、19 条 ambiguous；另有 9 条真实子问题按边界排除
+> 当前决策：`GO_IMPLEMENT`；ScholarGraph 仍默认关闭，P1 尚未实施
 
 ## 1. 使用边界
 
@@ -25,12 +26,15 @@ Consumer、不调用 DocuMind 或模型，也不产生付费请求。`sample_ori
 }
 ```
 
-从 ScholarGraph 项目根使用锁定镜像读取正式索引；入口必须使用 Python 模块形式：
+从 ScholarGraph 项目根使用锁定镜像读取正式索引；入口必须使用 Python 模块形式。Git
+worktree 不共享被忽略的 `workspace/output`，因此先显式解析实际保存冻结六表的数据目录：
 
 ```powershell
+$formalOutput = (Resolve-Path '<ScholarGraph-data-root>/corpora/formal/workspace/output').Path
+
 docker run --rm `
   --volume "${PWD}:/project" `
-  --volume "${PWD}/corpora/formal/workspace/output:/formal-output:ro" `
+  --volume "${formalOutput}:/formal-output:ro" `
   --workdir /project `
   graphrag-project:3.1.2 `
   python -m src.m9_b5_snapshot `
@@ -40,7 +44,8 @@ docker run --rm `
 ```
 
 脚本只接受 M8 冻结提交 `37e00cf`、198 篇语料、固定六表 hash 和 B5 top-3；运行前后
-Parquet 任一变化都会失败。生成的快照不含问题原文。将该快照复制到 ScholarTrace 的
+Parquet 任一变化都会失败；路径错误或空目录也会因缺少六表而失败，不能用其他实验索引
+代替。生成的快照不含问题原文。将该快照复制到 ScholarTrace 的
 `agent/m9-p0/snapshots/` 后再执行采集；不要把原始问题跨仓公开复制。
 
 ## 3. 追加观察
@@ -72,9 +77,12 @@ uv run python scripts/manage_m9_p0.py capture `
 
 ## 4. 人工审核
 
-人工确认 gold 论文身份、是否位于冻结语料以及主根因。Gold 不能只依据生成模型自评；
-`authority_sha256` 是所用公开权威记录的规范化内容哈希，不保存该内容本身。首次审核的
-`expected_revision` 为 0，修订时使用当前 revision，旧审核不会被覆盖。
+默认由项目所有者确认 gold 论文身份、是否位于冻结语料以及主根因。所有者明确授权代理
+审核后，可按冻结标题/摘要和既定标准采用建议，但必须在私有 notes 记录授权，且 P0 汇总
+进入 P1 前仍需所有者最终批准；这类记录不得描述为独立盲审。Gold 确认前不得查看
+GraphHint 或 GraphPath。`authority_sha256` 是所用公开权威记录的规范化内容哈希，不保存
+该内容本身。首次审核的 `expected_revision` 为 0，修订时使用当前 revision，旧审核不会
+被覆盖。
 
 ```json
 {

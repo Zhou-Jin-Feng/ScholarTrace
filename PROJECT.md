@@ -5,7 +5,7 @@
 - 产品名：ScholarTrace
 - 英文副标题：Evidence-Grounded Research Agent
 - 上游能力：`DocuMind` 原文 RAG、`ScholarGraph` GraphRAG 语义检索
-- 当前阶段：M0-M6 已完成工程复审；M7-G/M8-G Gate A 均为 `NO_GO / keep_disabled`；M9-P0 采集基础设施已完成，真实样本 `0/30`，当前为 `COLLECT_MORE`
+- 当前阶段：M0-M6 已完成工程复审；M7-G/M8-G Gate A 均为 `NO_GO / keep_disabled`；M9-P0 已完成 13 个真实任务的连续采集，39 条观察中 `30/30` 条 eligible 已全部审核，其中 11 条确认为图侧可修复漏检（10 条 `G3_RANKING`、1 条 `G1_ALIAS`）、19 条 ambiguous，另 9 条按边界排除，当前为 `GO_IMPLEMENT`；ScholarGraph 仍默认关闭，P1 treatment 尚未实施
 
 ## 目标交付
 
