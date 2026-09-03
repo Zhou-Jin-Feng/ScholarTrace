@@ -1,0 +1,113 @@
+{
+  "schema_version": "1.0",
+  "phase": "M9-P2",
+  "purpose": "prospective-gate-a-preregistration",
+  "sampling_not_before": "2026-09-03T15:38:12+08:00",
+  "sample_origin": "consecutive-real-scholartrace-subproblems",
+  "initial_eligible_target": 30,
+  "maximum_eligible_target": 50,
+  "minimum_b5_miss_opportunities": 6,
+  "minimum_b7_recovered_opportunities": 3,
+  "minimum_b7_recovery_rate": 0.5,
+  "minimum_recovered_strata": 2,
+  "maximum_precision_drop": 0.1,
+  "query_strata": [
+    "alias_bridge",
+    "relation_bridge",
+    "paper_neighbor",
+    "multi_concept",
+    "other"
+  ],
+  "metric_definitions": {
+    "candidate_recall": "micro hits divided by frozen-corpus gold IDs across confirmed records",
+    "candidate_precision": "micro hits divided by returned candidates across confirmed records",
+    "question_coverage": "share of confirmed records whose frozen-corpus gold IDs are all returned",
+    "opportunity": "confirmed record with at least one frozen-corpus gold ID missed by B5",
+    "recovery": "opportunity record where B7 returns at least one B5-missed gold ID"
+  },
+  "blinding": {
+    "gold_before_conditions": true,
+    "condition_snapshot_requires_gold_receipt": true,
+    "gold_revision_forbidden_after_condition_reveal": true
+  },
+  "stopping_rules": [
+    "Do not reveal B5 or B7 until all Gold records in the 30-item initial batch are frozen.",
+    "At 30 eligible records, stop with GO or NO_GO when there are at least 6 B5 miss opportunities.",
+    "Only when opportunities are fewer than 6 may collection extend once to a blind-frozen batch of 50.",
+    "At 50 eligible records with fewer than 6 opportunities, stop as INCONCLUSIVE.",
+    "Never reuse excluded questions or select records based on B5 or B7 outcomes."
+  ],
+  "frozen_inputs": {
+    "b5_commit": "37e00cfdafbd21612de9e9c60807ed0aeac28783",
+    "b7_commit": "04f532704289e8188af1caae08fd0c1bfa2ae7e7",
+    "b7_algorithm_manifest_sha256": "e673f2d7f405f1fec2741c4e36490fc47f7b4d35cb838853519ab1fb2df5ae58",
+    "corpus_id": "openalex-rag-abstracts-2020-2025-v1",
+    "document_count": 198,
+    "parquet_bundle_sha256": "c837792525d387ff3257a3e7d0504a7ec73fc28e2f09399e96a339ef2a25617b"
+  },
+  "exclusion_sources": {
+    "m9_p0_status_sha256": "14e74a872356cfe697c566e5cc5ac0029e809ce88d8d6578fbf3b4abc3516e2e",
+    "m8_holdout_questions_sha256": "c3b1d7a2e86275f098946bacc5fac263a051d852869bf02d6a11b6219ec36f97"
+  },
+  "excluded_question_sha256": [
+    "03518baff324e8d775bd366b2a1af8b1447dc11266b3bf5396c52b721cc99445",
+    "041894eab56555954e2461a9a42f8835f1ec18fbcc118652de422a724b46e19e",
+    "0b525c4fa3edaec9be57a910276319d6bd2b6e10b1cb4853b0571a33986b5d67",
+    "1084c882929b3aaa7e470d4e4c84fee9853d3cb9275fc6451db31e8ef887feb3",
+    "226586c689c7eb95582cde3911bb4178a2b1c779b7302609ed76c148ba7ccb8f",
+    "33db1791a1f9ae4ee65c917cf3b7530d11db8d8f5b06cdd752177e2c7efdfbdc",
+    "3420bcfa58064d9d8ebad8aafdb8468f315c6a69b7653454ccd709c33fd3aeaa",
+    "39a9f9e4821108be9108e18074445d83beac1b271fa4ba894f2fcb1ae62d436b",
+    "3a4df814aeb5b7a22dfd7f50035d924704be5ed45ed0f3c1f9485a994777b464",
+    "46fa5a3e8cb4249c8be0d1e74e05ecaf0cc1d8f0fefc5d513421be2944844c97",
+    "48fff5a47d03b289feda4ea989950e58121f9e1c600583c080ea2684388a06e9",
+    "51d9acd78d985e76234a2bc6e81caadfec606275c38539e22a75a7e8facfda18",
+    "5814d254cebea3c007a14180cd8f9b77b8c571325404c575a7c3a1bf514b21e7",
+    "58c42e18171022b6bca2286a36d8fe7850173ce12b0f1cdc6151e78b72775d2a",
+    "6a82cc8327125d6b881187634f6f2b65604882cc1749b0ea4484aa3d99e74d06",
+    "6b30ecc96ef4293186d83baca32ffee6d99824f7f059791e9524a2c9a71d73b6",
+    "6be9c6776e13a1e55cff5decc7ddcd429a8a01442e93d7baeac4f9467f5e56ac",
+    "76dbaf86897e03528e849e228a5a239af7e4eb97302789d722c7cbc2ac9f5d91",
+    "85ec2fc527cb5f408708e18db77e5258ffac8ea0f6f9c406c41f7e9d367593bf",
+    "87d603c27b0ad69738ffa7f5084932023a39a5554300a8dfbeeb285d815869ce",
+    "8aeb2b143e39af3ae050f955b808bf1339041d3558bbdebed4351dbfe8cd9190",
+    "8e66ed9ac7d5f197ff03eadedb8588e235009ffb63f0d96be8edb52544bd4b91",
+    "9ed7e4c6e28c078bef18995e9d92ec5da01bed6e396b89aff4fa88664e40cdd2",
+    "9f016184a68cf8636b31f251434cdc12db5d1a7c5b96a553068bb3f6a2a7d855",
+    "a1e858f74e61931aa406531e8d118f32fa473b9d5dfaba0622b4144ee0070b87",
+    "a739e5f15ef14722e5f71ccb1aabe4b51a76e1407bee7c644db4e9a509083525",
+    "ab298d4ae17ab4ef092e531f41ff8b19f6ef6b51f9050afd61d9643c24831019",
+    "b0afa884cb8c9333e2c669a4478bde1236bc32fe67b99b39e1d6e09c4d220c11",
+    "c10435bf17ee392f060979accd76d83aac4bd07063f14174d9c90dbc5534aadc",
+    "c25dbd5aae6862bf0b2ac38627675479fe5851bd5221e59ae7c6ae4c014f7cf6",
+    "ca9d27961764664b2258b7d529cdbcede92de6dedc6bdbf80efbef6df8e1d8f9",
+    "d109508c8f726a54b42a5fc00cb7d856c115ddfde53c4b95cbc32decf623cbe8",
+    "d353adb8f5d21e753bb77a7403804a81a94c280059c82578894e543842b15c18",
+    "d88ad592fc036d15e87b4f1d3fd37c3ae40934a8522faa40486bfdc07cf0e041",
+    "d94466c4728dfc2e7263b682c62ed5859482b0e02881c6c37d1d5c413f2be2c6",
+    "db7fa53e9344b28b5b288055d1fd3a2895e6a1089b975181a4906a2c51c21e38",
+    "e152059f3ae3a97389245e9c2a85d7ebf8b8e90c7c36fc2c4093ce1d549c2e32",
+    "e3f4d36885d31c8a54194a418673d1c7ce19ba80071d690a413b900b86b9ebdc",
+    "e3fb480f160ea6eaf4c23de792bc4f3896c9dc17f67e529472f6edbf142a50a5",
+    "e5e60b58eea87eb6e5e31546f6822a46bfa7c7ffc34855e7fe8a84e31c9605cf",
+    "eab810fcc774a092a61426518a6c1ebd6afef3db1946741f3a2d4cf9e4d76ae2",
+    "ec7a85e0004f527edf5079acbb3e3e3c55d625d80ca6162719815e7eeb944683",
+    "edcfd3b0311bf93845ce7a6e18ce867a5fd5387239471e320773f10bb1f02368",
+    "f4272321e1605623e826fa7c2c76b997eedbd90e98aefe432aa3878e3929c136",
+    "f8f10ac468f4f2c9af59c5989378247c4b8cb973b0fb09bc66b264b8c9050918",
+    "fc9930f649784801f42d77f47d387cc65c934dea5ee1e89376ea860c66287848",
+    "fec8027305b0e570f57f7a04057ba3482dc6c0399d3afaad71aa3f345c96ac94"
+  ],
+  "blinding": {
+    "gold_before_conditions": true,
+    "condition_snapshot_requires_gold_receipt": true,
+    "gold_revision_forbidden_after_condition_reveal": true
+  },
+  "stopping_rules": [
+    "Do not reuse M9-P0 or M8 holdout questions.",
+    "At 30 complete eligible records, stop if there are at least 6 B5 miss opportunities.",
+    "Only when fewer than 6 opportunities exist at 30 may collection continue consecutively, up to 50.",
+    "Never select or discard a record based on B7 success.",
+    "Any Gate A1 or Gate A2 failure keeps ScholarGraph disabled."
+  ]
+}
