@@ -17,6 +17,17 @@ from scholartrace.evidence.client import (
     EvidenceScopeError,
     RetrievalResult,
 )
+from scholartrace.evidence.live import (
+    DocumentCleanupError,
+    FullTextAcquisitionError,
+    PdfAcquisition,
+    acquire_pdf,
+    cleanup_documents,
+    download_pdf,
+    ingest_papers,
+    sha256_file,
+    validate_pdf,
+)
 from scholartrace.evidence.models import (
     DOCUMIND_ERROR_CODES,
     EVIDENCE_CONTRACT_MODELS,
@@ -68,5 +79,14 @@ __all__ = [
     "RetrievalChunk",
     "RetrievalResult",
     "build_evidence_report",
+    "DocumentCleanupError",
+    "FullTextAcquisitionError",
+    "PdfAcquisition",
+    "acquire_pdf",
+    "cleanup_documents",
+    "download_pdf",
+    "ingest_papers",
     "persist_m2_artifacts",
+    "sha256_file",
+    "validate_pdf",
 ]

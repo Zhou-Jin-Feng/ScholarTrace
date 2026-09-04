@@ -1,0 +1,113 @@
+{
+  "schema_version": "1.0",
+  "passed": true,
+  "runtime": {
+    "processes": 1,
+    "workers": 1,
+    "queue_capacity": 4,
+    "profile": "deterministic_delivery_demo"
+  },
+  "profiles": [
+    {
+      "concurrency": 1,
+      "task_count": 12,
+      "initial_accepted": 12,
+      "initial_backpressure_429": 0,
+      "retry_attempts": 0,
+      "final_completed": 12,
+      "final_failed": 0,
+      "terminal_sse_replay_count": 12,
+      "approval_latency_ms": {
+        "mean": 17.926,
+        "p50": 16.193,
+        "p95": 16.975,
+        "max": 44.571
+      },
+      "queue_after_run": {
+        "accepting": true,
+        "max_workers": 1,
+        "max_queue_size": 4,
+        "queued": 0,
+        "active": 0,
+        "submitted": 0
+      }
+    },
+    {
+      "concurrency": 2,
+      "task_count": 12,
+      "initial_accepted": 8,
+      "initial_backpressure_429": 4,
+      "retry_attempts": 4,
+      "final_completed": 12,
+      "final_failed": 0,
+      "terminal_sse_replay_count": 12,
+      "approval_latency_ms": {
+        "mean": 15.61,
+        "p50": 16.284,
+        "p95": 20.519,
+        "max": 25.687
+      },
+      "queue_after_run": {
+        "accepting": true,
+        "max_workers": 1,
+        "max_queue_size": 4,
+        "queued": 0,
+        "active": 0,
+        "submitted": 0
+      }
+    },
+    {
+      "concurrency": 4,
+      "task_count": 12,
+      "initial_accepted": 6,
+      "initial_backpressure_429": 6,
+      "retry_attempts": 7,
+      "final_completed": 12,
+      "final_failed": 0,
+      "terminal_sse_replay_count": 12,
+      "approval_latency_ms": {
+        "mean": 18.189,
+        "p50": 19.384,
+        "p95": 22.604,
+        "max": 22.968
+      },
+      "queue_after_run": {
+        "accepting": true,
+        "max_workers": 1,
+        "max_queue_size": 4,
+        "queued": 0,
+        "active": 0,
+        "submitted": 0
+      }
+    },
+    {
+      "concurrency": 8,
+      "task_count": 12,
+      "initial_accepted": 5,
+      "initial_backpressure_429": 7,
+      "retry_attempts": 8,
+      "final_completed": 12,
+      "final_failed": 0,
+      "terminal_sse_replay_count": 12,
+      "approval_latency_ms": {
+        "mean": 26.185,
+        "p50": 27.591,
+        "p95": 35.506,
+        "max": 37.117
+      },
+      "queue_after_run": {
+        "accepting": true,
+        "max_workers": 1,
+        "max_queue_size": 4,
+        "queued": 0,
+        "active": 0,
+        "submitted": 0
+      }
+    }
+  ],
+  "limitations": [
+    "In-process synthetic control-plane load; not a model, PDF acquisition, or GPU benchmark.",
+    "Backpressure is expected at burst sizes above the configured local queue capacity.",
+    "No external API, DocuMind, ScholarGraph, Ollama, or paid model call was made."
+  ]
+}

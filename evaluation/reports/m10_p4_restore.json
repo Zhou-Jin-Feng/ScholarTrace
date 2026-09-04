@@ -1,0 +1,74 @@
+{
+  "backup": {
+    "archive_sha256": "a5eb70a97d032f5aa64e39f7bb4f9a80c1d54c713cb475b7393b601564bea1d4",
+    "backup_id": "backup:20260904T085444Z:24a56a648ba6",
+    "database_count": 2,
+    "excluded_counts": {
+      "cache_or_transient": 0,
+      "raw_document": 0,
+      "secret": 0,
+      "sqlite_sidecar": 0,
+      "unsupported_file": 0
+    },
+    "manifest_sha256": "144afe783dbc69f608166bf557cc3d6ad351375702a947284afc2955c4ebac42",
+    "schema_version": "scholartrace-data-backup/1.0",
+    "total_bytes": 81920
+  },
+  "checks": {
+    "archive_and_manifest_hashes_verified": true,
+    "artifact_content_hashes_verified": true,
+    "isolated_restore_target": true,
+    "logical_counts_and_hashes_match": true,
+    "sqlite_integrity_and_table_counts_verified": true
+  },
+  "notes": [
+    "The source is the ignored local ScholarTrace delivery data directory.",
+    "Reports are stored as hashed artifact BLOBs in tasks.sqlite.",
+    "Raw PDFs, secrets, caches, and SQLite sidecars are excluded by policy.",
+    "DocuMind registry, Milvus vectors, and Ollama models require separate upstream recovery."
+  ],
+  "outcome": "pass",
+  "restore": {
+    "archive_sha256": "a5eb70a97d032f5aa64e39f7bb4f9a80c1d54c713cb475b7393b601564bea1d4",
+    "backup_id": "backup:20260904T085444Z:24a56a648ba6",
+    "database_count": 2,
+    "manifest_sha256": "144afe783dbc69f608166bf557cc3d6ad351375702a947284afc2955c4ebac42",
+    "restored_files": [
+      {
+        "relative_path": "runtime.sqlite",
+        "sha256": "35c988f1032267608b5f5f1a3e566ab6d5c4d4b5ca50bf85d9be4ded3a12b2b1",
+        "size_bytes": 24576,
+        "tables": {
+          "budget_effects": 0,
+          "events": 18
+        }
+      },
+      {
+        "relative_path": "tasks.sqlite",
+        "sha256": "e0ebf7a5cd0ed00cd07485a8c4e3fe67c73a9e1199528cd3a008326657d563c6",
+        "size_bytes": 57344,
+        "tables": {
+          "artifacts": 8,
+          "idempotency_keys": 2,
+          "tasks": 2
+        }
+      }
+    ],
+    "restored_tables": {
+      "runtime.sqlite": {
+        "budget_effects": 0,
+        "events": 18
+      },
+      "tasks.sqlite": {
+        "artifacts": 8,
+        "idempotency_keys": 2,
+        "tasks": 2
+      }
+    },
+    "schema_version": "scholartrace-data-backup/1.0",
+    "total_bytes": 81920,
+    "verified": true
+  },
+  "schema_version": "scholartrace-m10-p4-restore-drill/1.0",
+  "source_layout": "artifacts/m6-delivery"
+}

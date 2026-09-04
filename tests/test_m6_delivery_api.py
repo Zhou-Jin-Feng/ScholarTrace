@@ -75,6 +75,13 @@ def test_m6_success_task_approval_events_and_exports(tmp_path: Path) -> None:
             )
             assert replay.status_code == 200
             assert first_event_id not in replay.text
+            follow = await client.get(
+                f"/api/v1/research/tasks/{task_id}/events?follow=true",
+                headers={"Last-Event-ID": first_event_id},
+            )
+            assert follow.status_code == 200
+            assert "event: exports_ready" in follow.text
+            assert 'event: stream_end\ndata: {"reason":"terminal"}' in follow.text
 
     asyncio.run(scenario())
 
@@ -166,6 +173,12 @@ def test_m6_api_contracts_idempotency_conflict_and_configured_storage(
                 json={"question": "x", "unexpected": True},
             )
             assert invalid.status_code == 422
+
+            missing_events = await client.get(
+                "/api/v1/research/tasks/task:m6:missing/events?follow=true"
+            )
+            assert missing_events.status_code == 404
+            assert missing_events.json()["detail"] == "task not found"
 
     try:
         assert app.state.m6_service.store.path == configured_data_dir / "tasks.sqlite"

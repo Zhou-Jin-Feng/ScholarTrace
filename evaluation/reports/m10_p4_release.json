@@ -1,0 +1,20 @@
+{
+  "application_version": "0.5.0",
+  "archive_sha256": "536ef347c45d73275d77d4fadeed2f00a0d0977f6c47c22c5440d36862605a50",
+  "checks": {
+    "byte_reproducible_two_builds": true,
+    "credentials_excluded": true,
+    "dependency_locks_included": true,
+    "runtime_data_excluded": true
+  },
+  "file_count": 349,
+  "manifest_sha256": "4e0268d2464343b335f65f8aa037404aadc9636e232d94f3bb4836abb0489c43",
+  "notes": [
+    "The archive is a deterministic source release for local installation.",
+    "The archive excludes .env, agent notes, runtime data, caches, and build output.",
+    "External images and Python/npm packages are resolved from the committed lock files."
+  ],
+  "outcome": "pass",
+  "schema_version": "scholartrace-m10-p4-release-drill/1.0",
+  "size_bytes": 777973
+}

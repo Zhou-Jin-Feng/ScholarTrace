@@ -21,6 +21,7 @@ from scholartrace.evidence.analysis import (
 from scholartrace.evidence.bindings import DocuMindBindingRepository
 from scholartrace.evidence.client import DocuMindClient
 from scholartrace.evidence.live import (
+    FullTextAcquisitionError,
     cleanup_documents,
     download_pdf,
     ingest_papers,
@@ -356,13 +357,13 @@ async def run(args: argparse.Namespace) -> dict[str, object]:
     download_timeout = httpx.Timeout(args.download_timeout_seconds, connect=15)
     async with httpx.AsyncClient(
         timeout=download_timeout,
-        follow_redirects=True,
+        follow_redirects=False,
         trust_env=True,
     ) as download_client:
         download_semaphore = asyncio.Semaphore(3)
 
         async def download_with_retry(paper: Paper) -> tuple[Path, int]:
-            last_error: httpx.HTTPError | None = None
+            last_error: FullTextAcquisitionError | None = None
             async with download_semaphore:
                 for attempt in range(1, 4):
                     try:
@@ -371,8 +372,10 @@ async def run(args: argparse.Namespace) -> dict[str, object]:
                             paper=paper,
                             output_dir=args.documents_dir,
                         )
-                    except httpx.HTTPError as exc:
+                    except FullTextAcquisitionError as exc:
                         last_error = exc
+                        if exc.code not in {"transport_error", "http_error"}:
+                            raise
                         if attempt < 3:
                             await asyncio.sleep(attempt)
             raise RuntimeError(

@@ -1,6 +1,6 @@
 # ScholarTrace 接口契约
 
-> 状态：M5 ScholarGraph Provider/Consumer 已冻结；完整 Research Task HTTP 装配延后
+> 状态：M10-P3 受限公开 arXiv acquisition 与 DocuMind 闭环已实现；跨进程、多用户、租户隔离、出版社来源和公网安全仍不在范围内
 > 内部协议：版本化 HTTP/JSON + OpenAPI 3.1  
 > 契约目录：`contracts/openapi/`
 
@@ -83,6 +83,20 @@ Content-Type: application/json
 
 Client 还必须校验返回的 document、index、source、服务版本、Chunk 内容 hash、唯一 ID 和连续 rank。`stale_document_index` 不自动刷新绑定或重试；调用方必须显式读取新 active index 并执行 CAS。
 
+### 3.5 M10-P3 全文 acquisition
+
+内部入口为 `acquire_pdf(Paper, output_dir)`，不是公开 HTTP 端点。输入 Paper 必须含唯一、
+带版本号的 arXiv `abs` 来源；当前只生成 `https://arxiv.org/pdf/<version>.pdf`，允许最终
+域名为 `arxiv.org` 或 `export.arxiv.org`。请求逐跳关闭自动重定向并限制最多 3 跳，拒绝
+HTTP、非 443 端口、用户信息、跨域跳转、非 PDF Content-Type、超 30 MiB 响应和缺少 `%PDF-`
+魔数的内容。
+
+成功返回 `PdfAcquisition(path, size_bytes, sha256, reused)`。调用 `ingest_papers()` 时可传入
+`expected_source_sha256`；上传前后文件 hash 和 DocuMind 返回的 `source_sha256` 必须一致，
+否则返回 `FullTextAcquisitionError` 并停止 Evidence 流程。清理只接收本次新建的 document key，
+DELETE 404 为幂等成功，其他失败汇总为 `DocumentCleanupError`。该接口不提供断点续传，
+不绕过付费墙/访问控制，也不把摘要转换成全文 Evidence。
+
 ### 3.4 M2 在线状态边界
 
 `evaluation/reports/m2_documind_compatibility.json` 证明 2.1.0 与 2.2.0 的冻结 Provider Schema 可被 Consumer 接受。最终阶段复审时本机 `127.0.0.1:8001` 运行冻结部署 `2.2.0/212f60a`，OpenAPI 包含 `/api/v1/retrieve`，预热后的 readiness 为 HTTP 200 且 `components.retrieval=ready`，因此 `online_acceptance_passed=true`。`evaluation/reports/m2_live_documind_smoke.json` 另行记录三篇公开全文的真实 upload/status/retrieve 与 Evidence 闭环；Fixture 指标和在线指标保持分离。
@@ -131,16 +145,18 @@ M6 已装配可运行的 Research Task API：
 
 ```text
 GET  /api/v1/health/live
+GET  /api/v1/health/ready
 GET  /api/v1/evaluation/m6
 POST /api/v1/research/tasks
 GET  /api/v1/research/tasks/{task_id}
 POST /api/v1/research/tasks/{task_id}/approve
+POST /api/v1/research/tasks/{task_id}/cancel
 GET  /api/v1/research/tasks/{task_id}/events
 GET  /api/v1/research/tasks/{task_id}/artifacts
 GET  /api/v1/research/tasks/{task_id}/report?format=json|markdown|html|pdf
 ```
 
-创建接口支持 `Idempotency-Key`；相同 Key 与相同请求体返回原任务，Key 复用但请求体变化返回 409。任务先进入 `waiting_approval`，只有 approve/modify/reject 后才产生终态或显式降级。
+创建接口支持 `Idempotency-Key`；相同 Key 与相同请求体返回原任务，Key 复用但请求体变化返回 409。任务先进入 `waiting_approval`，审批后进入进程内有界队列，状态依次可见为 `queued`、`running`，最终为 `completed`、`degraded`、`cancelled` 或 `failed`。队列满返回 HTTP 429 和 `Retry-After`，关闭期间不再接受新任务。对 `queued` 或 `running` 任务调用 `cancel` 会发出协作式取消请求，并在阶段边界生成 `task_cancelled` 与终态导出。
 
 M3 的只读事件补发 Router 继续提供：
 
@@ -150,7 +166,18 @@ Last-Event-ID: event:<sequence>
 Accept: text/event-stream
 ```
 
-事件先以稳定 key 写入 Runtime Ledger，再按单调 `event:<sequence>` 以 SSE 返回。无效 `Last-Event-ID` 返回 HTTP 400；响应禁止代理缓冲和缓存。M6 API 返回当前已有事件后结束响应；持续 tail、heartbeat、认证、多用户和 Artifact 授权仍待后续产品化。
+事件先以稳定 key 写入 Runtime Ledger，再按单调 `event:<sequence>` 以 SSE 返回。无效 `Last-Event-ID` 返回 HTTP 400；响应禁止代理缓冲和缓存。M10-P0/P1 API 既支持有限回放，也支持显式 `follow=true` 持续 tail、heartbeat、断线续传和终态关闭；P1 的队列、取消和停机状态通过任务摘要与 SSE 事件可见。
+
+### 5.1 访问控制与部署边界
+
+- `SCHOLARTRACE_DEPLOYMENT_MODE` 只能是 `loopback` 或 `trusted_private`，默认是 `loopback`；
+- `loopback` 只提供绑定地址的单机边界；若配置 `SCHOLARTRACE_AUTH_TOKEN`，任务 API 同样要求 Bearer token；
+- `trusted_private` 必须配置至少 16 个不含空白字符的 `SCHOLARTRACE_AUTH_TOKEN`，否则应用启动失败；
+- `POST/GET /research/tasks`、任务状态、审批、取消、事件、工件和报告均需要认证；health 与静态前端保持可探测；
+- 普通 HTTP 请求使用 `Authorization: Bearer <token>`；为兼容原生 `EventSource` 与浏览器下载，仅事件和报告 `GET` 接受 `access_token` 查询参数；其他方法和路径不会从查询参数读取 token；
+- 查询参数 token 是兼容性折衷，可能被客户端或代理记录。部署时使用 TLS、关闭包含查询串的访问日志，并禁止把共享 token 当成账号、租户或细粒度 Artifact 授权。
+
+认证失败统一返回 `401`、`WWW-Authenticate: Bearer` 和非敏感错误消息；应用结构化日志只记录方法、路径、状态码和请求 ID，不记录 Authorization 或查询串。
 
 - 创建和审批使用 `Idempotency-Key`（当前为交付 API 的确定性演示装配）；
 - 事件先持久化再通过 SSE 发送，支持 `Last-Event-ID`；

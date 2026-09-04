@@ -12,18 +12,22 @@ from scholartrace.delivery.models import (
     TaskStatus,
     TaskSummary,
 )
+from scholartrace.delivery.queue import BoundedTaskExecutor, QueueClosedError, QueueFullError
 from scholartrace.delivery.reporting import render_html, render_markdown, render_pdf
 from scholartrace.delivery.service import M6TaskService
 from scholartrace.delivery.store import DeliveryStore
 
 __all__ = [
     "ApprovalRequest",
+    "BoundedTaskExecutor",
     "ArtifactSummary",
     "DeliveryStore",
     "EvaluationMatrix",
     "EvaluationPhase",
     "M6_DELIVERY_CONTRACT_MODELS",
     "M6TaskService",
+    "QueueClosedError",
+    "QueueFullError",
     "TaskCreateRequest",
     "TaskSummary",
     "TaskPhase",

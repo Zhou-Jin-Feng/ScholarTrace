@@ -15,6 +15,7 @@ __pycache__/
 data/
 logs/
 artifacts/
+/dist/
 
 # Frontend build output
 frontend/node_modules/

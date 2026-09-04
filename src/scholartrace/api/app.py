@@ -12,9 +12,10 @@ from pathlib import Path
 from typing import Annotated, Literal
 
 from fastapi import APIRouter, FastAPI, Header, HTTPException, Request
-from fastapi.responses import Response
+from fastapi.responses import JSONResponse, Response
 
 from scholartrace.api.events import create_event_router
+from scholartrace.api.security import SecurityPolicy
 from scholartrace.delivery.models import (
     ApprovalRequest,
     ArtifactSummary,
@@ -22,19 +23,44 @@ from scholartrace.delivery.models import (
     TaskCreateRequest,
     TaskSummary,
 )
-from scholartrace.delivery.service import M6TaskService, TaskNotFoundError, TaskStateError
+from scholartrace.delivery.service import (
+    M6TaskService,
+    TaskNotFoundError,
+    TaskQueueClosedError,
+    TaskQueueFullError,
+    TaskStateError,
+)
 
 logger = logging.getLogger("scholartrace.delivery")
 
 
-def create_app(*, root: Path | None = None, data_dir: Path | None = None) -> FastAPI:
+def create_app(
+    *,
+    root: Path | None = None,
+    data_dir: Path | None = None,
+    queue_capacity: int | None = None,
+    worker_count: int | None = None,
+    completion_wait_seconds: float = 0.5,
+    deployment_mode: str | None = None,
+    auth_token: str | None = None,
+) -> FastAPI:
     project_root = root or Path(__file__).resolve().parents[3]
     configured_data_dir = data_dir
     if configured_data_dir is None:
         environment_data_dir = os.environ.get("SCHOLARTRACE_DATA_DIR")
         if environment_data_dir:
             configured_data_dir = Path(environment_data_dir)
-    service = M6TaskService(root=project_root, data_dir=configured_data_dir)
+    security = SecurityPolicy.from_environment(
+        deployment_mode=deployment_mode,
+        auth_token=auth_token,
+    )
+    service = M6TaskService(
+        root=project_root,
+        data_dir=configured_data_dir,
+        queue_capacity=queue_capacity,
+        worker_count=worker_count,
+        completion_wait_seconds=completion_wait_seconds,
+    )
 
     @asynccontextmanager
     async def lifespan(_: FastAPI) -> AsyncIterator[None]:
@@ -50,13 +76,21 @@ def create_app(*, root: Path | None = None, data_dir: Path | None = None) -> Fas
         lifespan=lifespan,
     )
     app.state.m6_service = service
+    app.state.security_policy = security
 
     @app.middleware("http")
     async def request_context(
         request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
         request_id = request.headers.get("X-Request-ID") or uuid.uuid4().hex
-        response = await call_next(request)
+        if security.allows(request):
+            response = await call_next(request)
+        else:
+            response = JSONResponse(
+                status_code=401,
+                content={"detail": "authentication required"},
+                headers={"WWW-Authenticate": "Bearer"},
+            )
         response.headers["X-Request-ID"] = request_id
         logger.info(
             json.dumps(
@@ -78,6 +112,17 @@ def create_app(*, root: Path | None = None, data_dir: Path | None = None) -> Fas
     @api.get("/health/live")
     def live() -> dict[str, str]:
         return {"status": "live", "service": "scholartrace", "version": "0.5.0"}
+
+    @api.get("/health/ready")
+    def ready() -> dict[str, object]:
+        snapshot = service.queue_snapshot()
+        return {
+            "status": "ready" if snapshot["accepting"] else "draining",
+            "service": "scholartrace",
+            "deployment_mode": security.mode.value,
+            "auth_required": security.auth_required,
+            "queue": snapshot,
+        }
 
     @api.get("/evaluation/m6", response_model=EvaluationMatrix)
     def evaluation() -> EvaluationMatrix:
@@ -108,6 +153,23 @@ def create_app(*, root: Path | None = None, data_dir: Path | None = None) -> Fas
             return TaskSummary.model_validate(service.approve_task(task_id, payload))
         except TaskNotFoundError as exc:
             raise HTTPException(status_code=404, detail="task not found") from exc
+        except TaskQueueFullError as exc:
+            raise HTTPException(
+                status_code=429,
+                detail=str(exc),
+                headers={"Retry-After": "1"},
+            ) from exc
+        except TaskQueueClosedError as exc:
+            raise HTTPException(status_code=503, detail=str(exc)) from exc
+        except TaskStateError as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
+
+    @api.post("/research/tasks/{task_id}/cancel", response_model=TaskSummary)
+    def cancel_task(task_id: str) -> TaskSummary:
+        try:
+            return TaskSummary.model_validate(service.cancel_task(task_id))
+        except TaskNotFoundError as exc:
+            raise HTTPException(status_code=404, detail="task not found") from exc
         except TaskStateError as exc:
             raise HTTPException(status_code=409, detail=str(exc)) from exc
 
@@ -115,8 +177,7 @@ def create_app(*, root: Path | None = None, data_dir: Path | None = None) -> Fas
     def list_artifacts(task_id: str) -> list[ArtifactSummary]:
         try:
             return [
-                ArtifactSummary.model_validate(item)
-                for item in service.list_artifacts(task_id)
+                ArtifactSummary.model_validate(item) for item in service.list_artifacts(task_id)
             ]
         except TaskNotFoundError as exc:
             raise HTTPException(status_code=404, detail="task not found") from exc
@@ -148,7 +209,7 @@ def create_app(*, root: Path | None = None, data_dir: Path | None = None) -> Fas
         )
 
     app.include_router(api)
-    app.include_router(create_event_router(service.ledger))
+    app.include_router(create_event_router(service.ledger, task_exists=service.task_exists))
     return app
 
 

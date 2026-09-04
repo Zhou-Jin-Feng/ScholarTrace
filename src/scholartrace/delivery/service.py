@@ -4,6 +4,9 @@ from __future__ import annotations
 
 import hashlib
 import json
+import logging
+import os
+import threading
 import uuid
 from pathlib import Path
 from typing import Any
@@ -16,9 +19,16 @@ from scholartrace.delivery.models import (
     TaskPhase,
     TaskStatus,
 )
+from scholartrace.delivery.queue import (
+    BoundedTaskExecutor,
+    QueueClosedError,
+    QueueFullError,
+)
 from scholartrace.delivery.reporting import render_html, render_markdown, render_pdf
 from scholartrace.delivery.store import DeliveryStore
 from scholartrace.workflow.storage import RuntimeLedger
+
+logger = logging.getLogger(__name__)
 
 
 class TaskNotFoundError(KeyError):
@@ -29,15 +39,51 @@ class TaskStateError(ValueError):
     """The requested task transition is not allowed."""
 
 
+class TaskQueueFullError(TaskStateError):
+    """The local bounded queue rejected a newly approved task."""
+
+
+class TaskQueueClosedError(TaskStateError):
+    """The local task executor is shutting down."""
+
+
 class M6TaskService:
-    def __init__(self, *, root: Path, data_dir: Path | None = None) -> None:
+    def __init__(
+        self,
+        *,
+        root: Path,
+        data_dir: Path | None = None,
+        queue_capacity: int | None = None,
+        worker_count: int | None = None,
+        completion_wait_seconds: float = 0.5,
+    ) -> None:
         self.root = root
         storage_root = data_dir or root / "artifacts" / "m6-delivery"
         storage_root.mkdir(parents=True, exist_ok=True)
         self.store = DeliveryStore(storage_root / "tasks.sqlite")
         self.ledger = RuntimeLedger(storage_root / "runtime.sqlite")
+        resolved_capacity = queue_capacity or int(
+            os.environ.get("SCHOLARTRACE_QUEUE_CAPACITY", "4")
+        )
+        resolved_workers = worker_count or int(os.environ.get("SCHOLARTRACE_WORKERS", "1"))
+        if completion_wait_seconds <= 0:
+            raise ValueError("completion wait must be positive")
+        self._completion_wait_seconds = completion_wait_seconds
+        self._executor = BoundedTaskExecutor(
+            max_workers=resolved_workers,
+            max_queue_size=resolved_capacity,
+        )
+        self._state_lock = threading.RLock()
+        self._closed = False
 
     def close(self) -> None:
+        if self._closed:
+            return
+        drained = self._executor.shutdown(timeout_seconds=5.0)
+        if not drained:
+            logger.warning("task executor did not drain before shutdown timeout")
+            return
+        self._closed = True
         self.ledger.close()
         self.store.close()
 
@@ -47,9 +93,7 @@ class M6TaskService:
         *,
         idempotency_key: str | None = None,
     ) -> dict[str, Any]:
-        request_hash = hashlib.sha256(
-            request.model_dump_json().encode("utf-8")
-        ).hexdigest()
+        request_hash = hashlib.sha256(request.model_dump_json().encode("utf-8")).hexdigest()
         task_id = f"task:m6:{uuid.uuid4().hex[:16]}"
         thread_id = f"thread:m6:{uuid.uuid4().hex[:16]}"
         title = request.title or request.question[:80]
@@ -118,7 +162,69 @@ class M6TaskService:
                 node="approval",
                 kind="plan_approved",
             )
-        return self._run_demo(task_id)
+        self.store.update_task(task_id, status=TaskStatus.QUEUED, phase=TaskPhase.PLAN)
+        try:
+
+            def execute_queued(cancel_event: threading.Event) -> None:
+                self._execute_queued(task_id, cancel_event)
+
+            submission = self._executor.submit(
+                task_id,
+                execute_queued,
+            )
+        except QueueFullError as exc:
+            self.store.update_task(
+                task_id,
+                status=TaskStatus.WAITING_APPROVAL,
+                phase=TaskPhase.PLAN,
+                degradations=["Local task queue is full; approval can be retried."],
+            )
+            self.ledger.append_event(
+                stable_key=f"event:m6:{task_id}:queue-rejected",
+                task_id=task_id,
+                node="queue",
+                kind="queue_rejected",
+                payload={"reason": "queue_full"},
+            )
+            raise TaskQueueFullError("task queue is full") from exc
+        except QueueClosedError as exc:
+            raise TaskQueueClosedError("task queue is shutting down") from exc
+        submission.finished.wait(self._completion_wait_seconds)
+        return self.summary(task_id)
+
+    def cancel_task(self, task_id: str) -> dict[str, Any]:
+        with self._state_lock:
+            task = self._task(task_id)
+            status = TaskStatus(str(task["status"]))
+            if status in {
+                TaskStatus.COMPLETED,
+                TaskStatus.DEGRADED,
+                TaskStatus.REJECTED,
+                TaskStatus.CANCELLED,
+                TaskStatus.FAILED,
+            }:
+                raise TaskStateError(f"task is already terminal: {status.value}")
+            if status == TaskStatus.WAITING_APPROVAL:
+                return self._finish_cancelled(reason="cancelled before approval", task_id=task_id)
+            submission = self._executor.cancel(task_id)
+            if submission is None:
+                current = TaskStatus(str(self._task(task_id)["status"]))
+                raise TaskStateError(f"task is no longer cancellable: {current.value}")
+            self.store.update_task(
+                task_id,
+                status=TaskStatus.CANCELLING,
+                degradations=[
+                    "Cancellation requested; the active phase will stop at its next boundary."
+                ],
+            )
+            self.ledger.append_event(
+                stable_key=f"event:m6:{task_id}:cancel-requested",
+                task_id=task_id,
+                node="queue",
+                kind="task_cancel_requested",
+            )
+        submission.finished.wait(self._completion_wait_seconds)
+        return self.summary(task_id)
 
     def list_artifacts(self, task_id: str) -> list[dict[str, Any]]:
         self._task(task_id)
@@ -138,30 +244,74 @@ class M6TaskService:
         self._task(task_id)
         return [event.model_dump(mode="json") for event in self.ledger.replay(task_id=task_id)]
 
+    def task_exists(self, task_id: str) -> bool:
+        try:
+            self.store.get_task(task_id)
+        except KeyError:
+            return False
+        return True
+
     def evaluation_matrix(self) -> dict[str, Any]:
         return build_m6_evaluation_matrix(root=self.root).model_dump(mode="json")
 
-    def _run_demo(self, task_id: str) -> dict[str, Any]:
+    def queue_snapshot(self) -> dict[str, int | bool]:
+        return self._executor.snapshot()
+
+    def _execute_queued(self, task_id: str, cancel_event: threading.Event) -> None:
+        try:
+            self._run_demo(task_id, cancel_event=cancel_event)
+        except Exception as exc:  # pragma: no cover - exercised by failure injection
+            logger.exception("task execution failed", extra={"task_id": task_id})
+            task = self._task(task_id)
+            if TaskStatus(str(task["status"])) not in {
+                TaskStatus.CANCELLED,
+                TaskStatus.REJECTED,
+            }:
+                self.store.update_task(
+                    task_id,
+                    status=TaskStatus.FAILED,
+                    phase=TaskPhase.DONE,
+                    degradations=["Task execution failed; inspect the redacted server log."],
+                )
+                self.ledger.append_event(
+                    stable_key=f"event:m6:{task_id}:failed",
+                    task_id=task_id,
+                    node="queue",
+                    kind="task_failed",
+                    payload={"error_type": type(exc).__name__},
+                )
+                self._write_exports(task_id)
+
+    def _run_demo(
+        self, task_id: str, *, cancel_event: threading.Event | None = None
+    ) -> dict[str, Any]:
         task = self._task(task_id)
+        if cancel_event is not None and cancel_event.is_set():
+            return self._finish_cancelled(task_id, reason="cancelled before execution")
         mode = DemoMode(str(task["demo_mode"]))
         if mode == DemoMode.PRODUCTION_UNAVAILABLE:
-            self.store.update_task(
-                task_id,
-                status=TaskStatus.DEGRADED,
-                phase=TaskPhase.DONE,
-                metrics={"execution_mode": "production_unavailable", "model_calls": 0},
-                degradations=[
-                    "api-strong Coordinator/Verifier/Synthesis is disabled; "
-                    "no production model call was made."
-                ],
-            )
-            self.ledger.append_event(
-                stable_key=f"event:m6:{task_id}:degraded",
-                task_id=task_id,
-                node="delivery",
-                kind="workflow_degraded",
-                payload={"reason": "api_strong_disabled"},
-            )
+            with self._state_lock:
+                if cancel_event is not None and cancel_event.is_set():
+                    return self._finish_cancelled(
+                        task_id, reason="cancelled before production gate"
+                    )
+                self.store.update_task(
+                    task_id,
+                    status=TaskStatus.DEGRADED,
+                    phase=TaskPhase.DONE,
+                    metrics={"execution_mode": "production_unavailable", "model_calls": 0},
+                    degradations=[
+                        "api-strong Coordinator/Verifier/Synthesis is disabled; "
+                        "no production model call was made."
+                    ],
+                )
+                self.ledger.append_event(
+                    stable_key=f"event:m6:{task_id}:degraded",
+                    task_id=task_id,
+                    node="delivery",
+                    kind="workflow_degraded",
+                    payload={"reason": "api_strong_disabled"},
+                )
             return self._write_exports(task_id)
 
         phases = [
@@ -172,14 +322,21 @@ class M6TaskService:
             (TaskPhase.SYNTHESIS, "synthesis_completed"),
         ]
         for phase, event_kind in phases:
-            self.store.update_task(task_id, status=TaskStatus.RUNNING, phase=phase)
-            self.ledger.append_event(
-                stable_key=f"event:m6:{task_id}:{phase.value}",
-                task_id=task_id,
-                node=phase.value,
-                kind=event_kind,
-                payload={"execution_mode": "deterministic_delivery_demo"},
-            )
+            with self._state_lock:
+                if cancel_event is not None and cancel_event.is_set():
+                    should_cancel = True
+                else:
+                    should_cancel = False
+                    self.store.update_task(task_id, status=TaskStatus.RUNNING, phase=phase)
+                    self.ledger.append_event(
+                        stable_key=f"event:m6:{task_id}:{phase.value}",
+                        task_id=task_id,
+                        node=phase.value,
+                        kind=event_kind,
+                        payload={"execution_mode": "deterministic_delivery_demo"},
+                    )
+            if should_cancel:
+                return self._finish_cancelled(task_id, reason=f"cancelled before {phase.value}")
         degradations = []
         status = TaskStatus.COMPLETED
         if mode == DemoMode.DEGRADED:
@@ -206,20 +363,49 @@ class M6TaskService:
             "verification_states": ["supported", "partially_supported", "conflicted"],
             "export_formats": ["json", "markdown", "html", "pdf"],
         }
-        self.store.update_task(
-            task_id,
-            status=status,
-            phase=TaskPhase.DONE,
-            metrics=metrics,
-            degradations=degradations,
-        )
-        self.ledger.append_event(
-            stable_key=f"event:m6:{task_id}:finished",
-            task_id=task_id,
-            node="delivery",
-            kind="workflow_finished",
-            payload={"status": status.value},
-        )
+        with self._state_lock:
+            if cancel_event is not None and cancel_event.is_set():
+                should_cancel = True
+            else:
+                should_cancel = False
+                self.store.update_task(
+                    task_id,
+                    status=status,
+                    phase=TaskPhase.DONE,
+                    metrics=metrics,
+                    degradations=degradations,
+                )
+                self.ledger.append_event(
+                    stable_key=f"event:m6:{task_id}:finished",
+                    task_id=task_id,
+                    node="delivery",
+                    kind="workflow_finished",
+                    payload={"status": status.value},
+                )
+        if should_cancel:
+            return self._finish_cancelled(task_id, reason="cancelled before synthesis completed")
+        return self._write_exports(task_id)
+
+    def _finish_cancelled(self, task_id: str, *, reason: str) -> dict[str, Any]:
+        with self._state_lock:
+            task = self._task(task_id)
+            if TaskStatus(str(task["status"])) != TaskStatus.CANCELLED:
+                degradations = list(task["degradations"])
+                if reason not in degradations:
+                    degradations.append(reason)
+                self.store.update_task(
+                    task_id,
+                    status=TaskStatus.CANCELLED,
+                    phase=TaskPhase.DONE,
+                    degradations=degradations,
+                )
+                self.ledger.append_event(
+                    stable_key=f"event:m6:{task_id}:cancelled",
+                    task_id=task_id,
+                    node="queue",
+                    kind="task_cancelled",
+                    payload={"reason": reason},
+                )
         return self._write_exports(task_id)
 
     def _write_exports(self, task_id: str) -> dict[str, Any]:
@@ -231,11 +417,7 @@ class M6TaskService:
         report_json = json.dumps(
             {
                 "schema_version": "1.0",
-                "task": {
-                    key: value
-                    for key, value in task.items()
-                    if key not in {"question"}
-                },
+                "task": {key: value for key, value in task.items() if key not in {"question"}},
                 "events": [
                     {"event_id": item["event_id"], "kind": item["kind"], "node": item["node"]}
                     for item in events

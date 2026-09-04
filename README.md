@@ -2,7 +2,7 @@
 
 ScholarTrace 是一个面向计算机与人工智能技术调研的证据可追溯 Multi-Agent 学术研究工作台，服务学生、开发者和初级研究人员，使关键结论能够回溯到真实论文、页码或 Chunk。
 
-当前仓库已完成 **M0：范围与契约**、**M1：多源搜索**、**M2：DocuMind 证据闭环**、**M3：LangGraph Multi-Agent 编排**、**M4：引用网络与证据核验**、**M5：ScholarGraph 能力受限集成**和 **M6：工作台与交付装配**。M6 的 Research Task API、React 工作台、四种导出、B0-B4 证据矩阵、Compose、CI、本地 Demo、api-strong 结构化适配、12 题真实付费 B3/B4 盲审和三次 Basic 重复测试均已完成，阶段结论为 `PASS WITH NOTES`。M7-G 与 M8-G 的独立 Gate A 均未观察到可泛化的候选增益，因此 ScholarGraph 继续默认关闭；M9-P0 已完成 13 个真实任务的 39 条观察及 `30/30` eligible 审核，确认 10 条 `G3_RANKING`、1 条 `G1_ALIAS` 和 19 条 ambiguous，决策为 `GO_IMPLEMENT`。M9-P1 已在 ScholarGraph `04f5327` 冻结独立 B7 重排，P0 已知 G3 开发回放由 B6 1/10 提高到 B7 4/10；该样本参与过开发且补回率仅 0.40，不是前瞻正增益。M9-P2 已完成预注册、连续扩展、50/50 Gold 冻结和 50/50 条件快照；前瞻 Gate A 为 `INCONCLUSIVE`（50 条中 0 个 B5 miss opportunity），不能证明正增益或负增益，ScholarGraph 继续默认关闭且未进入 Evidence Gate。
+当前仓库已完成 M0-M9；M9-P2 前瞻 Gate A 为 `INCONCLUSIVE`（50 条中 0 个 B5 miss opportunity），不能证明 ScholarGraph 有正增益，因此仍默认关闭。M10-P0-P4 已补齐持续 SSE、单机有界队列、回环/可信私网访问控制、版本化公开 arXiv 到 DocuMind 的全文闭环，以及本地发布、备份和隔离恢复。M10 以 `PASS WITH NOTES` 正式冻结；公网、多用户、跨进程 worker、出版社全文来源和跨服务一键灾备仍不在范围内。
 
 ## 已冻结交付
 
@@ -179,6 +179,27 @@ powershell -ExecutionPolicy Bypass -File scripts/verify_m5_scholargraph.ps1
 
 脚本只下载 Fixture 锁定版本的公开 arXiv PDF，限制响应类型和大小；原文、绑定和完整 Evidence Artifact 写入已忽略的 `artifacts/`。默认只删除本次新建的 DocuMind 文档，传入 `--keep-documents` 才保留索引。
 
+M10-P3 全文 acquisition 与 DocuMind 闭环 smoke（要求 DocuMind `2.2.0`、Milvus、Ollama
+`qwen3-embedding` 和 `qwen3:8b`）：
+
+```powershell
+uv run python scripts/run_m10_p3_smoke.py
+```
+
+该命令沿用 M2 的三篇锁定公开 arXiv Fixture，但使用 M10-P3 的手动逐跳重定向、HTTPS/域名
+allowlist、PDF 类型/大小/魔数和 SHA-256 闭合；不支持出版社登录页、付费墙或摘要冒充全文。
+
+M10-P4 本地数据恢复和确定性发布验收：
+
+```powershell
+uv run python scripts/run_m10_p4_restore_drill.py
+uv run python scripts/run_m10_p4_release_drill.py
+```
+
+正式备份使用 `scholartrace-backup`，恢复使用 `scholartrace-restore`；恢复目标必须是不存在的
+新目录，不能原地覆盖。宿主机与 Compose 的完整步骤、升级和回滚顺序见
+[`docs/RUNBOOK.md`](docs/RUNBOOK.md)。
+
 公开数据源联机 smoke 会访问外部学术元数据 API，并将原始运行 Artifact 写入已忽略的 `artifacts/` 和 `data/`：
 
 ```powershell
@@ -242,7 +263,8 @@ uv run python scripts/run_m6_api_strong_smoke.py `
 - M4 已完成匿名 OpenAlex 有界在线兼容性验收，但 1 个控制 seed 不能代表完整引用覆盖率；
 - M4 的 `api-strong` 关键 Verifier 仍禁用，生产调用 fail closed，Fixture 结果不能作为语义准确率或模型成本证据；
 - M5 已完成历史真实 Basic 兼容联调；M6 已补齐 B3/B4 生产 ReportGenerator、Evidence 输入门禁、12 题真实付费执行、盲审导入和三次顺序容量复验。B4 未观察到 eligible 质量增益且延迟更高，ScholarGraph 因此默认关闭；
-- M6 已装配 Research Task API 和当前持久事件补发，但 SSE 持续 tail、heartbeat、认证、多用户和完整全文 acquisition 仍未交付；
+- M6 已装配 Research Task API；M10-P0-P3 已补齐 SSE、队列、访问控制和公开 arXiv/DocuMind 闭环；M10-P4 已补齐 SQLite 一致快照、版本/hash 清单、只写新目录的恢复、实际本地数据演练和确定性源代码发布包；
+- ScholarTrace 备份覆盖任务、事件和报告，不覆盖 DocuMind 注册表/Milvus/Ollama、原始 PDF 或其他上游数据；公网、多用户、跨进程队列、自动数据库迁移和跨服务一键灾备仍未交付；
 - 不提交凭据、运行数据、论文全文、模型原始回答或 `agent/` 工作记录。
 
 产品范围见 [`docs/PRD.md`](docs/PRD.md)，架构与演进条件见 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)。

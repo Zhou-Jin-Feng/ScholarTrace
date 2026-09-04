@@ -27,6 +27,7 @@ DEFAULT_DOCUMENTS = ROOT / "artifacts" / "m2-live-documents"
 DEFAULT_OUTPUT = ROOT / "artifacts" / "m2-evidence-live"
 DEFAULT_SUMMARY = ROOT / "evaluation" / "reports" / "m2_live_documind_smoke.json"
 _arxiv_pdf_url = live_evidence.arxiv_pdf_url
+_acquire_pdf = live_evidence.acquire_pdf
 _cleanup_documents = live_evidence.cleanup_documents
 _download_pdf = live_evidence.download_pdf
 _ingest_papers = live_evidence.ingest_papers
@@ -53,19 +54,24 @@ async def _run(args: argparse.Namespace) -> tuple[int, dict[str, object]]:
     download_timeout = httpx.Timeout(args.download_timeout_seconds, connect=15)
     async with httpx.AsyncClient(
         timeout=download_timeout,
-        follow_redirects=True,
+        follow_redirects=False,
         trust_env=False,
     ) as download_client:
         downloads = await asyncio.gather(
             *(
-                _download_pdf(download_client, paper=paper, output_dir=args.documents_dir)
+                _acquire_pdf(download_client, paper=paper, output_dir=args.documents_dir)
                 for paper in papers
             )
         )
     document_paths = {
-        paper.canonical_paper_id: path for paper, (path, _) in zip(papers, downloads, strict=True)
+        paper.canonical_paper_id: acquisition.path
+        for paper, acquisition in zip(papers, downloads, strict=True)
     }
-    total_pdf_bytes = sum(size for _, size in downloads)
+    source_hashes = {
+        paper.canonical_paper_id: acquisition.sha256
+        for paper, acquisition in zip(papers, downloads, strict=True)
+    }
+    total_pdf_bytes = sum(acquisition.size_bytes for acquisition in downloads)
 
     repository = DocuMindBindingRepository(args.output_dir / "bindings.sqlite3")
     documind_timeout = httpx.Timeout(args.ingest_timeout_seconds, connect=15)
@@ -101,6 +107,7 @@ async def _run(args: argparse.Namespace) -> tuple[int, dict[str, object]]:
                 document_paths=document_paths,
                 repository=repository,
                 newly_created=newly_created,
+                expected_source_sha256=source_hashes,
             )
             ingestion_seconds = time.perf_counter() - ingestion_started
             pipeline = M2EvidencePipeline(
@@ -159,6 +166,7 @@ async def _run(args: argparse.Namespace) -> tuple[int, dict[str, object]]:
         "paper_count": len(result.report.analyses),
         "paper_ids": [item.paper_card.canonical_paper_id for item in result.report.analyses],
         "pdf_bytes": total_pdf_bytes,
+        "pdf_source_sha256": source_hashes,
         "indexed_chunk_count": total_chunks,
         "retrieved_chunk_count": sum(item.chunk_count for item in result.retrieval_audits),
         "evidence_count": len(evidence),

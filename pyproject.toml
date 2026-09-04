@@ -18,6 +18,10 @@ dependencies = [
   "uvicorn[standard]>=0.30,<1",
 ]
 
+[project.scripts]
+scholartrace-backup = "scholartrace.operations.cli:backup_main"
+scholartrace-restore = "scholartrace.operations.cli:restore_main"
+
 [dependency-groups]
 dev = [
   "jsonschema>=4.25,<5",

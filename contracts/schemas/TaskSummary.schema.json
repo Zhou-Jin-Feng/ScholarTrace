@@ -26,10 +26,13 @@
       "enum": [
         "created",
         "waiting_approval",
+        "queued",
         "running",
         "completed",
         "degraded",
         "rejected",
+        "cancelling",
+        "cancelled",
         "failed"
       ],
       "title": "TaskStatus",

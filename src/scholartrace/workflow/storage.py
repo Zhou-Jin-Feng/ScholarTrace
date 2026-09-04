@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import sqlite3
+import threading
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -127,6 +128,7 @@ class RuntimeLedger:
     def __init__(self, path: Path) -> None:
         self.path = path
         path.parent.mkdir(parents=True, exist_ok=True)
+        self._lock = threading.RLock()
         self._connection = sqlite3.connect(path, timeout=5, check_same_thread=False)
         self._connection.row_factory = sqlite3.Row
         self._connection.execute("PRAGMA journal_mode=WAL")
@@ -158,7 +160,8 @@ class RuntimeLedger:
         self._connection.commit()
 
     def close(self) -> None:
-        self._connection.close()
+        with self._lock:
+            self._connection.close()
 
     def charge(
         self,
@@ -168,49 +171,51 @@ class RuntimeLedger:
         delta: BudgetUsage,
         limits: BudgetLimits,
     ) -> BudgetUsage:
-        with self._connection:
-            existing = self._connection.execute(
-                "SELECT * FROM budget_effects WHERE effect_key = ?", (effect_key,)
-            ).fetchone()
-            if existing is not None:
-                same_delta = all(
-                    float(existing[field]) == float(getattr(delta, field))
-                    for field in _USAGE_FIELDS
-                )
-                if existing["task_id"] != task_id or not same_delta:
-                    raise RuntimeEffectConflictError(
-                        f"budget effect content conflict: {effect_key}"
+        with self._lock:
+            with self._connection:
+                existing = self._connection.execute(
+                    "SELECT * FROM budget_effects WHERE effect_key = ?", (effect_key,)
+                ).fetchone()
+                if existing is not None:
+                    same_delta = all(
+                        float(existing[field]) == float(getattr(delta, field))
+                        for field in _USAGE_FIELDS
                     )
-                return self.usage(task_id)
-            current = self.usage(task_id)
-            combined = BudgetUsage(
-                **{
-                    field: getattr(current, field) + getattr(delta, field)
-                    for field in _USAGE_FIELDS
-                }
-            )
-            violations = self._violations(combined, limits)
-            if violations:
-                raise WorkflowBudgetExceededError(
-                    "workflow budget exceeded: " + ", ".join(violations)
+                    if existing["task_id"] != task_id or not same_delta:
+                        raise RuntimeEffectConflictError(
+                            f"budget effect content conflict: {effect_key}"
+                        )
+                    return self.usage(task_id)
+                current = self.usage(task_id)
+                combined = BudgetUsage(
+                    **{
+                        field: getattr(current, field) + getattr(delta, field)
+                        for field in _USAGE_FIELDS
+                    }
                 )
-            values = [getattr(delta, field) for field in _USAGE_FIELDS]
-            placeholders = ", ".join("?" for _ in range(3 + len(values)))
-            columns = ", ".join(("effect_key", "task_id", *_USAGE_FIELDS, "created_at"))
-            self._connection.execute(
-                f"INSERT INTO budget_effects({columns}) VALUES ({placeholders})",
-                (effect_key, task_id, *values, datetime.now(UTC).isoformat()),
-            )
-        return combined
+                violations = self._violations(combined, limits)
+                if violations:
+                    raise WorkflowBudgetExceededError(
+                        "workflow budget exceeded: " + ", ".join(violations)
+                    )
+                values = [getattr(delta, field) for field in _USAGE_FIELDS]
+                placeholders = ", ".join("?" for _ in range(3 + len(values)))
+                columns = ", ".join(("effect_key", "task_id", *_USAGE_FIELDS, "created_at"))
+                self._connection.execute(
+                    f"INSERT INTO budget_effects({columns}) VALUES ({placeholders})",
+                    (effect_key, task_id, *values, datetime.now(UTC).isoformat()),
+                )
+            return combined
 
     def usage(self, task_id: str) -> BudgetUsage:
-        expressions = ", ".join(
-            f"COALESCE(SUM({field}), 0) AS {field}" for field in _USAGE_FIELDS
-        )
-        row = self._connection.execute(
-            f"SELECT {expressions} FROM budget_effects WHERE task_id = ?", (task_id,)
-        ).fetchone()
-        return BudgetUsage.model_validate(dict(row))
+        with self._lock:
+            expressions = ", ".join(
+                f"COALESCE(SUM({field}), 0) AS {field}" for field in _USAGE_FIELDS
+            )
+            row = self._connection.execute(
+                f"SELECT {expressions} FROM budget_effects WHERE task_id = ?", (task_id,)
+            ).fetchone()
+            return BudgetUsage.model_validate(dict(row))
 
     def append_event(
         self,
@@ -224,56 +229,73 @@ class RuntimeLedger:
     ) -> PersistedEvent:
         serialized = _canonical_json(payload or {})
         created_at = datetime.now(UTC).isoformat()
-        with self._connection:
-            self._connection.execute(
-                """
-                INSERT OR IGNORE INTO events(
-                    stable_key, task_id, node, kind, artifact_id, payload_json, created_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?)
-                """,
-                (stable_key, task_id, node, kind, artifact_id, serialized, created_at),
-            )
-            row = self._connection.execute(
-                "SELECT * FROM events WHERE stable_key = ?", (stable_key,)
-            ).fetchone()
-            if (
-                row["task_id"] != task_id
-                or row["node"] != node
-                or row["kind"] != kind
-                or row["artifact_id"] != artifact_id
-                or row["payload_json"] != serialized
-            ):
-                raise RuntimeEffectConflictError(
-                    f"event content conflict: {stable_key}"
+        with self._lock:
+            with self._connection:
+                self._connection.execute(
+                    """
+                    INSERT OR IGNORE INTO events(
+                        stable_key, task_id, node, kind, artifact_id, payload_json, created_at
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (stable_key, task_id, node, kind, artifact_id, serialized, created_at),
                 )
-        return self._event_from_row(row)
+                row = self._connection.execute(
+                    "SELECT * FROM events WHERE stable_key = ?", (stable_key,)
+                ).fetchone()
+                if (
+                    row["task_id"] != task_id
+                    or row["node"] != node
+                    or row["kind"] != kind
+                    or row["artifact_id"] != artifact_id
+                    or row["payload_json"] != serialized
+                ):
+                    raise RuntimeEffectConflictError(f"event content conflict: {stable_key}")
+            return self._event_from_row(row)
 
     def replay(self, *, task_id: str, last_event_id: str | None = None) -> list[PersistedEvent]:
-        last_sequence = self._event_sequence(last_event_id)
-        rows = self._connection.execute(
-            """
-            SELECT * FROM events
-            WHERE task_id = ? AND sequence > ?
-            ORDER BY sequence ASC
-            """,
-            (task_id, last_sequence),
-        ).fetchall()
-        return [self._event_from_row(row) for row in rows]
+        with self._lock:
+            last_sequence = self._event_sequence(task_id=task_id, event_id=last_event_id)
+            rows = self._connection.execute(
+                """
+                SELECT * FROM events
+                WHERE task_id = ? AND sequence > ?
+                ORDER BY sequence ASC
+                """,
+                (task_id, last_sequence),
+            ).fetchall()
+            return [self._event_from_row(row) for row in rows]
 
     def event_count(self, task_id: str) -> int:
-        row = self._connection.execute(
-            "SELECT COUNT(*) AS count FROM events WHERE task_id = ?", (task_id,)
-        ).fetchone()
-        return int(row["count"])
+        with self._lock:
+            row = self._connection.execute(
+                "SELECT COUNT(*) AS count FROM events WHERE task_id = ?", (task_id,)
+            ).fetchone()
+            return int(row["count"])
 
-    @staticmethod
-    def _event_sequence(event_id: str | None) -> int:
+    def event_kind(self, *, task_id: str, event_id: str) -> str | None:
+        """Return a task-owned event kind for reconnect terminal detection."""
+
+        with self._lock:
+            sequence = self._event_sequence(task_id=task_id, event_id=event_id)
+            row = self._connection.execute(
+                "SELECT kind FROM events WHERE sequence = ? AND task_id = ?",
+                (sequence, task_id),
+            ).fetchone()
+            return None if row is None else str(row["kind"])
+
+    def _event_sequence(self, *, task_id: str, event_id: str | None) -> int:
         if event_id is None:
             return 0
         prefix, separator, raw_sequence = event_id.rpartition(":")
         if not separator or prefix != "event" or not raw_sequence.isdigit():
             raise ValueError("invalid Last-Event-ID")
-        return int(raw_sequence)
+        sequence = int(raw_sequence)
+        row = self._connection.execute(
+            "SELECT task_id FROM events WHERE sequence = ?", (sequence,)
+        ).fetchone()
+        if row is None or row["task_id"] != task_id:
+            raise ValueError("invalid Last-Event-ID")
+        return sequence
 
     @staticmethod
     def _event_from_row(row: sqlite3.Row) -> PersistedEvent:

@@ -17,10 +17,13 @@ class DeliveryModel(BaseModel):
 class TaskStatus(StrEnum):
     CREATED = "created"
     WAITING_APPROVAL = "waiting_approval"
+    QUEUED = "queued"
     RUNNING = "running"
     COMPLETED = "completed"
     DEGRADED = "degraded"
     REJECTED = "rejected"
+    CANCELLING = "cancelling"
+    CANCELLED = "cancelled"
     FAILED = "failed"
 
 

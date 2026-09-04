@@ -14,8 +14,24 @@ SECRET_PATTERNS = (
 
 def test_private_runtime_paths_are_ignored() -> None:
     ignored = (ROOT / ".gitignore").read_text("utf-8")
-    for entry in ("agent/", ".venv/", ".env", "data/", "logs/", "artifacts/"):
+    for entry in (
+        "agent/",
+        ".venv/",
+        ".env",
+        "data/",
+        "logs/",
+        "artifacts/",
+        "/dist/",
+    ):
         assert entry in ignored
+
+
+def test_frontend_entrypoint_mounts_the_root_component() -> None:
+    html = (ROOT / "frontend" / "index.html").read_text("utf-8")
+    entrypoint = (ROOT / "frontend" / "src" / "main.tsx").read_text("utf-8")
+    assert '<div id="root"></div>' in html
+    assert 'document.getElementById("root")' in entrypoint
+    assert "createRoot(rootElement).render(<App />)" in entrypoint
 
 
 def test_no_obvious_credentials_in_committable_text() -> None:
