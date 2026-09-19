@@ -52,6 +52,8 @@ def test_service_cancel_marks_task_and_exports_terminal_state(tmp_path: Path) ->
         completion_wait_seconds=0.02,
     )
     started = threading.Event()
+    allow_finish = threading.Event()
+    finished = threading.Event()
 
     def slow_demo(
         task_id: str, *, cancel_event: threading.Event | None = None
@@ -61,7 +63,11 @@ def test_service_cancel_marks_task_and_exports_terminal_state(tmp_path: Path) ->
             if cancel_event is None:
                 break
             cancel_event.wait(0.01)
-        return service._finish_cancelled(task_id, reason="cancelled by queue test")
+        if not allow_finish.wait(5):
+            raise TimeoutError("test did not release cancellation boundary")
+        result = service._finish_cancelled(task_id, reason="cancelled by queue test")
+        finished.set()
+        return result
 
     service._run_demo = slow_demo  # type: ignore[method-assign]
     try:
@@ -72,6 +78,11 @@ def test_service_cancel_marks_task_and_exports_terminal_state(tmp_path: Path) ->
         assert approved["status"] in {TaskStatus.QUEUED.value, TaskStatus.RUNNING.value}
         assert started.wait(1)
         cancelled = service.cancel_task(created["task_id"])
+        assert cancelled["status"] == TaskStatus.CANCELLING.value
+        assert cancelled["artifact_count"] == 0
+        allow_finish.set()
+        assert finished.wait(5), "cancellation must finish and export at its boundary"
+        cancelled = service.summary(created["task_id"])
         assert cancelled["status"] == TaskStatus.CANCELLED.value
         assert cancelled["phase"] == "done"
         assert cancelled["artifact_count"] == 4
@@ -80,6 +91,7 @@ def test_service_cancel_marks_task_and_exports_terminal_state(tmp_path: Path) ->
         assert "task_cancelled" in kinds
         assert "exports_ready" in kinds
     finally:
+        allow_finish.set()
         service.close()
 
 

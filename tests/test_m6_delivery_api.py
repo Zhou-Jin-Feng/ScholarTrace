@@ -74,7 +74,14 @@ def test_m6_success_task_approval_events_and_exports(tmp_path: Path) -> None:
                 headers={"Last-Event-ID": first_event_id},
             )
             assert replay.status_code == 200
-            assert first_event_id not in replay.text
+            # Compare parsed ids, not raw substrings: `event:1` is a substring of
+            # `event:10`, so a text search silently starts failing at ten events.
+            replayed_ids = [
+                line.removeprefix("id: ").strip()
+                for line in replay.text.splitlines()
+                if line.startswith("id: ")
+            ]
+            assert first_event_id not in replayed_ids
             follow = await client.get(
                 f"/api/v1/research/tasks/{task_id}/events?follow=true",
                 headers={"Last-Event-ID": first_event_id},

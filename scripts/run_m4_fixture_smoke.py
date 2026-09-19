@@ -12,7 +12,7 @@ from scholartrace.verification.fixture_smoke import run_fixture_smoke
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_FIXTURE = ROOT / "tests" / "fixtures" / "m4" / "reliability_cases.json"
-DEFAULT_OUTPUT = ROOT / "evaluation" / "reports" / "m4_reliability_fixture_smoke.json"
+DEFAULT_OUTPUT = ROOT / "artifacts" / "reports" / "m4_reliability_fixture_smoke.json"
 
 
 def main() -> int:

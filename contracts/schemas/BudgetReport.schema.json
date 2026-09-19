@@ -1,0 +1,390 @@
+{
+  "$defs": {
+    "BudgetUsage": {
+      "additionalProperties": false,
+      "properties": {
+        "api_calls": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Api Calls",
+          "type": "integer"
+        },
+        "candidate_papers": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Candidate Papers",
+          "type": "integer"
+        },
+        "elapsed_seconds": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Elapsed Seconds",
+          "type": "number"
+        },
+        "external_cost_cny": {
+          "default": 0,
+          "minimum": 0,
+          "title": "External Cost Cny",
+          "type": "number"
+        },
+        "fulltext_papers": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Fulltext Papers",
+          "type": "integer"
+        },
+        "llm_input_tokens": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Llm Input Tokens",
+          "type": "integer"
+        },
+        "llm_output_tokens": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Llm Output Tokens",
+          "type": "integer"
+        },
+        "local_gpu_seconds": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Local Gpu Seconds",
+          "type": "number"
+        },
+        "model_calls": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Model Calls",
+          "type": "integer"
+        },
+        "queries": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Queries",
+          "type": "integer"
+        },
+        "rag_calls": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Rag Calls",
+          "type": "integer"
+        }
+      },
+      "title": "BudgetUsage",
+      "type": "object"
+    },
+    "JournalAccounting": {
+      "additionalProperties": false,
+      "properties": {
+        "committed_calls": {
+          "minimum": 0,
+          "title": "Committed Calls",
+          "type": "integer"
+        },
+        "committed_cny": {
+          "minimum": 0,
+          "title": "Committed Cny",
+          "type": "number"
+        },
+        "committed_external_requests": {
+          "minimum": 0,
+          "title": "Committed External Requests",
+          "type": "integer"
+        },
+        "committed_local_calls": {
+          "minimum": 0,
+          "title": "Committed Local Calls",
+          "type": "integer"
+        },
+        "completed_effects": {
+          "minimum": 0,
+          "title": "Completed Effects",
+          "type": "integer"
+        },
+        "held_cny": {
+          "minimum": 0,
+          "title": "Held Cny",
+          "type": "number"
+        },
+        "is_actual_bill": {
+          "const": false,
+          "default": false,
+          "title": "Is Actual Bill",
+          "type": "boolean"
+        },
+        "known_cny": {
+          "minimum": 0,
+          "title": "Known Cny",
+          "type": "number"
+        },
+        "measured_cny": {
+          "minimum": 0,
+          "title": "Measured Cny",
+          "type": "number"
+        },
+        "uncertain_effects": {
+          "minimum": 0,
+          "title": "Uncertain Effects",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "measured_cny",
+        "known_cny",
+        "held_cny",
+        "committed_cny",
+        "committed_calls",
+        "committed_local_calls",
+        "committed_external_requests",
+        "uncertain_effects",
+        "completed_effects"
+      ],
+      "title": "JournalAccounting",
+      "type": "object"
+    },
+    "ReservationUsage": {
+      "additionalProperties": false,
+      "properties": {
+        "api_calls": {
+          "minimum": 0,
+          "title": "Api Calls",
+          "type": "integer"
+        },
+        "cny": {
+          "minimum": 0,
+          "title": "Cny",
+          "type": "number"
+        }
+      },
+      "required": [
+        "cny",
+        "api_calls"
+      ],
+      "title": "ReservationUsage",
+      "type": "object"
+    },
+    "ReservationView": {
+      "additionalProperties": false,
+      "properties": {
+        "estimate_source": {
+          "title": "Estimate Source",
+          "type": "string"
+        },
+        "is_actual_bill": {
+          "title": "Is Actual Bill",
+          "type": "boolean"
+        },
+        "plan_digest": {
+          "title": "Plan Digest",
+          "type": "string"
+        },
+        "plan_version": {
+          "minimum": 0,
+          "title": "Plan Version",
+          "type": "integer"
+        },
+        "reconciliation_required": {
+          "title": "Reconciliation Required",
+          "type": "boolean"
+        },
+        "recorded_usage": {
+          "$ref": "#/$defs/ReservationUsage"
+        },
+        "reserved": {
+          "$ref": "#/$defs/ReservedUsage"
+        },
+        "reserved_at": {
+          "title": "Reserved At",
+          "type": "string"
+        },
+        "settled": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SettledUsage"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "enum": [
+            "open",
+            "settled",
+            "reconciliation_required"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "task_id": {
+          "title": "Task Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_id",
+        "plan_version",
+        "plan_digest",
+        "reserved",
+        "estimate_source",
+        "reserved_at",
+        "settled",
+        "state",
+        "recorded_usage",
+        "reconciliation_required",
+        "is_actual_bill"
+      ],
+      "title": "ReservationView",
+      "type": "object"
+    },
+    "ReservedUsage": {
+      "additionalProperties": false,
+      "properties": {
+        "api_calls": {
+          "minimum": 0,
+          "title": "Api Calls",
+          "type": "integer"
+        },
+        "cny": {
+          "minimum": 0,
+          "title": "Cny",
+          "type": "number"
+        },
+        "wall_clock_seconds": {
+          "minimum": 0,
+          "title": "Wall Clock Seconds",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "cny",
+        "api_calls",
+        "wall_clock_seconds"
+      ],
+      "title": "ReservedUsage",
+      "type": "object"
+    },
+    "SettledUsage": {
+      "additionalProperties": false,
+      "properties": {
+        "api_calls": {
+          "minimum": 0,
+          "title": "Api Calls",
+          "type": "integer"
+        },
+        "at": {
+          "title": "At",
+          "type": "string"
+        },
+        "cny": {
+          "minimum": 0,
+          "title": "Cny",
+          "type": "number"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "cny",
+        "api_calls",
+        "at",
+        "reason"
+      ],
+      "title": "SettledUsage",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "committed_cny_all_tasks": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Committed Cny All Tasks"
+    },
+    "is_actual_bill": {
+      "title": "Is Actual Bill",
+      "type": "boolean"
+    },
+    "journal_accounting": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/JournalAccounting"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "measured_usage": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BudgetUsage"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "note": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Note"
+    },
+    "projection_state": {
+      "default": "legacy",
+      "enum": [
+        "legacy",
+        "pending",
+        "synced",
+        "reconciliation_required"
+      ],
+      "title": "Projection State",
+      "type": "string"
+    },
+    "reservation": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ReservationView"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "task_id": {
+      "title": "Task Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "task_id",
+    "reservation",
+    "measured_usage",
+    "is_actual_bill"
+  ],
+  "title": "BudgetReport",
+  "type": "object"
+}

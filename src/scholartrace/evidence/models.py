@@ -9,6 +9,7 @@ from typing import Annotated, Literal
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from scholartrace.contracts import Claim, Evidence, NonBlank, Sha256, StableId
+from scholartrace.documind_compatibility import DOCUMIND_VERSION_PATTERN, supports_documind_retrieve
 
 DocuMindErrorCode = Literal[
     "document_not_found",
@@ -81,7 +82,7 @@ class RetrievalChunk(StrictModel):
 
 class DocuMindRetrieveResponse(StrictModel):
     schema_version: Literal["1.0"] = "1.0"
-    service_version: Annotated[str, Field(pattern=r"^2\.[1-9][0-9]*\.[0-9]+$")]
+    service_version: Annotated[str, Field(pattern=DOCUMIND_VERSION_PATTERN)]
     retrieval_version: Literal["dense-v1"]
     retrieval_mode: Literal["dense"]
     document_key: Sha256
@@ -117,6 +118,15 @@ class DocuMindReadiness(StrictModel):
     components: dict[str, str] | None = None
     dependencies: dict[str, bool] | None = None
     error_type: str | None = Field(default=None, max_length=200)
+
+
+def retrieval_is_ready(readiness: DocuMindReadiness, http_status: int) -> bool:
+    if not supports_documind_retrieve(readiness.version) or http_status not in (200, 503):
+        return False
+    if readiness.components is not None:
+        return readiness.components.get("retrieval") == "ready"
+    # 3.0.0 readiness always exposes components; never infer it from liveness.
+    return readiness.version != "3.0.0" and http_status == 200 and readiness.ready
 
 
 class PaperCard(StrictModel):

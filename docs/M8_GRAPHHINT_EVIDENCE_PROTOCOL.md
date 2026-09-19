@@ -1,7 +1,7 @@
 # M8-G GraphHint 查漏补缺与 Evidence 增益协议
 
-> 状态：已完成（Gate A `NO_GO / keep_disabled`）  
-> 前置结论：M6 B3/B4 与 M7-G 保持冻结，不得回改  
+> 状态：已完成（Gate A `NO_GO / keep_disabled`）<br>
+> 前置结论：M6 B3/B4 与 M7-G 保持冻结，不得回改<br>
 > 默认决策：ScholarGraph 继续关闭，除非本协议的分层门禁依次通过
 
 ## 1. 目标与职责

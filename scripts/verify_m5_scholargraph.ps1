@@ -1,8 +1,12 @@
 param(
+    [switch]$Historical,
     [string]$ScholarGraphPath = ""
 )
 
 $ErrorActionPreference = "Stop"
+if (-not $Historical) {
+    throw "Historical replay only. Pass -Historical with an archived upstream checkout; see docs/RUNBOOK.md for current validation."
+}
 $projectRoot = Split-Path -Parent $PSScriptRoot
 $documentsRoot = Split-Path -Parent $projectRoot
 if (-not $ScholarGraphPath) {

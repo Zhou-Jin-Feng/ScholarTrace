@@ -6,11 +6,20 @@ import hashlib
 import json
 import sqlite3
 import threading
+from base64 import urlsafe_b64decode, urlsafe_b64encode
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from scholartrace.delivery.models import DemoMode, TaskPhase, TaskStatus
+from scholartrace.delivery.migrations import migrate
+from scholartrace.delivery.models import DemoMode, ExecutionMode, TaskPhase, TaskStatus
+from scholartrace.delivery.transactions import transaction
+
+
+class InvalidCursorError(ValueError):
+    """The supplied list cursor could not be decoded."""
+
+    code = "invalid_cursor"
 
 
 def _now() -> str:
@@ -63,6 +72,9 @@ class DeliveryStore:
             """
         )
         self.connection.commit()
+        # Bring older databases up to the current schema. Transactional: a
+        # failure leaves the previous version intact rather than half-migrated.
+        self.schema_version = migrate(self.connection)
 
     def close(self) -> None:
         with self._lock:
@@ -78,6 +90,7 @@ class DeliveryStore:
         demo_mode: DemoMode,
         idempotency_key: str | None = None,
         request_sha256: str | None = None,
+        execution_mode: ExecutionMode = ExecutionMode.DEMO,
     ) -> dict[str, Any]:
         with self._lock:
             if idempotency_key is not None:
@@ -92,13 +105,13 @@ class DeliveryStore:
                     return self.get_task(str(existing["task_id"]))
 
             timestamp = _now()
-            with self.connection:
+            with transaction(self.connection):
                 self.connection.execute(
                     """
                     INSERT INTO tasks(
                         task_id, thread_id, title, question, status, phase, demo_mode,
-                        created_at, updated_at, metrics_json, degradations_json
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        created_at, updated_at, metrics_json, degradations_json, execution_mode
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """,
                     (
                         task_id,
@@ -112,6 +125,7 @@ class DeliveryStore:
                         timestamp,
                         _json({}),
                         _json([]),
+                        execution_mode.value,
                     ),
                 )
                 if idempotency_key is not None and request_sha256 is not None:
@@ -145,7 +159,7 @@ class DeliveryStore:
     ) -> dict[str, Any]:
         with self._lock:
             current = self.get_task(task_id)
-            with self.connection:
+            with transaction(self.connection):
                 self.connection.execute(
                     """
                     UPDATE tasks SET status = ?, phase = ?, updated_at = ?,
@@ -177,7 +191,7 @@ class DeliveryStore:
         with self._lock:
             digest = hashlib.sha256(content).hexdigest()
             timestamp = _now()
-            with self.connection:
+            with transaction(self.connection):
                 existing = self.connection.execute(
                     "SELECT * FROM artifacts WHERE artifact_id = ?", (artifact_id,)
                 ).fetchone()
@@ -214,6 +228,90 @@ class DeliveryStore:
                 (task_id,),
             ).fetchall()
             return [self._artifact_row(row, include_content=False) for row in rows]
+
+    # ---- Task list with keyset pagination (T13) ---------------------------
+
+    @staticmethod
+    def encode_cursor(created_at: str, task_id: str) -> str:
+        raw = json.dumps({"c": created_at, "i": task_id}, separators=(",", ":"))
+        return urlsafe_b64encode(raw.encode("utf-8")).decode("ascii")
+
+    @staticmethod
+    def decode_cursor(cursor: str) -> tuple[str, str]:
+        try:
+            padded = cursor + "=" * (-len(cursor) % 4)
+            payload = json.loads(urlsafe_b64decode(padded.encode("ascii")).decode("utf-8"))
+            return str(payload["c"]), str(payload["i"])
+        except Exception as exc:  # narrow surface: any malformed cursor is a 400
+            raise InvalidCursorError("cursor is not decodable") from exc
+
+    def list_tasks(
+        self,
+        *,
+        status: TaskStatus | None = None,
+        cursor: str | None = None,
+        limit: int = 20,
+    ) -> dict[str, Any]:
+        """Return one page ordered by ``(created_at DESC, task_id DESC)``.
+
+        Keyset, not OFFSET: concurrent inserts must not cause a page to skip or
+        repeat rows while the user is paging through history.
+        """
+
+        if not 1 <= limit <= 100:
+            raise ValueError("limit must be between 1 and 100")
+        clauses: list[str] = []
+        params: list[Any] = []
+        if status is not None:
+            clauses.append("status = ?")
+            params.append(status.value)
+        if cursor is not None:
+            created_at, task_id = self.decode_cursor(cursor)
+            clauses.append("(created_at < ? OR (created_at = ? AND task_id < ?))")
+            params.extend([created_at, created_at, task_id])
+        where = f" WHERE {' AND '.join(clauses)}" if clauses else ""
+        with self._lock:
+            rows = self.connection.execute(
+                f"SELECT * FROM tasks{where} ORDER BY created_at DESC, task_id DESC LIMIT ?",
+                (*params, limit + 1),
+            ).fetchall()
+            count_params = params[:1] if status is not None else []
+            count_where = " WHERE status = ?" if status is not None else ""
+            total = int(
+                self.connection.execute(
+                    f"SELECT COUNT(*) FROM tasks{count_where}", tuple(count_params)
+                ).fetchone()[0]
+            )
+        has_more = len(rows) > limit
+        page = rows[:limit]
+        next_cursor = (
+            self.encode_cursor(str(page[-1]["created_at"]), str(page[-1]["task_id"]))
+            if has_more and page
+            else None
+        )
+        return {
+            "items": [self._task_row(row) for row in page],
+            "next_cursor": next_cursor,
+            "total_known": total,
+        }
+
+    def _task_row(self, row: sqlite3.Row) -> dict[str, Any]:
+        keys = set(row.keys())
+        return {
+            "task_id": str(row["task_id"]),
+            "thread_id": str(row["thread_id"]),
+            "title": str(row["title"]),
+            "question": str(row["question"]),
+            "status": str(row["status"]),
+            "phase": str(row["phase"]),
+            "demo_mode": str(row["demo_mode"]),
+            # Absent on databases migrated from v1; those rows really were demo.
+            "execution_mode": str(row["execution_mode"]) if "execution_mode" in keys else "demo",
+            "created_at": str(row["created_at"]),
+            "updated_at": str(row["updated_at"]),
+            "metrics": json.loads(row["metrics_json"]),
+            "degradations": json.loads(row["degradations_json"]),
+        }
 
     def get_artifact(self, artifact_id: str, *, include_content: bool = True) -> dict[str, Any]:
         with self._lock:

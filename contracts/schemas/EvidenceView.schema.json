@@ -1,0 +1,225 @@
+{
+  "$defs": {
+    "BindingView": {
+      "additionalProperties": false,
+      "properties": {
+        "document_key": {
+          "title": "Document Key",
+          "type": "string"
+        },
+        "documind_version": {
+          "title": "Documind Version",
+          "type": "string"
+        },
+        "index_id": {
+          "title": "Index Id",
+          "type": "string"
+        },
+        "source_sha256": {
+          "title": "Source Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "document_key",
+        "index_id",
+        "source_sha256",
+        "documind_version"
+      ],
+      "title": "BindingView",
+      "type": "object"
+    },
+    "ChunkView": {
+      "additionalProperties": false,
+      "properties": {
+        "char_end": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Char End"
+        },
+        "char_start": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Char Start"
+        },
+        "chunk_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Chunk Id"
+        },
+        "content_sha256": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Content Sha256"
+        },
+        "page_number": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Page Number"
+        }
+      },
+      "required": [
+        "chunk_id",
+        "content_sha256",
+        "page_number",
+        "char_start",
+        "char_end"
+      ],
+      "title": "ChunkView",
+      "type": "object"
+    },
+    "PaperView": {
+      "additionalProperties": false,
+      "properties": {
+        "access_level": {
+          "title": "Access Level",
+          "type": "string"
+        },
+        "paper_id": {
+          "title": "Paper Id",
+          "type": "string"
+        },
+        "source": {
+          "title": "Source",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Version"
+        }
+      },
+      "required": [
+        "paper_id",
+        "title",
+        "source",
+        "access_level",
+        "version"
+      ],
+      "title": "PaperView",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "binding": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BindingView"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "chunk": {
+      "$ref": "#/$defs/ChunkView"
+    },
+    "claim_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Claim Ids",
+      "type": "array"
+    },
+    "evidence_id": {
+      "title": "Evidence Id",
+      "type": "string"
+    },
+    "evidence_level": {
+      "enum": [
+        "fulltext",
+        "abstract",
+        "metadata"
+      ],
+      "title": "Evidence Level",
+      "type": "string"
+    },
+    "excerpt": {
+      "title": "Excerpt",
+      "type": "string"
+    },
+    "excerpt_is_verbatim": {
+      "title": "Excerpt Is Verbatim",
+      "type": "boolean"
+    },
+    "inference_note": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Inference Note"
+    },
+    "paper": {
+      "$ref": "#/$defs/PaperView"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "task_id": {
+      "title": "Task Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "evidence_id",
+    "task_id",
+    "claim_ids",
+    "evidence_level",
+    "paper",
+    "binding",
+    "chunk",
+    "excerpt",
+    "excerpt_is_verbatim",
+    "inference_note"
+  ],
+  "title": "EvidenceView",
+  "type": "object"
+}

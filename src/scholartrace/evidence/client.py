@@ -5,7 +5,6 @@ from __future__ import annotations
 import asyncio
 import hashlib
 import json
-import re
 import time
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
@@ -15,6 +14,7 @@ import httpx
 from pydantic import ValidationError
 
 from scholartrace.contracts import DocuMindBinding
+from scholartrace.documind_compatibility import supports_documind_retrieve
 from scholartrace.evidence.models import (
     DocuMindErrorCode,
     DocuMindErrorEnvelope,
@@ -22,6 +22,7 @@ from scholartrace.evidence.models import (
     DocuMindRetrieveRequest,
     DocuMindRetrieveResponse,
     RetrievalAudit,
+    retrieval_is_ready,
 )
 
 AsyncSleeper = Callable[[float], Awaitable[None]]
@@ -100,11 +101,7 @@ class DocuMindClient:
             )
         except (httpx.HTTPError, ValidationError, ValueError, json.JSONDecodeError):
             return False, None
-        if not self._supports_retrieve(readiness.version):
-            return False, readiness
-        if readiness.components is not None:
-            return readiness.components.get("retrieval") == "ready", readiness
-        return response.is_success and readiness.ready, readiness
+        return retrieval_is_ready(readiness, response.status_code), readiness
 
     async def retrieve(
         self,
@@ -251,5 +248,4 @@ class DocuMindClient:
 
     @staticmethod
     def _supports_retrieve(version: str) -> bool:
-        match = re.fullmatch(r"2\.(\d+)\.(\d+)", version)
-        return bool(match and int(match.group(1)) >= 1)
+        return supports_documind_retrieve(version)

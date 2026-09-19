@@ -8,6 +8,8 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from scholartrace.documind_compatibility import DOCUMIND_VERSION_PATTERN
+
 SchemaVersion = Literal["1.0"]
 Sha256 = Annotated[str, Field(pattern=r"^[a-f0-9]{64}$")]
 StableId = Annotated[
@@ -146,7 +148,7 @@ class DocuMindBinding(ContractModel):
     document_key: Sha256
     index_id: Sha256
     source_sha256: Sha256
-    documind_version: Annotated[str, Field(pattern=r"^2\.[1-9][0-9]*\.[0-9]+$")]
+    documind_version: Annotated[str, Field(pattern=DOCUMIND_VERSION_PATTERN)]
     retrieval_schema_version: Literal["1.0"]
 
 

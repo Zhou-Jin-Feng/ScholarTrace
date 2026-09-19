@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      SCHOLARTRACE_DATA_DIR: ${SCHOLARTRACE_DATA_DIR:-/var/lib/scholartrace}
+      SCHOLARTRACE_DATA_DIR: ${SCHOLARTRACE_CONTAINER_DATA_DIR:-/var/lib/scholartrace}
       SCHOLARTRACE_DEPLOYMENT_MODE: ${SCHOLARTRACE_DEPLOYMENT_MODE:-loopback}
       SCHOLARTRACE_AUTH_TOKEN: ${SCHOLARTRACE_AUTH_TOKEN:-}
     ports:

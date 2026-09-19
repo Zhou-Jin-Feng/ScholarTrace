@@ -311,6 +311,19 @@
           "default": null,
           "title": "Openalex Id"
         },
+        "publication_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Publication Date"
+        },
         "publication_year": {
           "maximum": 2100,
           "minimum": 1900,
@@ -374,6 +387,19 @@
           "minLength": 1,
           "title": "Title",
           "type": "string"
+        },
+        "version_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Version Date"
         }
       },
       "required": [

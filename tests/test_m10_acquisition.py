@@ -196,6 +196,7 @@ def test_ingest_rejects_provider_hash_mismatch_before_binding(tmp_path: Path) ->
                     document_paths={paper.canonical_paper_id: pdf_path},
                     repository=DocuMindBindingRepository(tmp_path / "bindings.sqlite3"),
                     newly_created=[],
+                    documind_version="2.2.0",
                     expected_source_sha256={
                         paper.canonical_paper_id: hashlib.sha256(PDF).hexdigest()
                     },
@@ -203,6 +204,43 @@ def test_ingest_rejects_provider_hash_mismatch_before_binding(tmp_path: Path) ->
             assert raised.value.code == "provider_hash_mismatch"
 
     _run(scenario())
+
+
+@pytest.mark.parametrize('when', ['before_upload', 'during_upload'])
+def test_ingest_rejects_acquired_file_mutation_without_publishing_binding(tmp_path, when):
+    paper = _paper()
+    path = tmp_path / 'paper.pdf'
+    path.write_bytes(PDF)
+    expected = hashlib.sha256(PDF).hexdigest()
+    changed = PDF + b'changed after acquisition'
+    if when == 'before_upload':
+        path.write_bytes(changed)
+    calls = []
+    created = []
+    repository = DocuMindBindingRepository(tmp_path / 'bindings.sqlite')
+
+    def handler(request):
+        calls.append(request.method)
+        if request.method == 'GET':
+            return httpx.Response(200, json={'items': []})
+        path.write_bytes(changed)
+        return httpx.Response(200, json={})
+
+    async def run():
+        async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+            with pytest.raises(live.FullTextAcquisitionError) as raised:
+                await live.ingest_papers(
+                    client=client, base_url='http://documind.test', papers=[paper],
+                    document_paths={paper.canonical_paper_id: path}, repository=repository,
+                    newly_created=created, documind_version='3.0.0',
+                    expected_source_sha256={paper.canonical_paper_id: expected},
+                )
+            assert raised.value.code == 'source_hash_mismatch'
+
+    _run(run())
+    assert repository.get(paper.canonical_paper_id) is None
+    assert created == []
+    assert calls == (['GET'] if when == 'before_upload' else ['GET', 'POST'])
 
 
 def test_cleanup_is_idempotent_and_attempts_all_documents() -> None:

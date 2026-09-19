@@ -60,7 +60,8 @@ class SecurityPolicy:
 
     def protects(self, request: Request) -> bool:
         path = request.url.path
-        return path == "/api/v1/research/tasks" or path.startswith("/api/v1/research/tasks/")
+        return (path == "/api/v1/research/tasks" or path.startswith("/api/v1/research/tasks/")
+                or path == "/api/v1/health/dependencies/probe")
 
     def allows(self, request: Request) -> bool:
         if not self.auth_required or not self.protects(request):

@@ -16,7 +16,7 @@ from scholartrace.search.storage import write_json
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_SEEDS = ROOT / "tests" / "fixtures" / "m4" / "openalex_live_seeds.json"
 DEFAULT_CACHE_ROOT = ROOT / "artifacts" / "m4-openalex-live"
-DEFAULT_OUTPUT = ROOT / "evaluation" / "reports" / "m4_openalex_live_smoke.json"
+DEFAULT_OUTPUT = ROOT / "artifacts" / "reports" / "m4_openalex_live_smoke.json"
 
 
 def _load_seeds(path: Path, *, limit: int) -> list[CitationSeed]:

@@ -6,8 +6,11 @@ import re
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Literal
+from urllib.parse import urlparse
 
 _KEY_PATTERN = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+StructuredOutputMode = Literal["auto", "json_schema", "json_object"]
 
 
 @dataclass(frozen=True, slots=True)
@@ -18,6 +21,7 @@ class ProviderSettings:
     api_key: str = field(repr=False)
     timeout_seconds: float
     model: str | None = None
+    structured_output_mode: StructuredOutputMode = "auto"
 
 
 def read_dotenv(path: Path) -> dict[str, str]:
@@ -85,11 +89,20 @@ def resolve_provider_settings(
         dotenv_values.get("SCHOLARTRACE_API_MODEL"),
         "",
     )
+    structured_output_mode = _first_non_empty(
+        cli_values.get("structured_output_mode"),
+        environment.get("SCHOLARTRACE_API_STRUCTURED_OUTPUT_MODE"),
+        dotenv_values.get("SCHOLARTRACE_API_STRUCTURED_OUTPUT_MODE"),
+        "auto",
+    )
+    if structured_output_mode not in {"auto", "json_schema", "json_object"}:
+        raise ValueError("provider structured output mode is invalid")
     return ProviderSettings(
         base_url=base_url,
         api_key=api_key,
         timeout_seconds=timeout_seconds,
         model=model or None,
+        structured_output_mode=structured_output_mode,  # type: ignore[arg-type]
     )
 
 
@@ -106,3 +119,22 @@ def _parse_dotenv_value(value: str) -> str:
     if value.startswith(("'", '"')):
         raise ValueError("unterminated dotenv quote")
     return value
+
+
+def resolved_structured_output_mode(
+    settings: ProviderSettings,
+) -> Literal["json_schema", "json_object"]:
+    """Select the safest structured-output dialect for the configured endpoint."""
+
+    if settings.structured_output_mode == "json_schema":
+        return "json_schema"
+    if settings.structured_output_mode == "json_object":
+        return "json_object"
+    hostname = (urlparse(settings.base_url).hostname or "").lower()
+    return "json_object" if hostname == "api.deepseek.com" else "json_schema"
+
+
+def uses_deepseek_chat_parameters(settings: ProviderSettings) -> bool:
+    """DeepSeek's Chat Completions endpoint uses ``max_tokens``."""
+
+    return (urlparse(settings.base_url).hostname or "").lower() == "api.deepseek.com"

@@ -21,7 +21,7 @@ from scholartrace.workflow import ApprovalDecision, SearchBackendResult, open_m3
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_WORK_DIR = ROOT / "artifacts" / "m3-workflow-fixture"
-DEFAULT_SUMMARY = ROOT / "evaluation" / "reports" / "m3_workflow_fixture_smoke.json"
+DEFAULT_SUMMARY = ROOT / "artifacts" / "reports" / "m3_workflow_fixture_smoke.json"
 
 
 def _plan(task_id: str) -> ResearchPlan:

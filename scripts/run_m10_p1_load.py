@@ -176,8 +176,9 @@ def main() -> None:
         raise ValueError("task count must be at least 8")
     report = asyncio.run(_run(args.task_count))
     output = (
-        Path(__file__).resolve().parents[1] / "evaluation" / "reports" / "m10_p1_local_load.json"
+        Path(__file__).resolve().parents[1] / "artifacts" / "reports" / "m10_p1_local_load.json"
     )
+    output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False))
 

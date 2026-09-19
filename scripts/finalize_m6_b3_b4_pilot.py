@@ -24,7 +24,7 @@ BOUNDARY = ROOT / "evaluation" / "seeds" / "m5_scholargraph_boundary_eval.jsonl"
 M2_REPORT = ROOT / "artifacts" / "m2-evidence-live" / "evidence_report.json"
 M2_PAPERS = ROOT / "tests" / "fixtures" / "documind" / "m2_three_papers.json"
 PRIVATE_DIR = ROOT / "agent" / "过程记录" / "M6-B3B4-paid-pilot"
-PUBLIC_OUTPUT = ROOT / "evaluation" / "reports" / "m6_b3_b4_paid_pilot.json"
+PUBLIC_OUTPUT = ROOT / "artifacts" / "reports" / "m6_b3_b4_paid_pilot.json"
 
 
 def main() -> int:
@@ -39,15 +39,10 @@ def main() -> int:
         required=True,
     )
     args = parser.parse_args()
-    if not (
-        0 < args.prior_attempt_reference_upper_bound_cny
-        < args.approved_max_cost_cny
-    ):
+    if not (0 < args.prior_attempt_reference_upper_bound_cny < args.approved_max_cost_cny):
         raise ValueError("finalizer requires a valid prior-attempt budget bound")
 
-    private_input = json.loads(
-        (args.private_dir / "verified_input.json").read_text("utf-8")
-    )
+    private_input = json.loads((args.private_dir / "verified_input.json").read_text("utf-8"))
     archive = PrivateExperimentArchive.model_validate_json(
         (args.private_dir / "private_run.json").read_text("utf-8")
     )
@@ -64,9 +59,7 @@ def main() -> int:
         or archive.manifest.paper_pool_sha256 != artifacts.paper_pool_sha256
     ):
         raise ValueError("pilot finalization inputs drifted")
-    verifications = [
-        Verification.model_validate(item) for item in private_input["verifications"]
-    ]
+    verifications = [Verification.model_validate(item) for item in private_input["verifications"]]
     gate = ReportGateResult.model_validate(private_input["report_gate"])
     statuses = Counter(item.status for item in verifications)
     review = prepare_blind_review(
@@ -148,9 +141,7 @@ def main() -> int:
                 "total_reference_cost_upper_bound_cny": public[
                     "total_reference_cost_upper_bound_cny"
                 ],
-                "default_enable_decision": public["unscored_comparison"][
-                    "default_enable_decision"
-                ],
+                "default_enable_decision": public["unscored_comparison"]["default_enable_decision"],
             },
             ensure_ascii=False,
             sort_keys=True,

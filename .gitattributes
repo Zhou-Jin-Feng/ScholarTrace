@@ -1,0 +1,2 @@
+# Preserve the exact bytes used by the frozen preregistration SHA-256.
+evaluation/m9/p2_preregistration.json text eol=lf

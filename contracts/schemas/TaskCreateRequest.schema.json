@@ -8,6 +8,15 @@
       ],
       "title": "DemoMode",
       "type": "string"
+    },
+    "ExecutionMode": {
+      "description": "Which executor owns a task. There is no implicit fallback between them.",
+      "enum": [
+        "demo",
+        "real"
+      ],
+      "title": "ExecutionMode",
+      "type": "string"
     }
   },
   "additionalProperties": false,
@@ -15,6 +24,10 @@
     "demo_mode": {
       "$ref": "#/$defs/DemoMode",
       "default": "success"
+    },
+    "execution_mode": {
+      "$ref": "#/$defs/ExecutionMode",
+      "default": "demo"
     },
     "question": {
       "maxLength": 2000,

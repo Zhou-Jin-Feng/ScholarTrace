@@ -36,7 +36,7 @@ BOUNDARY = ROOT / "evaluation" / "seeds" / "m5_scholargraph_boundary_eval.jsonl"
 SCOPES = ROOT / "evaluation" / "seeds" / "m5_scholargraph_routing_scopes.json"
 CAPABILITIES = ROOT / "tests" / "fixtures" / "m5" / "scholargraph_capabilities.json"
 PAPER_POOL = ROOT / "tests" / "fixtures" / "documind" / "m2_three_papers.json"
-PUBLIC_OUTPUT = ROOT / "evaluation" / "reports" / "m6_b3_b4_fixture_infrastructure.json"
+PUBLIC_OUTPUT = ROOT / "artifacts" / "reports" / "m6_b3_b4_fixture_infrastructure.json"
 PRIVATE_DIR = ROOT / "agent" / "过程记录" / "M6-B3B4-fixture"
 PRIVATE_OUTPUT = PRIVATE_DIR / "private_run.json"
 REVIEW_OUTPUT = PRIVATE_DIR / "blind_review.csv"
@@ -50,20 +50,15 @@ async def run_fixture() -> dict[str, object]:
         for question_id in questions
     }
     allowed_evidence_ids = {
-        question_id: frozenset({f"evidence:fixture:{question_id}"})
-        for question_id in questions
+        question_id: frozenset({f"evidence:fixture:{question_id}"}) for question_id in questions
     }
     hashes = QuestionSetHashes(
         eligible_sha256=question_set_sha256(ELIGIBLE),
         boundary_sha256=question_set_sha256(BOUNDARY),
     )
     scopes_payload = json.loads(SCOPES.read_text("utf-8"))
-    scopes = TypeAdapter(dict[str, ScholarGraphScope]).validate_python(
-        scopes_payload["scopes"]
-    )
-    capabilities = CapabilitiesResponse.model_validate_json(
-        CAPABILITIES.read_text("utf-8")
-    )
+    scopes = TypeAdapter(dict[str, ScholarGraphScope]).validate_python(scopes_payload["scopes"])
+    capabilities = CapabilitiesResponse.model_validate_json(CAPABILITIES.read_text("utf-8"))
     generator = DeterministicFixtureReportGenerator()
     graph = DeterministicFixtureScholarGraph(
         router=CapabilityRouter(),
@@ -153,9 +148,7 @@ def main() -> int:
         "simulated_scholargraph_calls": result["simulated_scholargraph_calls"],
         "paid_model_api_calls": result["paid_model_api_calls"],
         "blind_review_rows": result["blind_review"]["row_count"],
-        "default_enable_decision": result["unscored_comparison"][
-            "default_enable_decision"
-        ],
+        "default_enable_decision": result["unscored_comparison"]["default_enable_decision"],
         "passed": result["passed"],
     }
     print(json.dumps(summary, ensure_ascii=False))

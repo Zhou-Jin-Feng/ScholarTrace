@@ -14,6 +14,7 @@ import httpx
 from pydantic import BaseModel, ConfigDict, Field
 
 from scholartrace.contracts import DocuMindBinding, Paper, Sha256
+from scholartrace.documind_compatibility import supports_documind_retrieve
 from scholartrace.evidence.bindings import DocuMindBindingRepository
 
 MAX_PDF_BYTES = 30 * 1024 * 1024
@@ -39,9 +40,7 @@ class DocumentCleanupError(RuntimeError):
     def __init__(self, failed_document_keys: list[str], cleaned_count: int) -> None:
         self.failed_document_keys = tuple(failed_document_keys)
         self.cleaned_count = cleaned_count
-        super().__init__(
-            "DocuMind cleanup failed for " + ", ".join(self.failed_document_keys)
-        )
+        super().__init__("DocuMind cleanup failed for " + ", ".join(self.failed_document_keys))
 
 
 @dataclass(frozen=True, slots=True)
@@ -72,6 +71,12 @@ class _IngestionResponse(_LenientModel):
     index_id: Sha256
     source_sha256: Sha256
     chunk_count: int = Field(ge=1)
+
+
+class _DeletionResponse(_LenientModel):
+    status: str
+    document_key: Sha256
+    cleanup_pending: bool = False
 
 
 class _DocumentDetail(_LenientModel):
@@ -300,8 +305,16 @@ async def ingest_papers(
     document_paths: dict[str, Path],
     repository: DocuMindBindingRepository,
     newly_created: list[str],
+    documind_version: str,
     expected_source_sha256: dict[str, Sha256] | None = None,
+    multipart_boundary: str | None = None,
 ) -> tuple[list[DocuMindBinding], int]:
+    if multipart_boundary is not None and not re.fullmatch(
+        r"[a-zA-Z0-9]{1,70}", multipart_boundary
+    ):
+        raise ValueError("multipart boundary must be a bounded ASCII identifier")
+    if not supports_documind_retrieve(documind_version):
+        raise ValueError("unsupported DocuMind provider version")
     list_response = await client.get(f"{base_url}/api/v1/documents")
     document_list = await _json_response(list_response, _DocumentList)
     assert isinstance(document_list, _DocumentList)
@@ -314,9 +327,7 @@ async def ingest_papers(
         validate_pdf(path)
         source_sha256 = sha256_file(path)
         expected = (
-            expected_source_sha256.get(paper.canonical_paper_id)
-            if expected_source_sha256
-            else None
+            expected_source_sha256.get(paper.canonical_paper_id) if expected_source_sha256 else None
         )
         if expected is not None and source_sha256 != expected:
             raise FullTextAcquisitionError(
@@ -326,6 +337,8 @@ async def ingest_papers(
             response = await client.post(
                 f"{base_url}/api/v1/documents",
                 files={"file": (path.name, source, "application/pdf")},
+                headers=({"content-type": f"multipart/form-data; boundary={multipart_boundary}"}
+                         if multipart_boundary else None),
             )
         if sha256_file(path) != source_sha256:
             raise FullTextAcquisitionError(
@@ -341,9 +354,7 @@ async def ingest_papers(
             newly_created.append(ingestion.document_key)
             existing_keys.add(ingestion.document_key)
 
-        detail_response = await client.get(
-            f"{base_url}/api/v1/documents/{ingestion.document_key}"
-        )
+        detail_response = await client.get(f"{base_url}/api/v1/documents/{ingestion.document_key}")
         detail = await _json_response(detail_response, _DocumentDetail)
         assert isinstance(detail, _DocumentDetail)
         if (
@@ -359,7 +370,7 @@ async def ingest_papers(
             document_key=ingestion.document_key,
             index_id=ingestion.index_id,
             source_sha256=ingestion.source_sha256,
-            documind_version="2.2.0",
+            documind_version=documind_version,
             retrieval_schema_version="1.0",
         )
         current = repository.get(paper.canonical_paper_id)
@@ -383,11 +394,21 @@ async def cleanup_documents(
     for document_key in reversed(document_keys):
         try:
             response = await client.delete(f"{base_url}/api/v1/documents/{document_key}")
-            if response.status_code == 404 or 200 <= response.status_code < 300:
+            if response.status_code in (404, 204):
                 cleaned += 1
+            elif response.status_code == 200:
+                deletion = _DeletionResponse.model_validate_json(response.content)
+                if (
+                    deletion.status == "deleted"
+                    and deletion.document_key == document_key
+                    and not deletion.cleanup_pending
+                ):
+                    cleaned += 1
+                else:
+                    failed.append(document_key)
             else:
                 failed.append(document_key)
-        except httpx.HTTPError:
+        except (httpx.HTTPError, ValueError):
             failed.append(document_key)
     if failed:
         raise DocumentCleanupError(failed, cleaned)

@@ -45,12 +45,13 @@ def _generator(
     *,
     protocol: str = "responses",
     budget: ApiCallBudget | None = None,
+    base_url: str = "https://provider.test",
 ) -> OpenAICompatiblePlanGenerator:
     test_credential = "private-" + "test-key"
     return OpenAICompatiblePlanGenerator(
         client=http,
         settings=ProviderSettings(
-            base_url="https://provider.test",
+            base_url=base_url,
             api_key=test_credential,
             timeout_seconds=20,
         ),
@@ -171,6 +172,162 @@ def test_chat_completions_protocol_is_supported_without_retry() -> None:
     assert result.protocol == "chat_completions"
     assert result.usage.output_tokens == 160
     assert calls == 1
+
+
+def test_deepseek_chat_uses_json_object_and_max_tokens() -> None:
+    seen: dict[str, object] = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        payload = json.loads(request.content)
+        seen["payload"] = payload
+        return httpx.Response(
+            200,
+            json={
+                "id": "deepseek_test",
+                "model": "deepseek-flash",
+                "choices": [{"message": {"content": json.dumps(_draft())}}],
+                "usage": {"prompt_tokens": 700, "completion_tokens": 180},
+            },
+        )
+
+    async def scenario() -> object:
+        async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as http:
+            generator = _generator(
+                http,
+                protocol="chat_completions",
+                base_url="https://api.deepseek.com/v1",
+            )
+            generator.model = "deepseek-flash"
+            return await generator.generate_plan_with_usage(
+                task_id="task:deepseek-chat",
+                question="How should adaptive RAG systems validate evidence provenance?",
+                idempotency_key="effect:deepseek-chat:coordinator",
+            )
+
+    result = asyncio.run(scenario())
+    assert result.response_model == "deepseek-flash"
+    payload = seen["payload"]
+    assert isinstance(payload, dict)
+    assert payload["max_tokens"] == 900
+    assert "max_completion_tokens" not in payload
+    assert payload["response_format"] == {"type": "json_object"}
+    messages = payload["messages"]
+    assert isinstance(messages, list)
+    assert "exactly these keys" in messages[-1]["content"]
+    assert "exactly 2 subquestions" in messages[-1]["content"]
+    assert "Both criteria fields must be JSON arrays" in messages[-1]["content"]
+
+
+def test_deepseek_json_object_normalizes_scalar_criteria_lists() -> None:
+    def handler(_: httpx.Request) -> httpx.Response:
+        payload = _draft()
+        payload["inclusion_criteria"] = "Public research with reproducible evaluation"
+        payload["exclusion_criteria"] = "Uncitable marketing material"
+        return httpx.Response(
+            200,
+            json={
+                "id": "deepseek_scalar_criteria",
+                "model": "deepseek-flash",
+                "choices": [{"message": {"content": json.dumps(payload)}}],
+                "usage": {"prompt_tokens": 700, "completion_tokens": 180},
+            },
+        )
+
+    async def scenario() -> object:
+        async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as http:
+            generator = _generator(
+                http,
+                protocol="chat_completions",
+                base_url="https://api.deepseek.com/v1",
+            )
+            generator.model = "deepseek-flash"
+            return await generator.generate_plan_with_usage(
+                task_id="task:deepseek-scalar-criteria",
+                question="How should adaptive RAG systems validate evidence provenance?",
+                idempotency_key="effect:deepseek-scalar-criteria:coordinator",
+            )
+
+    result = asyncio.run(scenario())
+    assert result.plan.inclusion_criteria == ["Public research with reproducible evaluation"]
+    assert result.plan.exclusion_criteria == ["Uncitable marketing material"]
+
+
+def test_invalid_plan_exposes_only_safe_validation_diagnostics() -> None:
+    private_model_content = "private-model-content-must-not-leak"
+
+    def handler(_: httpx.Request) -> httpx.Response:
+        invalid = _draft()
+        invalid["sources"] = ["unsupported-source"]
+        invalid["private_field"] = private_model_content
+        return httpx.Response(
+            200,
+            json={
+                "id": "deepseek_invalid_plan",
+                "model": "deepseek-flash",
+                "choices": [{"message": {"content": json.dumps(invalid)}}],
+                "usage": {"prompt_tokens": 700, "completion_tokens": 180},
+            },
+        )
+
+    async def scenario() -> None:
+        async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as http:
+            generator = _generator(
+                http,
+                protocol="chat_completions",
+                base_url="https://api.deepseek.com/v1",
+            )
+            generator.model = "deepseek-flash"
+            await generator.generate_plan_with_usage(
+                task_id="task:deepseek-invalid-plan",
+                question="How should adaptive RAG systems validate evidence provenance?",
+                idempotency_key="effect:deepseek-invalid-plan:coordinator",
+            )
+
+    with pytest.raises(ProviderInferenceError) as caught:
+        asyncio.run(scenario())
+    diagnostics = caught.value.diagnostics
+    assert diagnostics is not None
+    assert diagnostics["kind"] == "model_validation"
+    assert "sources.0" in diagnostics["paths"]
+    assert "private_field" in diagnostics["paths"]
+    assert private_model_content not in str(diagnostics)
+
+
+def test_truncated_chat_completion_exposes_only_safe_finish_diagnostic() -> None:
+    async def scenario() -> None:
+        async with httpx.AsyncClient(
+            transport=httpx.MockTransport(
+                lambda request: httpx.Response(
+                    200,
+                    json={
+                        "id": "deepseek_truncated_plan",
+                        "model": "deepseek-flash",
+                        "choices": [
+                            {
+                                "finish_reason": "length",
+                                "message": {"content": "{\"title\": \"truncated"},
+                            }
+                        ],
+                        "usage": {"prompt_tokens": 700, "completion_tokens": 800},
+                    },
+                )
+            )
+        ) as http:
+            generator = _generator(
+                http,
+                protocol="chat_completions",
+                base_url="https://api.deepseek.com/v1",
+            )
+            generator.model = "deepseek-flash"
+            await generator.generate_plan_with_usage(
+                task_id="task:deepseek-truncated-plan",
+                question="How should adaptive RAG systems validate evidence provenance?",
+                idempotency_key="effect:deepseek-truncated-plan:coordinator",
+            )
+
+    with pytest.raises(ProviderInferenceError) as caught:
+        asyncio.run(scenario())
+    assert caught.value.diagnostics == {"kind": "completion", "finish_reason": "length"}
 
 
 def test_preflight_budget_blocks_network_call() -> None:

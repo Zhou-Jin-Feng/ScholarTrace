@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -46,10 +47,22 @@ def persist_m2_artifacts(
     git_commit: str,
     worktree_dirty: bool,
     source_tree_sha256: str,
-    documind_version: str = "2.2.0",
-    documind_commit: str = "212f60a",
+    documind_version: str | None = None,
+    documind_commit: str | None = None,
     capability_id: str = "single-document-dense-retrieval-contract-fixture",
 ) -> PersistedM2Artifacts:
+    is_fixture = capability_id == "single-document-dense-retrieval-contract-fixture"
+    if is_fixture:
+        documind_version = documind_version or "2.2.0"
+        documind_commit = documind_commit or "212f60a"
+    elif (
+        not documind_version
+        or not documind_commit
+        or not re.fullmatch(r"[0-9a-f]{40}", documind_commit)
+    ):
+        raise ValueError("live provider identity requires a version and full commit")
+    if any(a.service_version != documind_version for a in result.retrieval_audits):
+        raise ValueError("retrieval audit differs from declared provider identity")
     budget = _build_budget(root=root, result=result)
     output_dir.mkdir(parents=True, exist_ok=True)
     report_json_path = output_dir / "evidence_report.json"

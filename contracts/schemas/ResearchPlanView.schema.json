@@ -1,0 +1,272 @@
+{
+  "$defs": {
+    "BudgetPlan": {
+      "properties": {
+        "estimate_source": {
+          "title": "Estimate Source",
+          "type": "string"
+        },
+        "is_actual_bill": {
+          "default": false,
+          "title": "Is Actual Bill",
+          "type": "boolean"
+        },
+        "max_api_calls": {
+          "title": "Max Api Calls",
+          "type": "integer"
+        },
+        "max_cny": {
+          "title": "Max Cny",
+          "type": "number"
+        },
+        "max_wall_clock_seconds": {
+          "title": "Max Wall Clock Seconds",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "max_cny",
+        "max_api_calls",
+        "max_wall_clock_seconds",
+        "estimate_source"
+      ],
+      "title": "BudgetPlan",
+      "type": "object"
+    },
+    "PlanDetails": {
+      "additionalProperties": false,
+      "description": "Coordinator constraints that remain visible and bound to every approval.",
+      "properties": {
+        "inclusion_criteria": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 20,
+          "minItems": 1,
+          "title": "Inclusion Criteria",
+          "type": "array"
+        },
+        "objective": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Objective",
+          "type": "string"
+        },
+        "retrieval_cutoff": {
+          "format": "date",
+          "title": "Retrieval Cutoff",
+          "type": "string"
+        },
+        "subquestions": {
+          "items": {
+            "$ref": "#/$defs/ResearchSubquestion"
+          },
+          "maxItems": 20,
+          "minItems": 1,
+          "title": "Subquestions",
+          "type": "array"
+        },
+        "title": {
+          "maxLength": 300,
+          "minLength": 3,
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "objective",
+        "inclusion_criteria",
+        "subquestions",
+        "retrieval_cutoff"
+      ],
+      "title": "PlanDetails",
+      "type": "object"
+    },
+    "ResearchSubquestion": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence_required": {
+          "enum": [
+            "fulltext",
+            "abstract",
+            "metadata"
+          ],
+          "title": "Evidence Required",
+          "type": "string"
+        },
+        "priority": {
+          "default": "normal",
+          "enum": [
+            "critical",
+            "high",
+            "normal"
+          ],
+          "title": "Priority",
+          "type": "string"
+        },
+        "question": {
+          "maxLength": 8000,
+          "minLength": 1,
+          "title": "Question",
+          "type": "string"
+        },
+        "subquestion_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Subquestion Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "subquestion_id",
+        "question",
+        "evidence_required"
+      ],
+      "title": "ResearchSubquestion",
+      "type": "object"
+    },
+    "SourceScope": {
+      "properties": {
+        "max_papers": {
+          "default": 5,
+          "title": "Max Papers",
+          "type": "integer"
+        },
+        "min_papers": {
+          "default": 3,
+          "title": "Min Papers",
+          "type": "integer"
+        },
+        "providers": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Providers",
+          "type": "array"
+        },
+        "year_from": {
+          "title": "Year From",
+          "type": "integer"
+        },
+        "year_to": {
+          "title": "Year To",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "providers",
+        "year_from",
+        "year_to"
+      ],
+      "title": "SourceScope",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "approval_state": {
+      "enum": [
+        "waiting_approval",
+        "approved",
+        "rejected",
+        "superseded"
+      ],
+      "title": "Approval State",
+      "type": "string"
+    },
+    "budget_plan": {
+      "$ref": "#/$defs/BudgetPlan"
+    },
+    "details": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PlanDetails"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "exclusions": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 20,
+      "title": "Exclusions",
+      "type": "array"
+    },
+    "generated_at": {
+      "title": "Generated At",
+      "type": "string"
+    },
+    "generated_by": {
+      "enum": [
+        "fixture",
+        "api-strong",
+        "manual"
+      ],
+      "title": "Generated By",
+      "type": "string"
+    },
+    "plan_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Plan Digest",
+      "type": "string"
+    },
+    "plan_version": {
+      "minimum": 1,
+      "title": "Plan Version",
+      "type": "integer"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_scope": {
+      "$ref": "#/$defs/SourceScope"
+    },
+    "sub_questions": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 20,
+      "minItems": 1,
+      "title": "Sub Questions",
+      "type": "array"
+    },
+    "supersedes_version": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Supersedes Version"
+    },
+    "task_id": {
+      "title": "Task Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "sub_questions",
+    "source_scope",
+    "budget_plan",
+    "task_id",
+    "plan_version",
+    "plan_digest",
+    "generated_by",
+    "generated_at",
+    "approval_state",
+    "supersedes_version"
+  ],
+  "title": "ResearchPlanView",
+  "type": "object"
+}

@@ -80,7 +80,7 @@ def main() -> None:
     parser.add_argument(
         "--report",
         type=Path,
-        default=ROOT / "evaluation" / "reports" / "m10_p4_restore.json",
+        default=ROOT / "artifacts" / "reports" / "m10_p4_restore.json",
     )
     args = parser.parse_args()
     source_inventory = _logical_inventory(args.data_dir)

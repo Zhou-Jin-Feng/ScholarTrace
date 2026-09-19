@@ -20,13 +20,26 @@ from scholartrace.contracts import (
     ResearchPlan,
     ResearchSubquestion,
 )
-from scholartrace.model_provider.settings import ProviderSettings
+from scholartrace.model_provider.settings import (
+    ProviderSettings,
+    resolved_structured_output_mode,
+    uses_deepseek_chat_parameters,
+)
 
 ProviderProtocol = Literal["responses", "chat_completions"]
 
 
 class ProviderInferenceError(RuntimeError):
     """A paid model call failed without exposing provider response content."""
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        diagnostics: dict[str, object] | None = None,
+    ) -> None:
+        super().__init__(message)
+        self.diagnostics = diagnostics
 
 
 class ProviderEndpointUnsupportedError(ProviderInferenceError):
@@ -239,9 +252,16 @@ class OpenAICompatiblePlanGenerator:
         if not isinstance(response_model, str) or response_model != self.model:
             raise ProviderInferenceError("provider response model did not match requested model")
         response_text = self._extract_text(envelope)
+        if resolved_structured_output_mode(self.settings) == "json_object":
+            response_text = self._normalize_json_object_plan(response_text)
         try:
             draft = ResearchPlanDraft.model_validate_json(response_text)
-        except (ValidationError, ValueError) as exc:
+        except ValidationError as exc:
+            raise ProviderInferenceError(
+                "provider returned invalid structured plan output",
+                diagnostics=self._validation_diagnostics(exc),
+            ) from exc
+        except ValueError as exc:
             raise ProviderInferenceError(
                 "provider returned invalid structured plan output"
             ) from exc
@@ -324,19 +344,50 @@ class OpenAICompatiblePlanGenerator:
                     }
                 },
             }
-        return {
+        structured_mode = resolved_structured_output_mode(self.settings)
+        request_messages = messages
+        if structured_mode == "json_object":
+            request_messages = [
+                *messages,
+                {
+                    "role": "system",
+                    "content": (
+                        "Return one valid JSON object with exactly these keys: title, "
+                        "objective, subquestions, inclusion_criteria, exclusion_criteria, "
+                        "sources. Both criteria fields must be JSON arrays of strings, "
+                        "even when they contain only one item. Each subquestion must have "
+                        "exactly question, "
+                        "evidence_required, priority. evidence_required must be one of "
+                        "fulltext, abstract, metadata; priority must be one of critical, "
+                        "high, normal; sources must use only arxiv, openalex, crossref, "
+                        "semantic_scholar. Use exactly 2 subquestions, one concise "
+                        "inclusion criterion, one concise exclusion criterion, and 1-3 "
+                        "sources. Keep title under 80 characters, objective under 240 "
+                        "characters, and every other string under 160 characters. Do not "
+                        "explain, use Markdown fences, or add extra keys."
+                    ),
+                },
+            ]
+        payload: dict[str, object] = {
             "model": self.model,
-            "messages": messages,
-            "max_completion_tokens": self.call_counter.budget.max_output_tokens,
-            "response_format": {
+            "messages": request_messages,
+        }
+        if uses_deepseek_chat_parameters(self.settings):
+            payload["max_tokens"] = self.call_counter.budget.max_output_tokens
+        else:
+            payload["max_completion_tokens"] = self.call_counter.budget.max_output_tokens
+        if structured_mode == "json_object":
+            payload["response_format"] = {"type": "json_object"}
+        else:
+            payload["response_format"] = {
                 "type": "json_schema",
                 "json_schema": {
                     "name": "scholartrace_research_plan",
                     "strict": True,
                     "schema": schema,
                 },
-            },
-        }
+            }
+        return payload
 
     @staticmethod
     def _messages(question: str) -> list[dict[str, str]]:
@@ -385,7 +436,64 @@ class OpenAICompatiblePlanGenerator:
         content = message.get("content") if isinstance(message, dict) else None
         if not isinstance(content, str):
             raise ProviderInferenceError("provider response choice has no text content")
+        finish_reason = choice.get("finish_reason") if isinstance(choice, dict) else None
+        if finish_reason is not None and finish_reason != "stop":
+            safe_reason = (
+                finish_reason if finish_reason in {"length", "content_filter"} else "other"
+            )
+            raise ProviderInferenceError(
+                "provider response did not complete",
+                diagnostics={"kind": "completion", "finish_reason": safe_reason},
+            )
         return content
+
+    @staticmethod
+    def _normalize_json_object_plan(response_text: str) -> str:
+        """Normalize only the known scalar-list drift seen from JSON-object providers."""
+
+        try:
+            payload = json.loads(response_text)
+        except json.JSONDecodeError:
+            return response_text
+        if not isinstance(payload, dict):
+            return response_text
+        changed = False
+        for key in ("inclusion_criteria", "exclusion_criteria"):
+            value = payload.get(key)
+            if isinstance(value, str):
+                payload[key] = [value]
+                changed = True
+        if not changed:
+            return response_text
+        return json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
+
+    @staticmethod
+    def _validation_diagnostics(exc: ValidationError) -> dict[str, object]:
+        """Return field-level failure metadata without retaining provider content."""
+
+        errors = exc.errors(include_context=False, include_input=False, include_url=False)
+        paths = sorted(
+            {
+                ".".join(str(part) for part in item.get("loc", ()))
+                for item in errors
+                if item.get("loc")
+            }
+        )
+        error_types = sorted(
+            {
+                str(item.get("type"))
+                for item in errors
+                if item.get("type")
+            }
+        )
+        return {
+            "kind": "model_validation",
+            "error_count": len(errors),
+            "paths": paths[:32],
+            "types": error_types[:16],
+            "paths_truncated": len(paths) > 32,
+            "types_truncated": len(error_types) > 16,
+        }
 
     def _extract_usage(self, envelope: dict[str, Any]) -> ProviderTokenUsage:
         raw_usage = envelope.get("usage")

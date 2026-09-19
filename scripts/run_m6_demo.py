@@ -60,7 +60,8 @@ async def _run() -> dict[str, object]:
 
 def main() -> None:
     report = asyncio.run(_run())
-    output = Path(__file__).resolve().parents[1] / "evaluation" / "reports" / "m6_demo_smoke.json"
+    output = Path(__file__).resolve().parents[1] / "artifacts" / "reports" / "m6_demo_smoke.json"
+    output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False))
 

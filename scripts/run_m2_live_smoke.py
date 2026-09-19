@@ -13,6 +13,7 @@ from pathlib import Path
 import httpx
 
 from scholartrace.contracts import Paper
+from scholartrace.documind_compatibility import validate_documind_identity
 from scholartrace.evidence import live as live_evidence
 from scholartrace.evidence.analysis import OllamaPaperAnalyzer
 from scholartrace.evidence.artifacts import persist_m2_artifacts
@@ -25,7 +26,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_FIXTURE = ROOT / "tests" / "fixtures" / "documind" / "m2_three_papers.json"
 DEFAULT_DOCUMENTS = ROOT / "artifacts" / "m2-live-documents"
 DEFAULT_OUTPUT = ROOT / "artifacts" / "m2-evidence-live"
-DEFAULT_SUMMARY = ROOT / "evaluation" / "reports" / "m2_live_documind_smoke.json"
+DEFAULT_SUMMARY = ROOT / "artifacts" / "reports" / "m2_live_documind_smoke.json"
 _arxiv_pdf_url = live_evidence.arxiv_pdf_url
 _acquire_pdf = live_evidence.acquire_pdf
 _cleanup_documents = live_evidence.cleanup_documents
@@ -33,6 +34,8 @@ _download_pdf = live_evidence.download_pdf
 _ingest_papers = live_evidence.ingest_papers
 _validate_pdf = live_evidence.validate_pdf
 _warmup_embedding = live_evidence.warmup_embedding
+
+
 def _git(*args: str) -> str:
     result = subprocess.run(
         ("git", *args),
@@ -46,6 +49,7 @@ def _git(*args: str) -> str:
 
 
 async def _run(args: argparse.Namespace) -> tuple[int, dict[str, object]]:
+    _validate_provider_identity(args.documind_version, args.documind_commit)
     fixture = json.loads(args.fixture.read_text("utf-8"))
     papers = [Paper.model_validate(item["paper"]) for item in fixture["papers"]]
     if len(papers) != 3:
@@ -97,8 +101,8 @@ async def _run(args: argparse.Namespace) -> tuple[int, dict[str, object]]:
             timeout_seconds=args.retrieve_timeout_seconds,
         )
         ready, readiness = await client.retrieval_ready()
-        if not ready or readiness is None or readiness.version != "2.2.0":
-            raise RuntimeError("DocuMind 2.2.0 retrieval is not ready")
+        if not ready or readiness is None or readiness.version != args.documind_version:
+            raise RuntimeError("Expected DocuMind retrieval version is not ready")
         try:
             _, total_chunks = await _ingest_papers(
                 client=documind_http,
@@ -107,6 +111,7 @@ async def _run(args: argparse.Namespace) -> tuple[int, dict[str, object]]:
                 document_paths=document_paths,
                 repository=repository,
                 newly_created=newly_created,
+                documind_version=readiness.version,
                 expected_source_sha256=source_hashes,
             )
             ingestion_seconds = time.perf_counter() - ingestion_started
@@ -131,6 +136,8 @@ async def _run(args: argparse.Namespace) -> tuple[int, dict[str, object]]:
                 worktree_dirty=bool(_git("status", "--porcelain", "--untracked-files=no")),
                 source_tree_sha256=source_tree_sha256(ROOT),
                 capability_id="single-document-dense-retrieval-live-smoke",
+                documind_version=args.documind_version,
+                documind_commit=args.documind_commit,
             )
         finally:
             if not args.keep_documents and newly_created:
@@ -144,7 +151,7 @@ async def _run(args: argparse.Namespace) -> tuple[int, dict[str, object]]:
     passed = (
         len(result.report.analyses) == 3
         and len(result.retrieval_audits) == 3
-        and all(item.service_version == "2.2.0" for item in result.retrieval_audits)
+        and all(item.service_version == args.documind_version for item in result.retrieval_audits)
         and all(
             item.status == "succeeded" and item.chunk_count > 0 for item in result.retrieval_audits
         )
@@ -156,7 +163,9 @@ async def _run(args: argparse.Namespace) -> tuple[int, dict[str, object]]:
         "generated_at": datetime.now(UTC).isoformat(),
         "quality_scope": "Live DocuMind retrieval over versioned public arXiv PDFs.",
         "documind_online_service_used": True,
-        "documind_version": "2.2.0",
+        "documind_version": args.documind_version,
+        "documind_commit": args.documind_commit,
+        "provider_identity_source": "operator-declared clean deployment; not attested by readiness",
         "retrieval_schema_version": "1.0",
         "retrieval_version": "dense-v1",
         "source_kind": "versioned_public_arxiv_pdf",
@@ -206,12 +215,26 @@ async def _run(args: argparse.Namespace) -> tuple[int, dict[str, object]]:
     return (0 if passed else 1), summary
 
 
+def _validate_provider_identity(version: str, commit: str) -> None:
+    validate_documind_identity(version, commit)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--fixture", type=Path, default=DEFAULT_FIXTURE)
     parser.add_argument("--documents-dir", type=Path, default=DEFAULT_DOCUMENTS)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--summary-output", type=Path, default=DEFAULT_SUMMARY)
+    parser.add_argument(
+        "--documind-version",
+        required=True,
+        help="Expected supported version of the deployed DocuMind service.",
+    )
+    parser.add_argument(
+        "--documind-commit",
+        required=True,
+        help="Full SHA of the clean deployed revision, supplied by the operator.",
+    )
     parser.add_argument("--documind-url", default="http://127.0.0.1:8001")
     parser.add_argument("--ollama-url", default="http://127.0.0.1:11434")
     parser.add_argument("--model", default="qwen3:8b")
@@ -223,6 +246,10 @@ def main() -> int:
     parser.add_argument("--model-timeout-seconds", type=float, default=600)
     parser.add_argument("--keep-documents", action="store_true")
     args = parser.parse_args()
+    try:
+        _validate_provider_identity(args.documind_version, args.documind_commit)
+    except ValueError as exc:
+        parser.error(str(exc))
     exit_code, _ = asyncio.run(_run(args))
     return exit_code
 

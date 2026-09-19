@@ -7,7 +7,7 @@ import json
 import time
 import xml.etree.ElementTree as ET
 from collections.abc import Mapping
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from html.parser import HTMLParser
 from typing import Any, Protocol
 
@@ -53,6 +53,36 @@ def _clean_text(value: str | None) -> str:
     return " ".join((value or "").split())
 
 
+def _calendar_date(value: Any) -> date | None:
+    """Only retain complete valid dates; missing precision is never invented."""
+    if not isinstance(value, str) or len(value) < 10:
+        return None
+    try:
+        return date.fromisoformat(value[:10])
+    except ValueError:
+        return None
+
+
+def candidate_within_dates(candidate: PaperCandidate, request: SearchRequest) -> bool:
+    if request.from_year is not None and candidate.publication_year < request.from_year:
+        return False
+    if request.to_year is not None and candidate.publication_year > request.to_year:
+        return False
+    cutoff = request.published_before
+    if cutoff is None:
+        return True
+    # A year-only record can prove eligibility only once that whole year ended.
+    published = candidate.publication_date or date(candidate.publication_year, 12, 31)
+    if published > cutoff:
+        return False
+    if candidate.source == "arxiv":
+        if candidate.arxiv_version != 1 and candidate.version_date is None:
+            return False
+        if candidate.version_date is not None and candidate.version_date > cutoff:
+            return False
+    return True
+
+
 def _markup_text(value: str | None) -> str | None:
     if not value:
         return None
@@ -72,9 +102,17 @@ def _record_sha256(value: Any) -> str:
     return hashlib.sha256(serialized).hexdigest()
 
 
-def _request_id(source: SourceName, query: str, params: Mapping[str, str]) -> str:
+def _request_id(source: SourceName, request: SearchRequest, params: Mapping[str, str]) -> str:
     serialized = json.dumps(
-        {"source": source, "query": query, "params": dict(sorted(params.items()))},
+        {
+            "source": source,
+            "query": request.query,
+            "from_year": request.from_year,
+            "to_year": request.to_year,
+            "published_before": request.published_before.isoformat()
+            if request.published_before else None,
+            "params": dict(sorted(params.items())),
+        },
         ensure_ascii=True,
         sort_keys=True,
         separators=(",", ":"),
@@ -103,9 +141,11 @@ class BaseAcademicSource:
                 headers=headers,
             )
             candidates, provider_cost = self.parse(payload)
+            original_count = len(candidates)
+            candidates = [c for c in candidates if candidate_within_dates(c, request)]
             status: SourceStatus = "succeeded" if candidates else "empty"
             audit = SourceRequestRecord(
-                request_id=_request_id(self.name, request.query, public_params),
+                request_id=_request_id(self.name, request, public_params),
                 source=self.name,
                 public_url=self.endpoint,
                 public_params=public_params,
@@ -118,6 +158,11 @@ class BaseAcademicSource:
                 http_status=payload.status_code,
                 response_sha256=payload.response_sha256,
                 candidate_count=len(candidates),
+                public_reason=(
+                    f"Date scope excluded {original_count - len(candidates)} candidates; "
+                    "incomplete dates are accepted only when eligibility is provable."
+                    if len(candidates) != original_count else None
+                ),
                 provider_reported_cost_usd=provider_cost,
             )
             return SourceSearchResult(source=self.name, request=audit, candidates=candidates)
@@ -160,7 +205,7 @@ class BaseAcademicSource:
         error: AcademicSourceError,
     ) -> SourceSearchResult:
         audit = SourceRequestRecord(
-            request_id=_request_id(self.name, request.query, public_params),
+            request_id=_request_id(self.name, request, public_params),
             source=self.name,
             public_url=self.endpoint,
             public_params=public_params,
@@ -233,6 +278,8 @@ class ArxivSource(BaseAcademicSource):
                     title=title,
                     authors=authors,
                     publication_year=int(published[:4]),
+                    publication_date=_calendar_date(published),
+                    version_date=_calendar_date(entry.findtext(f"{ATOM}updated")),
                     doi=doi,
                     arxiv_id=arxiv_id,
                     arxiv_version=arxiv_version,
@@ -255,6 +302,7 @@ class OpenAlexSource(BaseAcademicSource):
             "doi",
             "title",
             "publication_year",
+            "publication_date",
             "authorships",
             "ids",
             "abstract_inverted_index",
@@ -338,6 +386,7 @@ class OpenAlexSource(BaseAcademicSource):
                     title=title,
                     authors=authors,
                     publication_year=year,
+                    publication_date=_calendar_date(item.get("publication_date")),
                     doi=doi,
                     arxiv_id=arxiv_id,
                     arxiv_version=arxiv_version,
@@ -455,6 +504,7 @@ class CrossrefSource(BaseAcademicSource):
                     title=title,
                     authors=authors,
                     publication_year=year,
+                    publication_date=self._date(item.get("published")),
                     doi=doi,
                     arxiv_id=arxiv_id,
                     abstract=abstract,
@@ -465,6 +515,20 @@ class CrossrefSource(BaseAcademicSource):
                 )
             )
         return candidates, 0.0
+
+    @staticmethod
+    def _date(value: Any) -> date | None:
+        if not isinstance(value, dict):
+            return None
+        parts = value.get("date-parts")
+        if not isinstance(parts, list) or not parts or not isinstance(parts[0], list):
+            return None
+        if len(parts[0]) != 3 or any(type(v) is not int for v in parts[0]):
+            return None
+        try:
+            return date(*parts[0])
+        except ValueError:
+            return None
 
     @staticmethod
     def _year(value: Any) -> int | None:
@@ -485,7 +549,7 @@ class CrossrefSource(BaseAcademicSource):
 class SemanticScholarSource(BaseAcademicSource):
     name: SourceName = "semantic_scholar"
     endpoint = "https://api.semanticscholar.org/graph/v1/paper/search"
-    fields = "paperId,title,authors,year,abstract,externalIds,url,openAccessPdf"
+    fields = "paperId,title,authors,year,publicationDate,abstract,externalIds,url,openAccessPdf"
 
     def __init__(self, http: AcademicHttpClient, *, api_key: str | None = None) -> None:
         super().__init__(http)
@@ -542,6 +606,7 @@ class SemanticScholarSource(BaseAcademicSource):
                     title=title,
                     authors=authors,
                     publication_year=year,
+                    publication_date=_calendar_date(item.get("publicationDate")),
                     doi=doi,
                     arxiv_id=arxiv_id,
                     arxiv_version=arxiv_version,

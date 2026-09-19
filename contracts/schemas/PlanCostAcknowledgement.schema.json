@@ -1,0 +1,127 @@
+{
+  "$defs": {
+    "PhaseLimits": {
+      "additionalProperties": false,
+      "properties": {
+        "max_cny": {
+          "title": "Max Cny",
+          "type": "string"
+        },
+        "max_external_requests": {
+          "maximum": 9223372036854775807,
+          "minimum": 0,
+          "title": "Max External Requests",
+          "type": "integer"
+        },
+        "max_local_calls": {
+          "maximum": 9223372036854775807,
+          "minimum": 0,
+          "title": "Max Local Calls",
+          "type": "integer"
+        },
+        "max_remote_calls": {
+          "maximum": 9223372036854775807,
+          "minimum": 0,
+          "title": "Max Remote Calls",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "max_cny",
+        "max_remote_calls",
+        "max_local_calls",
+        "max_external_requests"
+      ],
+      "title": "PhaseLimits",
+      "type": "object"
+    },
+    "PlanningAuthorization": {
+      "additionalProperties": false,
+      "properties": {
+        "deadline_at": {
+          "title": "Deadline At",
+          "type": "string"
+        },
+        "generation": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Generation",
+          "type": "integer"
+        },
+        "max_cny": {
+          "title": "Max Cny",
+          "type": "string"
+        },
+        "max_external_requests": {
+          "maximum": 9223372036854775807,
+          "minimum": 0,
+          "title": "Max External Requests",
+          "type": "integer"
+        },
+        "max_local_calls": {
+          "maximum": 9223372036854775807,
+          "minimum": 0,
+          "title": "Max Local Calls",
+          "type": "integer"
+        },
+        "max_remote_calls": {
+          "maximum": 9223372036854775807,
+          "minimum": 0,
+          "title": "Max Remote Calls",
+          "type": "integer"
+        },
+        "max_wall_clock_seconds": {
+          "maximum": 86400,
+          "minimum": 1,
+          "title": "Max Wall Clock Seconds",
+          "type": "integer"
+        },
+        "planning": {
+          "$ref": "#/$defs/PhaseLimits"
+        },
+        "policy_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Policy Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "max_cny",
+        "max_remote_calls",
+        "max_local_calls",
+        "max_external_requests",
+        "policy_sha256",
+        "deadline_at",
+        "max_wall_clock_seconds",
+        "generation",
+        "planning"
+      ],
+      "title": "PlanningAuthorization",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "acknowledged_max_cny": {
+      "minimum": 0,
+      "title": "Acknowledged Max Cny",
+      "type": "number"
+    },
+    "authorization": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PlanningAuthorization"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "acknowledged_max_cny"
+  ],
+  "title": "PlanCostAcknowledgement",
+  "type": "object"
+}

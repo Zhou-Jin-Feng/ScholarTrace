@@ -14,7 +14,7 @@ from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CASES = ROOT / "evaluation" / "seeds" / "model_comparison_cases.json"
-DEFAULT_OUTPUT = ROOT / "evaluation" / "reports" / "m0_local_model_smoke.json"
+DEFAULT_OUTPUT = ROOT / "artifacts" / "reports" / "m0_local_model_smoke.json"
 
 
 def request_case(

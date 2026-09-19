@@ -17,7 +17,7 @@ from scholartrace.scholargraph.real_miss import (
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_DATABASE = ROOT / "agent" / "m9-p0" / "observations.sqlite"
-DEFAULT_PUBLIC_REPORT = ROOT / "evaluation" / "reports" / "m9_p0_status.json"
+DEFAULT_PUBLIC_REPORT = ROOT / "artifacts" / "reports" / "m9_p0_status.json"
 
 
 def _private_json(path: Path) -> dict[str, object]:
@@ -72,9 +72,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 "decision": store.public_report().decision.value,
             }
         elif args.command == "review":
-            review_submission = M9ReviewSubmission.model_validate(
-                _private_json(args.input)
-            )
+            review_submission = M9ReviewSubmission.model_validate(_private_json(args.input))
             review = store.review(review_submission)
             report_sha256 = store.write_public_report(args.public_report)
             output = {
@@ -86,9 +84,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             }
         else:
             report = store.public_report()
-            status_output_sha256 = (
-                store.write_public_report(args.output) if args.output else None
-            )
+            status_output_sha256 = store.write_public_report(args.output) if args.output else None
             output = {
                 "decision": report.decision.value,
                 "counts": report.counts.model_dump(mode="json"),

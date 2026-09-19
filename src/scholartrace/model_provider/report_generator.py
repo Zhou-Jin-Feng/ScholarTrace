@@ -19,7 +19,11 @@ from scholartrace.model_provider.plan_generator import (
     ProviderInferenceError,
     ProviderTokenUsage,
 )
-from scholartrace.model_provider.settings import ProviderSettings
+from scholartrace.model_provider.settings import (
+    ProviderSettings,
+    resolved_structured_output_mode,
+    uses_deepseek_chat_parameters,
+)
 from scholartrace.scholargraph.experiment import (
     GeneratedReport,
     ProviderProtocol,
@@ -242,19 +246,40 @@ class OpenAICompatibleReportGenerator:
                     }
                 },
             }
-        return {
+        structured_mode = resolved_structured_output_mode(self.settings)
+        request_messages = messages
+        if structured_mode == "json_object":
+            request_messages = [
+                *messages,
+                {
+                    "role": "system",
+                    "content": (
+                        "Return one valid JSON object matching this JSON Schema exactly. "
+                        "Do not use Markdown fences or add fields outside the schema.\n"
+                        + json.dumps(schema, ensure_ascii=False, sort_keys=True)
+                    ),
+                },
+            ]
+        payload: dict[str, object] = {
             "model": self.model_identifier,
-            "messages": messages,
-            "max_completion_tokens": self.call_counter.budget.max_output_tokens,
-            "response_format": {
+            "messages": request_messages,
+        }
+        if uses_deepseek_chat_parameters(self.settings):
+            payload["max_tokens"] = self.call_counter.budget.max_output_tokens
+        else:
+            payload["max_completion_tokens"] = self.call_counter.budget.max_output_tokens
+        if structured_mode == "json_object":
+            payload["response_format"] = {"type": "json_object"}
+        else:
+            payload["response_format"] = {
                 "type": "json_schema",
                 "json_schema": {
                     "name": "scholartrace_evidence_report",
                     "strict": True,
                     "schema": schema,
                 },
-            },
-        }
+            }
+        return payload
 
     def _messages(self, request: ReportGenerationRequest) -> list[dict[str, str]]:
         user_payload = {

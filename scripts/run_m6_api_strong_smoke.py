@@ -26,7 +26,7 @@ from scholartrace.model_provider import (
 from scholartrace.search.storage import write_json
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_OUTPUT = ROOT / "evaluation" / "reports" / "m6_api_strong_smoke.json"
+DEFAULT_OUTPUT = ROOT / "artifacts" / "reports" / "m6_api_strong_smoke.json"
 DEFAULT_QUESTION = (
     "How do adaptive retrieval and evidence verification improve the faithfulness of "
     "retrieval-augmented generation systems?"
@@ -72,11 +72,7 @@ async def run(args: argparse.Namespace) -> dict[str, object]:
     if args.timeout_seconds <= 0 or args.max_output_tokens <= 0 or args.max_cost_cny <= 0:
         raise ValueError("smoke timeout, output-token limit, and CNY budget must be positive")
 
-    protocols = (
-        ["responses", "chat_completions"]
-        if args.protocol == "auto"
-        else [args.protocol]
-    )
+    protocols = ["responses", "chat_completions"] if args.protocol == "auto" else [args.protocol]
     call_counter = ApiCallCounter(
         ApiCallBudget(
             max_calls=len(protocols),

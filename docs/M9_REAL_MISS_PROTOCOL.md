@@ -194,7 +194,7 @@ P3 调用数和人民币上限按 Gate A 实际补回候选数计算，运行前
    由 B6 1/10 提高到 4/10，算法清单 SHA-256 为
    `e673f2d7f405f1fec2741c4e36490fc47f7b4d35cb838853519ab1fb2df5ae58`；
 6. P2 预注册、私有账本、Gold 冻结回执和 B5/B7 条件快照工具：已完成；
-7. 前瞻 Gate A 真实样本：`50/50` eligible，另有 `1` 条边界排除；Gold 和条件快照均为 `50/50`，Gold 全部为 ambiguous；
+7. 前瞻 Gate A 历史账本登记样本：`50/50` eligible，另有 `1` 条边界排除；Gold 和条件快照均为 `50/50`，Gold 全部为 ambiguous；来源限制见后续补充；
 8. Gate A 复审：Gate A1 完整性通过，但 0 个 B5 miss opportunity，按停止规则结论为 `INCONCLUSIVE`；
 9. Evidence 与最终质量报告：未启动；仅当未来独立评测满足 Gate A 才能重新申请。
 
@@ -214,7 +214,7 @@ P1 阶段结论为 **PASS WITH NOTES**。ScholarGraph `04f5327` 保留 B5 top-3�
 P2 已获批并完成基础设施准备。预注册清单固定 47 个 P0/M8 排除哈希和批次级盲法：初始
 30 条 Gold 全部冻结前不得揭示 B5/B7；机会不足时扩展批次必须收满 50 条后再揭示。正式
 198 篇索引 fixture smoke 已验证跨仓条件 Schema、B5 seed、单 GraphHint、GraphPath、boundary、
-确定性和 Parquet 只读性，但 fixture 不计入门禁。当前真实状态为 `50/50` eligible、`50/50`
+确定性和 Parquet 只读性，但 fixture 不计入门禁。当前历史账本状态为 `50/50` eligible、`50/50`
 Gold 和条件快照；Gate A 为 `INCONCLUSIVE`，因为 0 个 B5 miss opportunity。ScholarGraph 继续
 默认关闭，未进入 Evidence Gate；操作手册和最终复审见 `docs/M9_P2_RUNBOOK.md`、
 `docs/M9_P2_GATE_A_REVIEW.md`。
@@ -222,3 +222,12 @@ Gold 和条件快照；Gate A 为 `INCONCLUSIVE`，因为 0 个 B5 miss opportun
 ## 规划基线
 
 2026-08-31 的规划检查仅冻结连续采样、Gold 审核、根因分类、诊断集与前瞻集隔离、分级门禁及停止条件；当时未采集真实查询、建立 Gold、修改算法或索引，也未运行 DocuMind、模型、网络查询、付费评测或在线 Consumer。这一规划状态不替代后续版本的实际实施和评测记录。
+
+## 后续证据范围补充（2026-09-16）
+
+本协议的自然连续采样、Gold 审核及盲法条款是预注册要求，不自动证明历史实施已满足全部要求。
+M9-P2 的 51 条账本观察中，50 条当时标记为 eligible 且 Gold 均为 ambiguous，机器门禁仍为
+INCONCLUSIVE。后续有界抽核发现部分任务创建事件和逐题审核依据无法由保存材料充分确证，
+故不能将其整体称为已验证的自然连续生产样本。工程链完整性不等于来源真实性或 Gold 语义正确。
+详见 [M9-P2 最终复审](M9_P2_GATE_A_REVIEW.md)的后续来源抽核与解释限制。
+本补充不改变 P0/P1 结果、原协议门槛、旧 Gold 或冻结机器报告，也不证明图检索有正收益或负收益。

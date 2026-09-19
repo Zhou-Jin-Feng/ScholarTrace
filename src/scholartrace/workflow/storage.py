@@ -207,6 +207,54 @@ class RuntimeLedger:
                 )
             return combined
 
+    def confirms_projected_usage(
+        self, *, effect_key: str, task_id: str, delta: BudgetUsage,
+    ) -> bool:
+        """Read an exact durable projection without charging or repairing it."""
+        with self._lock:
+            row = self._connection.execute(
+                "SELECT * FROM budget_effects WHERE effect_key=?", (effect_key,),
+            ).fetchone()
+            return row is not None and row["task_id"] == task_id and all(
+                float(row[field]) == float(getattr(delta, field)) for field in _USAGE_FIELDS
+            )
+
+    def project_confirmed_usage(
+        self, *, effect_key: str, task_id: str, delta: BudgetUsage,
+    ) -> None:
+        """Mirror a durable journal measurement, never authorize another call.
+
+        A measured overrun must remain visible even when it exceeds a plan.
+        Admission belongs to the effect journal; this projection has no budget
+        granting semantics and refuses a conflicting retry.
+        """
+        if not effect_key.startswith("journal:"):
+            raise ValueError("journal projections require a distinct stable-key namespace")
+        with self._lock:
+            self._connection.execute("BEGIN IMMEDIATE")
+            try:
+                existing = self._connection.execute(
+                    "SELECT * FROM budget_effects WHERE effect_key=?", (effect_key,),
+                ).fetchone()
+                if existing is not None:
+                    if existing["task_id"] != task_id or any(
+                        float(existing[field]) != float(getattr(delta, field))
+                        for field in _USAGE_FIELDS
+                    ):
+                        raise RuntimeEffectConflictError("journal usage projection conflicts")
+                else:
+                    columns = ",".join(("effect_key", "task_id", *_USAGE_FIELDS, "created_at"))
+                    placeholders = ",".join("?" for _ in range(3 + len(_USAGE_FIELDS)))
+                    self._connection.execute(
+                        f"INSERT INTO budget_effects({columns}) VALUES ({placeholders})",
+                        (effect_key, task_id, *(getattr(delta, f) for f in _USAGE_FIELDS),
+                         datetime.now(UTC).isoformat()),
+                    )
+                self._connection.commit()
+            except BaseException:
+                self._connection.rollback()
+                raise
+
     def usage(self, task_id: str) -> BudgetUsage:
         with self._lock:
             expressions = ", ".join(

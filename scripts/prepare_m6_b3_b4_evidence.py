@@ -41,7 +41,7 @@ DEFAULT_ELIGIBLE = ROOT / "evaluation" / "seeds" / "m5_scholargraph_eligible_eva
 DEFAULT_BOUNDARY = ROOT / "evaluation" / "seeds" / "m5_scholargraph_boundary_eval.jsonl"
 DEFAULT_DOCUMENTS = ROOT / "artifacts" / "m6-b3-b4-documents"
 DEFAULT_OUTPUT = ROOT / "artifacts" / "m6-b3-b4-evidence"
-DEFAULT_SUMMARY = ROOT / "evaluation" / "reports" / "m6_b3_b4_evidence_coverage.json"
+DEFAULT_SUMMARY = ROOT / "artifacts" / "reports" / "m6_b3_b4_evidence_coverage.json"
 PENDING_QUESTION_IDS = frozenset(
     {
         "sg-eligible-01",
@@ -349,9 +349,7 @@ async def run(args: argparse.Namespace) -> dict[str, object]:
         write_json(args.summary_output, summary)
         return summary
 
-    selected_ids = sorted(
-        {paper_id for row in questions_to_run for paper_id in row.paper_ids}
-    )
+    selected_ids = sorted({paper_id for row in questions_to_run for paper_id in row.paper_ids})
     selected_papers = [papers_by_id[paper_id] for paper_id in selected_ids]
 
     download_timeout = httpx.Timeout(args.download_timeout_seconds, connect=15)
@@ -382,9 +380,7 @@ async def run(args: argparse.Namespace) -> dict[str, object]:
                 f"arXiv download failed after three attempts: {paper.canonical_paper_id}"
             ) from last_error
 
-        downloads = await asyncio.gather(
-            *(download_with_retry(paper) for paper in selected_papers)
-        )
+        downloads = await asyncio.gather(*(download_with_retry(paper) for paper in selected_papers))
     document_paths = {
         paper.canonical_paper_id: path
         for paper, (path, _) in zip(selected_papers, downloads, strict=True)
@@ -424,6 +420,7 @@ async def run(args: argparse.Namespace) -> dict[str, object]:
                 document_paths=document_paths,
                 repository=repository,
                 newly_created=newly_created,
+                documind_version=readiness.version,
             )
             pipeline = M2EvidencePipeline(
                 client=client,

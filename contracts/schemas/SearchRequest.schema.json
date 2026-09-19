@@ -22,6 +22,19 @@
       "title": "Max Results",
       "type": "integer"
     },
+    "published_before": {
+      "anyOf": [
+        {
+          "format": "date",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Published Before"
+    },
     "query": {
       "maxLength": 1000,
       "minLength": 2,

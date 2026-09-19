@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import date, datetime
 from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -33,6 +33,7 @@ class SearchRequest(StrictModel):
     max_results: int = Field(default=10, ge=1, le=100)
     from_year: int | None = Field(default=None, ge=1900, le=2100)
     to_year: int | None = Field(default=None, ge=1900, le=2100)
+    published_before: date | None = None
 
     @model_validator(mode="after")
     def validate_year_range(self) -> SearchRequest:
@@ -69,6 +70,8 @@ class PaperCandidate(StrictModel):
     title: Annotated[str, Field(min_length=1, max_length=1000)]
     authors: Annotated[list[str], Field(min_length=1, max_length=200)]
     publication_year: int = Field(ge=1900, le=2100)
+    publication_date: date | None = None
+    version_date: date | None = None
     doi: str | None = Field(default=None, max_length=512)
     arxiv_id: str | None = Field(default=None, max_length=64)
     arxiv_version: int | None = Field(default=None, ge=1, le=999)

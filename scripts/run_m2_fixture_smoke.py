@@ -22,7 +22,7 @@ from scholartrace.search.storage import source_tree_sha256, write_json
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_FIXTURE = ROOT / "tests" / "fixtures" / "documind" / "m2_three_papers.json"
 DEFAULT_OUTPUT = ROOT / "artifacts" / "m2-evidence-fixture"
-DEFAULT_SUMMARY = ROOT / "evaluation" / "reports" / "m2_local_fixture_smoke.json"
+DEFAULT_SUMMARY = ROOT / "artifacts" / "reports" / "m2_local_fixture_smoke.json"
 
 
 def _git(*args: str) -> str:

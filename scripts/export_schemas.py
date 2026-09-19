@@ -8,6 +8,7 @@ from pathlib import Path
 from scholartrace.citations.models import CITATION_CONTRACT_MODELS
 from scholartrace.contracts import CONTRACT_MODELS
 from scholartrace.delivery.models import M6_DELIVERY_CONTRACT_MODELS
+from scholartrace.delivery.views import VIEW_CONTRACT_MODELS
 from scholartrace.evidence.models import EVIDENCE_CONTRACT_MODELS
 from scholartrace.scholargraph.evaluation import M5_EVALUATION_CONTRACT_MODELS
 from scholartrace.scholargraph.experiment import M6_EXPERIMENT_CONTRACT_MODELS
@@ -32,6 +33,7 @@ def main() -> None:
         **M5_EVALUATION_CONTRACT_MODELS,
         **M6_EXPERIMENT_CONTRACT_MODELS,
         **M6_DELIVERY_CONTRACT_MODELS,
+        **VIEW_CONTRACT_MODELS,
         **M9_P0_PUBLIC_CONTRACT_MODELS,
     }
     for name, model in models.items():

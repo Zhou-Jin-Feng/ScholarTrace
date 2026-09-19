@@ -60,7 +60,7 @@ SCOPES = ROOT / "evaluation" / "seeds" / "m5_scholargraph_routing_scopes.json"
 M2_REPORT = ROOT / "artifacts" / "m2-evidence-live" / "evidence_report.json"
 M2_PAPERS = ROOT / "tests" / "fixtures" / "documind" / "m2_three_papers.json"
 MODEL_POLICY = ROOT / "contracts" / "examples" / "m0_bundle.json"
-PUBLIC_OUTPUT = ROOT / "evaluation" / "reports" / "m6_b3_b4_paid_pilot.json"
+PUBLIC_OUTPUT = ROOT / "artifacts" / "reports" / "m6_b3_b4_paid_pilot.json"
 PRIVATE_DIR = ROOT / "agent" / "过程记录" / "M6-B3B4-paid-pilot"
 
 
@@ -131,9 +131,7 @@ async def run(args: argparse.Namespace) -> dict[str, object]:
         raise ValueError("private pilot directory already exists; refusing duplicate paid run")
     private_input = args.private_dir / "verified_input.json"
     private_run = args.private_dir / "private_run.json"
-    if args.resume_after_report_failure and (
-        not private_input.is_file() or private_run.exists()
-    ):
+    if args.resume_after_report_failure and (not private_input.is_file() or private_run.exists()):
         raise ValueError("resume requires verified input and no completed private run")
 
     all_questions = load_question_sets(ELIGIBLE, BOUNDARY)
@@ -180,9 +178,7 @@ async def run(args: argparse.Namespace) -> dict[str, object]:
                 or cached.get("paper_pool_sha256") != artifacts.paper_pool_sha256
             ):
                 raise ValueError("cached verified input drifted from the pilot source")
-            verifications = [
-                Verification.model_validate(item) for item in cached["verifications"]
-            ]
+            verifications = [Verification.model_validate(item) for item in cached["verifications"]]
             gate = ReportGateResult.model_validate(cached["report_gate"])
             allowed = frozenset(cached["allowed_evidence_ids"])
             prepared = PreparedEvidenceInput(
@@ -239,9 +235,7 @@ async def run(args: argparse.Namespace) -> dict[str, object]:
                     "source_report_sha256": artifacts.source_report_sha256,
                     "paper_pool_sha256": artifacts.paper_pool_sha256,
                     "validation": artifacts.validation.model_dump(mode="json"),
-                    "verifications": [
-                        item.model_dump(mode="json") for item in verifications
-                    ],
+                    "verifications": [item.model_dump(mode="json") for item in verifications],
                     "report_gate": gate.model_dump(mode="json"),
                     "evidence_context": prepared.evidence_context,
                     "allowed_evidence_ids": sorted(prepared.allowed_evidence_ids),
@@ -252,8 +246,7 @@ async def run(args: argparse.Namespace) -> dict[str, object]:
         boundary_seed = args.private_dir / "pilot_boundary.jsonl"
         write_text(
             eligible_seed,
-            json.dumps(question.model_dump(mode="json"), ensure_ascii=False, sort_keys=True)
-            + "\n",
+            json.dumps(question.model_dump(mode="json"), ensure_ascii=False, sort_keys=True) + "\n",
         )
         write_text(boundary_seed, "")
         hashes = QuestionSetHashes(
@@ -397,19 +390,13 @@ async def run(args: argparse.Namespace) -> dict[str, object]:
                 ),
                 "reference_cost_upper_bound_cny": round(verifier_cap, 6),
                 "usage_observability": (
-                    "complete"
-                    if verifier_records
-                    else "not_persisted_before_first_report_failure"
+                    "complete" if verifier_records else "not_persisted_before_first_report_failure"
                 ),
                 "status_counts": dict(sorted(statuses.items())),
             },
             "report_reference_cost_cny": round(report_cost, 6),
-            "total_reference_cost_cny": (
-                round(total_cost, 6) if total_cost is not None else None
-            ),
-            "total_reference_cost_upper_bound_cny": round(
-                total_cost_upper_bound, 6
-            ),
+            "total_reference_cost_cny": (round(total_cost, 6) if total_cost is not None else None),
+            "total_reference_cost_upper_bound_cny": round(total_cost_upper_bound, 6),
             "documind_source_report_sha256": artifacts.source_report_sha256,
             "paper_pool_sha256": artifacts.paper_pool_sha256,
             "deterministic_validation_outcome": artifacts.validation.outcome,
@@ -464,12 +451,8 @@ def main() -> int:
         ),
         "scholargraph_calls": result["runs"]["b4"]["usage"]["scholargraph_calls"],
         "total_reference_cost_cny": result["total_reference_cost_cny"],
-        "total_reference_cost_upper_bound_cny": result[
-            "total_reference_cost_upper_bound_cny"
-        ],
-        "default_enable_decision": result["unscored_comparison"][
-            "default_enable_decision"
-        ],
+        "total_reference_cost_upper_bound_cny": result["total_reference_cost_upper_bound_cny"],
+        "default_enable_decision": result["unscored_comparison"]["default_enable_decision"],
     }
     print(json.dumps(summary, ensure_ascii=False, sort_keys=True))
     return 0 if result["passed"] else 1

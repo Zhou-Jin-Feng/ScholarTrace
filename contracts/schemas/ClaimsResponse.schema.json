@@ -1,0 +1,139 @@
+{
+  "$defs": {
+    "ClaimVerificationView": {
+      "additionalProperties": false,
+      "properties": {
+        "marker": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Marker"
+        },
+        "status": {
+          "enum": [
+            "supported",
+            "partially_supported",
+            "unsupported",
+            "conflicted"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "validated": {
+          "title": "Validated",
+          "type": "boolean"
+        },
+        "verifier_kind": {
+          "enum": [
+            "deterministic",
+            "model",
+            "human",
+            "fixture"
+          ],
+          "title": "Verifier Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "verifier_kind",
+        "marker",
+        "validated"
+      ],
+      "title": "ClaimVerificationView",
+      "type": "object"
+    },
+    "ClaimView": {
+      "additionalProperties": false,
+      "properties": {
+        "claim_id": {
+          "title": "Claim Id",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "included_in_report": {
+          "title": "Included In Report",
+          "type": "boolean"
+        },
+        "sub_question": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Sub Question"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "verification": {
+          "$ref": "#/$defs/ClaimVerificationView"
+        }
+      },
+      "required": [
+        "claim_id",
+        "text",
+        "sub_question",
+        "verification",
+        "evidence_ids",
+        "included_in_report"
+      ],
+      "title": "ClaimView",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "claims": {
+      "items": {
+        "$ref": "#/$defs/ClaimView"
+      },
+      "title": "Claims",
+      "type": "array"
+    },
+    "excluded_count": {
+      "title": "Excluded Count",
+      "type": "integer"
+    },
+    "exclusion_reasons": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Exclusion Reasons",
+      "type": "object"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "task_id": {
+      "title": "Task Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "task_id",
+    "claims",
+    "excluded_count",
+    "exclusion_reasons"
+  ],
+  "title": "ClaimsResponse",
+  "type": "object"
+}

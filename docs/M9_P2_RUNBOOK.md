@@ -1,11 +1,11 @@
 # M9-P2 前瞻 Gate A 操作手册
 
-> 状态：已完成连续前瞻采集与条件快照；真实观察 `51` 条，其中 `50` 条 eligible、`1` 条边界排除；Gold `50/50` 已冻结
+> 历史账本状态：登记 `51` 条观察，其中 `50` 条当时标记为 eligible、`1` 条边界排除；Gold `50/50` 和条件快照已冻结。样本来源与审核限制见下文。
 > 当前决策：Gate A `INCONCLUSIVE`；ScholarGraph 继续 `keep_disabled`
 
 ## 1. 评测边界
 
-P2 只接收 ScholarGraph P1 算法冻结时间之后自然发生的 ScholarTrace 研究子问题。P0 的
+预注册要求 P2 只接收 ScholarGraph P1 算法冻结时间之后自然发生的 ScholarTrace 研究子问题。P0 的
 39 条记录和 M8 的 8 条 holdout 已通过问题 SHA-256 排除，不能通过改写大小写、空白或
 Unicode 形式再次纳入。合成题和 fixture 只能测试工具，不能计入正式门禁。
 
@@ -98,7 +98,7 @@ uv run --python 3.11 --frozen python scripts/manage_m9_p2.py condition `
 - `INCONCLUSIVE`：扩展到 50 条后仍少于 6 个机会，不能解释成正结果；
 - `GO_EVIDENCE_GATE` 也不自动启动 P3，仍需项目所有者另行批准 DocuMind 回放和预算。
 
-当前公开状态为 `evaluation/reports/m9_p2_status.json` 的 `INCONCLUSIVE`：真实观察 `51` 条，
+历史公开状态为 `evaluation/reports/m9_p2_status.json` 的 `INCONCLUSIVE`：账本登记观察 `51` 条，
 其中 `50` 条 eligible、`1` 条 `fulltext_required` 边界排除；`50/50` Gold 和 `50/50` B5/B7
 条件快照均已冻结，50 条 Gold 全部为 `ambiguous`，因此没有可评分的 B5 miss opportunity。
 Gate A1 完整性、确定性、边界、Parquet 只读和零外部调用门禁全部通过；Gate A2 因机会数为 0
@@ -108,3 +108,12 @@ Gate A1 完整性、确定性、边界、Parquet 只读和零外部调用门禁�
 按预注册停止规则，P2 在 50 条 eligible 后冻结为 `INCONCLUSIVE` 并停止，不继续采样、不修改
 ScholarGraph、不启动 DocuMind Evidence Gate、不产生模型或付费调用。工具 fixture 与正式索引
 smoke 仍只构成工程证据，不构成前瞻增益证据；详细复审见 `docs/M9_P2_GATE_A_REVIEW.md`。
+
+## 6. 来源标签与后续抽核
+
+sample_origin=real 是历史输入标签，不是自动验证过的生产任务来源。任务创建记录、
+实际研究执行和自然发生的需求应分别核验；模板化备注不替代逐题 Gold 依据。
+后续有界抽核发现部分来源链与审核依据不能由保存材料充分确认。
+本批不能作为已验证的自然连续生产样本，也不能用于推断图检索正负收益。
+详见 [最终复审](M9_P2_GATE_A_REVIEW.md)的后续来源抽核与解释限制。
+本手册的采样要求仍是协议要求，并非证明所有旧记录已经满足要求。

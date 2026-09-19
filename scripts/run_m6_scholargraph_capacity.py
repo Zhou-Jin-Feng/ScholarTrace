@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 ELIGIBLE = ROOT / "evaluation" / "seeds" / "m5_scholargraph_eligible_eval.jsonl"
 BOUNDARY = ROOT / "evaluation" / "seeds" / "m5_scholargraph_boundary_eval.jsonl"
 SCOPES = ROOT / "evaluation" / "seeds" / "m5_scholargraph_routing_scopes.json"
-OUTPUT = ROOT / "evaluation" / "reports" / "m6_scholargraph_basic_capacity.json"
+OUTPUT = ROOT / "artifacts" / "reports" / "m6_scholargraph_basic_capacity.json"
 
 
 def main() -> int:
@@ -46,12 +46,8 @@ def main() -> int:
             {
                 "repeat_count": summary["repeat_count"],
                 "success_rate": summary["success_rate"],
-                "query_http_duration_p50_seconds": summary[
-                    "query_http_duration_p50_seconds"
-                ],
-                "query_http_duration_p95_seconds": summary[
-                    "query_http_duration_p95_seconds"
-                ],
+                "query_http_duration_p50_seconds": summary["query_http_duration_p50_seconds"],
+                "query_http_duration_p95_seconds": summary["query_http_duration_p95_seconds"],
                 "passed": summary["passed"],
             },
             ensure_ascii=False,

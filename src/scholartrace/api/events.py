@@ -17,7 +17,17 @@ from scholartrace.workflow.storage import RuntimeLedger
 SSE_POLL_SECONDS = 0.25
 SSE_HEARTBEAT_SECONDS = 15.0
 SSE_RETRY_MILLISECONDS = 1000
-SSE_TERMINAL_EVENT_KINDS = frozenset({"exports_ready"})
+#: Kinds that close the stream (T15).
+#:
+#: `exports_ready` is the normal last event on every terminal path — it is
+#: emitted *after* task_failed / task_cancelled / plan_rejected, so those must
+#: NOT close the stream or the client would never receive its own exports.
+#:
+#: `task_terminal_no_exports` is the failure counterpart: when export rendering
+#: raises, it is the last event instead. Without it here, a task that finished
+#: but could not render would hold the stream open until the client gave up and
+#: then display as running forever.
+SSE_TERMINAL_EVENT_KINDS = frozenset({"exports_ready", "task_terminal_no_exports"})
 
 
 def _control_event(name: str, payload: dict[str, object]) -> str:

@@ -8,3 +8,21 @@
 !nginx.conf
 !src/
 !src/**
+
+# Private files remain excluded even inside an allowed source directory.
+**/.git
+**/.env
+**/.env.*
+**/agent
+**/.monkeycode
+**/.ohmyagent
+**/.serena
+**/.claude
+**/.kilo
+**/.playwright-mcp
+**/graphify-out
+**/local_docs
+**/__pycache__
+**/*.pyc
+**/.venv
+**/node_modules

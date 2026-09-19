@@ -9,6 +9,15 @@
       "title": "DemoMode",
       "type": "string"
     },
+    "ExecutionMode": {
+      "description": "Which executor owns a task. There is no implicit fallback between them.",
+      "enum": [
+        "demo",
+        "real"
+      ],
+      "title": "ExecutionMode",
+      "type": "string"
+    },
     "TaskPhase": {
       "enum": [
         "plan",
@@ -33,7 +42,8 @@
         "rejected",
         "cancelling",
         "cancelled",
-        "failed"
+        "failed",
+        "interrupted"
       ],
       "title": "TaskStatus",
       "type": "string"
@@ -64,6 +74,10 @@
       "minimum": 0,
       "title": "Event Count",
       "type": "integer"
+    },
+    "execution_mode": {
+      "$ref": "#/$defs/ExecutionMode",
+      "default": "demo"
     },
     "metrics": {
       "additionalProperties": true,

@@ -1,219 +1,92 @@
 {
   "$defs": {
-    "Budget": {
-      "additionalProperties": false,
+    "BudgetPlan": {
       "properties": {
-        "limits": {
-          "$ref": "#/$defs/BudgetLimits"
-        },
-        "schema_version": {
-          "const": "1.0",
-          "default": "1.0",
-          "title": "Schema Version",
+        "estimate_source": {
+          "title": "Estimate Source",
           "type": "string"
         },
-        "usage": {
-          "$ref": "#/$defs/BudgetUsage"
-        }
-      },
-      "title": "Budget",
-      "type": "object"
-    },
-    "BudgetLimits": {
-      "additionalProperties": false,
-      "properties": {
+        "is_actual_bill": {
+          "default": false,
+          "title": "Is Actual Bill",
+          "type": "boolean"
+        },
         "max_api_calls": {
-          "default": 16,
-          "maximum": 200,
-          "minimum": 0,
           "title": "Max Api Calls",
           "type": "integer"
         },
-        "max_candidate_papers": {
-          "default": 50,
-          "maximum": 500,
-          "minimum": 1,
-          "title": "Max Candidate Papers",
-          "type": "integer"
-        },
-        "max_concurrency": {
-          "default": 4,
-          "maximum": 16,
-          "minimum": 1,
-          "title": "Max Concurrency",
-          "type": "integer"
-        },
-        "max_cost_cny": {
-          "default": 10.0,
-          "minimum": 0,
-          "title": "Max Cost Cny",
+        "max_cny": {
+          "title": "Max Cny",
           "type": "number"
         },
-        "max_duration_seconds": {
-          "default": 900,
-          "maximum": 86400,
-          "minimum": 30,
-          "title": "Max Duration Seconds",
-          "type": "integer"
-        },
-        "max_fulltext_papers": {
-          "default": 15,
-          "maximum": 100,
-          "minimum": 1,
-          "title": "Max Fulltext Papers",
-          "type": "integer"
-        },
-        "max_llm_input_tokens": {
-          "default": 160000,
-          "minimum": 1,
-          "title": "Max Llm Input Tokens",
-          "type": "integer"
-        },
-        "max_llm_output_tokens": {
-          "default": 40000,
-          "minimum": 1,
-          "title": "Max Llm Output Tokens",
-          "type": "integer"
-        },
-        "max_model_calls": {
-          "default": 60,
-          "maximum": 500,
-          "minimum": 0,
-          "title": "Max Model Calls",
-          "type": "integer"
-        },
-        "max_queries": {
-          "default": 12,
-          "maximum": 100,
-          "minimum": 1,
-          "title": "Max Queries",
-          "type": "integer"
-        },
-        "max_rag_calls_per_paper": {
-          "default": 6,
-          "maximum": 50,
-          "minimum": 1,
-          "title": "Max Rag Calls Per Paper",
-          "type": "integer"
-        },
-        "max_rounds": {
-          "default": 2,
-          "maximum": 5,
-          "minimum": 1,
-          "title": "Max Rounds",
-          "type": "integer"
-        },
-        "max_total_tokens": {
-          "anyOf": [
-            {
-              "minimum": 1,
-              "type": "integer"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "title": "Max Total Tokens"
-        }
-      },
-      "title": "BudgetLimits",
-      "type": "object"
-    },
-    "BudgetUsage": {
-      "additionalProperties": false,
-      "properties": {
-        "api_calls": {
-          "default": 0,
-          "minimum": 0,
-          "title": "Api Calls",
-          "type": "integer"
-        },
-        "candidate_papers": {
-          "default": 0,
-          "minimum": 0,
-          "title": "Candidate Papers",
-          "type": "integer"
-        },
-        "elapsed_seconds": {
-          "default": 0,
-          "minimum": 0,
-          "title": "Elapsed Seconds",
-          "type": "number"
-        },
-        "external_cost_cny": {
-          "default": 0,
-          "minimum": 0,
-          "title": "External Cost Cny",
-          "type": "number"
-        },
-        "fulltext_papers": {
-          "default": 0,
-          "minimum": 0,
-          "title": "Fulltext Papers",
-          "type": "integer"
-        },
-        "llm_input_tokens": {
-          "default": 0,
-          "minimum": 0,
-          "title": "Llm Input Tokens",
-          "type": "integer"
-        },
-        "llm_output_tokens": {
-          "default": 0,
-          "minimum": 0,
-          "title": "Llm Output Tokens",
-          "type": "integer"
-        },
-        "local_gpu_seconds": {
-          "default": 0,
-          "minimum": 0,
-          "title": "Local Gpu Seconds",
-          "type": "number"
-        },
-        "model_calls": {
-          "default": 0,
-          "minimum": 0,
-          "title": "Model Calls",
-          "type": "integer"
-        },
-        "queries": {
-          "default": 0,
-          "minimum": 0,
-          "title": "Queries",
-          "type": "integer"
-        },
-        "rag_calls": {
-          "default": 0,
-          "minimum": 0,
-          "title": "Rag Calls",
+        "max_wall_clock_seconds": {
+          "title": "Max Wall Clock Seconds",
           "type": "integer"
         }
       },
-      "title": "BudgetUsage",
+      "required": [
+        "max_cny",
+        "max_api_calls",
+        "max_wall_clock_seconds",
+        "estimate_source"
+      ],
+      "title": "BudgetPlan",
       "type": "object"
     },
-    "ResearchPlan": {
+    "ExecutionAuthorization": {
       "additionalProperties": false,
       "properties": {
-        "budget": {
-          "$ref": "#/$defs/Budget"
+        "generation": {
+          "maximum": 9223372036854775807,
+          "minimum": 1,
+          "title": "Generation",
+          "type": "integer"
         },
-        "exclusion_criteria": {
-          "items": {
-            "maxLength": 8000,
-            "minLength": 1,
-            "type": "string"
-          },
-          "maxItems": 20,
-          "minItems": 1,
-          "title": "Exclusion Criteria",
-          "type": "array"
+        "max_cny": {
+          "title": "Max Cny",
+          "type": "string"
         },
+        "max_external_requests": {
+          "maximum": 9223372036854775807,
+          "minimum": 0,
+          "title": "Max External Requests",
+          "type": "integer"
+        },
+        "max_local_calls": {
+          "maximum": 9223372036854775807,
+          "minimum": 0,
+          "title": "Max Local Calls",
+          "type": "integer"
+        },
+        "max_remote_calls": {
+          "maximum": 9223372036854775807,
+          "minimum": 0,
+          "title": "Max Remote Calls",
+          "type": "integer"
+        },
+        "policy_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Policy Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "max_cny",
+        "max_remote_calls",
+        "max_local_calls",
+        "max_external_requests",
+        "policy_sha256",
+        "generation"
+      ],
+      "title": "ExecutionAuthorization",
+      "type": "object"
+    },
+    "PlanDetails": {
+      "additionalProperties": false,
+      "description": "Coordinator constraints that remain visible and bound to every approval.",
+      "properties": {
         "inclusion_criteria": {
           "items": {
-            "maxLength": 8000,
-            "minLength": 1,
             "type": "string"
           },
           "maxItems": 20,
@@ -222,50 +95,14 @@
           "type": "array"
         },
         "objective": {
-          "maxLength": 8000,
+          "maxLength": 2000,
           "minLength": 1,
           "title": "Objective",
-          "type": "string"
-        },
-        "question": {
-          "maxLength": 8000,
-          "minLength": 1,
-          "title": "Question",
           "type": "string"
         },
         "retrieval_cutoff": {
           "format": "date",
           "title": "Retrieval Cutoff",
-          "type": "string"
-        },
-        "schema_version": {
-          "const": "1.0",
-          "default": "1.0",
-          "title": "Schema Version",
-          "type": "string"
-        },
-        "sources": {
-          "items": {
-            "enum": [
-              "arxiv",
-              "openalex",
-              "crossref",
-              "semantic_scholar"
-            ],
-            "type": "string"
-          },
-          "minItems": 1,
-          "title": "Sources",
-          "type": "array"
-        },
-        "status": {
-          "enum": [
-            "draft",
-            "waiting_approval",
-            "approved",
-            "rejected"
-          ],
-          "title": "Status",
           "type": "string"
         },
         "subquestions": {
@@ -277,13 +114,6 @@
           "title": "Subquestions",
           "type": "array"
         },
-        "task_id": {
-          "maxLength": 160,
-          "minLength": 3,
-          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
-          "title": "Task Id",
-          "type": "string"
-        },
         "title": {
           "maxLength": 300,
           "minLength": 3,
@@ -292,19 +122,60 @@
         }
       },
       "required": [
-        "task_id",
         "title",
-        "question",
         "objective",
-        "subquestions",
         "inclusion_criteria",
-        "exclusion_criteria",
-        "sources",
-        "retrieval_cutoff",
-        "budget",
-        "status"
+        "subquestions",
+        "retrieval_cutoff"
       ],
-      "title": "ResearchPlan",
+      "title": "PlanDetails",
+      "type": "object"
+    },
+    "PlanModification": {
+      "additionalProperties": false,
+      "description": "Complete editable content of a delivery plan; no identity or approval fields.",
+      "properties": {
+        "budget_plan": {
+          "$ref": "#/$defs/BudgetPlan"
+        },
+        "details": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PlanDetails"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "exclusions": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 20,
+          "title": "Exclusions",
+          "type": "array"
+        },
+        "source_scope": {
+          "$ref": "#/$defs/SourceScope"
+        },
+        "sub_questions": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 20,
+          "minItems": 1,
+          "title": "Sub Questions",
+          "type": "array"
+        }
+      },
+      "required": [
+        "sub_questions",
+        "source_scope",
+        "budget_plan"
+      ],
+      "title": "PlanModification",
       "type": "object"
     },
     "ResearchSubquestion": {
@@ -350,10 +221,46 @@
       ],
       "title": "ResearchSubquestion",
       "type": "object"
+    },
+    "SourceScope": {
+      "properties": {
+        "max_papers": {
+          "default": 5,
+          "title": "Max Papers",
+          "type": "integer"
+        },
+        "min_papers": {
+          "default": 3,
+          "title": "Min Papers",
+          "type": "integer"
+        },
+        "providers": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Providers",
+          "type": "array"
+        },
+        "year_from": {
+          "title": "Year From",
+          "type": "integer"
+        },
+        "year_to": {
+          "title": "Year To",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "providers",
+        "year_from",
+        "year_to"
+      ],
+      "title": "SourceScope",
+      "type": "object"
     }
   },
   "additionalProperties": false,
-  "description": "M3 approval contract exposed by the M6 API.",
+  "description": "Decision bound to a delivery plan, distinct from the workflow M3 contract.",
   "properties": {
     "action": {
       "enum": [
@@ -364,16 +271,53 @@
       "title": "Action",
       "type": "string"
     },
-    "modified_plan": {
+    "execution_authorization": {
       "anyOf": [
         {
-          "$ref": "#/$defs/ResearchPlan"
+          "$ref": "#/$defs/ExecutionAuthorization"
         },
         {
           "type": "null"
         }
       ],
       "default": null
+    },
+    "modified_plan": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PlanModification"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "plan_digest": {
+      "anyOf": [
+        {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Plan Digest"
+    },
+    "plan_version": {
+      "anyOf": [
+        {
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Plan Version"
     },
     "reason": {
       "anyOf": [

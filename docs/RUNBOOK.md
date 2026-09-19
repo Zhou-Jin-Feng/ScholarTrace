@@ -1,5 +1,19 @@
 # ScholarTrace 本地运行手册（M6-M10）
 
+## 离线回归与私有工件验证
+
+`uv run pytest` 使用可公开的确定性 Fixture，不依赖本机历史 Evidence 文件，不执行真实模型或付费调用。M2 pilot loader 的公开测试覆盖有效输入、哈希/来源/论文身份篡改、论文池漂移及缺失文件。
+
+已有私有 M2 工件可独立只读校验。将 `SCHOLARTRACE_M2_REPORT` 指向本地工件后执行：
+
+```powershell
+uv run python scripts/verify_m2_pilot_packet.py `
+  --report "$env:SCHOLARTRACE_M2_REPORT" `
+  --expected-claims 12 --expected-evidence 11
+```
+
+上述数量对应冻结的三篇论文 M2 实测记录。其他输入须显式提供其预期数量。文件缺失、校验失败或数量不符会返回非零退出码；输出仅含汇总和哈希，不输出原始 Evidence。这是已有记录的确定性验证，不代表重新执行在线检索、模型推理或质量评测；原始工件仍不进入 Git 或发布包。
+
 ## 1. 本地启动
 
 环境要求：Python 3.11、uv、Node.js 20+ 和 npm。M6 的确定性演示不需要 API Key、DocuMind、ScholarGraph 或 Ollama。
@@ -11,7 +25,9 @@ uv sync --all-groups
 uv run uvicorn scholartrace.api.app:app --host 127.0.0.1 --port 8000 --no-access-log
 ```
 
-默认任务数据写入 `artifacts/m6-delivery`。部署到 Compose 时由 `SCHOLARTRACE_DATA_DIR` 指向持久卷；本地也可在启动前设置该变量以切换目录。单进程执行器默认 1 个 worker、4 个排队槽位，可用 `SCHOLARTRACE_WORKERS` 和 `SCHOLARTRACE_QUEUE_CAPACITY` 调整；这两个参数只控制本地进程，不提供跨进程协调。
+当前 Web/API 装配的是确定性 Demo，并非全部真实研究组件的生产装配；上游与模型 smoke 是独立入口。
+
+默认任务数据写入 `artifacts/m6-delivery`。本地启动前可设置 SCHOLARTRACE_DATA_DIR 切换目录：相对路径以项目根解析，绝对路径保持其位置。宿主机 uvicorn 不自动加载 .env，应显式设置环境变量。Compose 从 SCHOLARTRACE_CONTAINER_DATA_DIR 映射容器内 SCHOLARTRACE_DATA_DIR，默认 /var/lib/scholartrace；不能把宿主机路径直接填入容器变量。单进程执行器默认 1 个 worker、4 个排队槽位，可用 `SCHOLARTRACE_WORKERS` 和 `SCHOLARTRACE_QUEUE_CAPACITY` 调整；这两个参数只控制本地进程，不提供跨进程协调。
 
 另开终端启动前端：
 
@@ -140,16 +156,18 @@ uv run python scripts/run_m6_scholargraph_capacity.py --repeat-count 3
 uv run python scripts/run_m10_p1_load.py --task-count 12
 ```
 
-评测和 Demo 只写脱敏 JSON 到 `evaluation/reports/`；临时 SQLite 位于已忽略的 `artifacts/`。M10-P1 负载命令仅运行本地确定性控制面，分 1/2/4/8 并发档位记录 429 背压、恢复、延迟和终态 SSE，不访问付费模型、DocuMind、ScholarGraph 或 Ollama。容量命令要求冻结 ScholarGraph `1.2.0` 已在 `127.0.0.1:8002` ready，按并发 1 顺序执行三次 Basic，不访问付费模型，不保存问题或答案。矩阵中的 `limited` 或 `missing` 表示质量证据缺口；B3/B4 的 `measured` 表示已完成人工盲审，不表示 B4 获得收益。
+新运行的默认摘要写入已忽略的 `artifacts/reports/`，冻结的 evaluation/reports 保留原始证据、不随重跑更新；临时 SQLite 位于已忽略的 `artifacts/`。M10-P1 负载命令仅运行本地确定性控制面，分 1/2/4/8 并发档位记录 429 背压、恢复、延迟和终态 SSE，不访问付费模型、DocuMind、ScholarGraph 或 Ollama。容量命令要求冻结 ScholarGraph `1.2.0` 已在 `127.0.0.1:8002` ready，按并发 1 顺序执行三次 Basic，不访问付费模型，不保存问题或答案。矩阵中的 `limited` 或 `missing` 表示质量证据缺口；B3/B4 的 `measured` 表示已完成人工盲审，不表示 B4 获得收益。
 
 ### 4.1 M10-P3 全文 acquisition smoke
 
-先确认 DocuMind `2.2.0` 的 `health/ready` 返回 retrieval ready，且 Ollama 已安装并可预热
+当前明确支持 DocuMind 3.0.0，同时保留原2.x。先在独立测试部署确认 DocuMind 的 `health/ready` 返回 retrieval ready，且 Ollama 已安装并可预热
 `qwen3-embedding`，再执行：
 
 ```powershell
-uv run python scripts/run_m10_p3_smoke.py
+uv run python scripts/run_m10_p3_smoke.py --documind-version 3.0.0 --documind-commit <部署版本的完整40位SHA>
 ```
+
+将上面的 SHA 占位符替换为经核对的实际值，不要原样执行。必须由操作者确认部署来自该干净提交；readiness 不提供 SHA 证明。版本与 SHA 在下载和模型调用前检查，实际 readiness/检索版本也须匹配，报告不再默认为旧 SHA。该约束同样适用于 run_m2_live_smoke.py。
 
 该命令只读取 `tests/fixtures/documind/m2_three_papers.json` 中的三篇版本化公开 arXiv
 来源，逐跳限制 HTTPS/域名/端口、最多 3 次重定向、`application/pdf`、30 MiB 和 `%PDF-`
@@ -201,7 +219,7 @@ Invoke-WebRequest http://127.0.0.1:5173 -UseBasicParsing
 New-Item -ItemType Directory -Force backups | Out-Null
 uv run scholartrace-backup `
   --data-dir artifacts/m6-delivery `
-  --output backups/scholartrace-0.5.0-20260904.zip
+  --output backups/scholartrace-1.0.0-20260919.zip
 ```
 
 命令输出的 `archive_sha256`、`manifest_sha256`、数据库数量和字节数应另行保存。备份包含
@@ -212,7 +230,7 @@ hash 校验 BLOB。`.env`、PDF、缓存、日志、临时文件、`*-wal` 和 `
 
 ```powershell
 uv run scholartrace-restore `
-  --archive backups/scholartrace-0.5.0-20260904.zip `
+  --archive backups/scholartrace-1.0.0-20260919.zip `
   --target-dir artifacts/m6-delivery-restored-20260904
 $env:SCHOLARTRACE_DATA_DIR = "artifacts/m6-delivery-restored-20260904"
 uv run uvicorn scholartrace.api.app:app --host 127.0.0.1 --port 8000 --no-access-log
@@ -221,6 +239,17 @@ uv run uvicorn scholartrace.api.app:app --host 127.0.0.1 --port 8000 --no-access
 只有恢复输出 `verified=true`，且 live/ready、任务计数、事件回放和报告下载抽查通过后，才把
 新目录设为长期配置。目标目录已存在、版本不匹配或任一 hash/完整性/表计数不一致时，恢复会
 失败关闭；不要使用文件管理器直接把 WAL 主库复制回来。
+
+恢复完成时，目标根目录会生成
+`.scholartrace-restore-reconciliation-required` 标记。它表示备份可能遗漏备份之后
+发生的外部调用，不是 SQLite 损坏。当前 journal 仍可读取历史结果、费用和未知占用，
+但拒绝激活阶段授权及发出新操作；子目录内的 journal 同样受限。重复备份并恢复也不会
+自动解除限制。`verified=true` 只证明恢复完整性，不表示可以恢复真实执行。
+
+不要删除该标记或单独搬走数据库来恢复调用。当前没有自动解除入口；真实任务必须先
+核对外部副作用与费用，再使用经过验证的显式恢复流程。新建独立数据目录不会恢复旧任务，
+也不能作为重放旧任务的替代办法。备份中的 SQL 记录保持原值，恢复限制不通过清零预算、
+删除授权或覆盖 unknown 记录实现。
 
 ### 5.3 Compose 备份、恢复与切换
 
@@ -233,7 +262,7 @@ docker compose run --rm --no-deps `
   -v "${PWD}/backups:/backup" `
   scholartrace-api scholartrace-backup `
   --data-dir /var/lib/scholartrace `
-  --output /backup/scholartrace-0.5.0-20260904.zip
+  --output /backup/scholartrace-1.0.0-20260919.zip
 ```
 
 恢复到同一数据卷中的新子目录，再显式切换：
@@ -242,12 +271,12 @@ docker compose run --rm --no-deps `
 docker compose run --rm --no-deps `
   -v "${PWD}/backups:/backup" `
   scholartrace-api scholartrace-restore `
-  --archive /backup/scholartrace-0.5.0-20260904.zip `
+  --archive /backup/scholartrace-1.0.0-20260919.zip `
   --target-dir /var/lib/scholartrace/restored-20260904
 ```
 
 随后在未跟踪 `.env` 中设置
-`SCHOLARTRACE_DATA_DIR=/var/lib/scholartrace/restored-20260904`，执行 `docker compose up -d`
+`SCHOLARTRACE_CONTAINER_DATA_DIR=/var/lib/scholartrace/restored-20260904`，执行 `docker compose up -d`
 并完成 health、任务、SSE 和报告抽查。旧目录保留到观察期结束；不要在验证前删除。
 
 ### 5.4 升级与回滚
@@ -256,7 +285,7 @@ docker compose run --rm --no-deps `
 2. 用当前版本创建备份并完成一次隔离恢复校验；
 3. 解压新发布包到新目录，执行 `uv sync --locked`/`npm ci` 或重新构建 Compose；
 4. 先用恢复副本启动新版本，再检查 live、ready、SSE、任务和报告；
-5. 当前 `0.5.0` 没有自动数据库迁移器；版本不一致时不得强行恢复；
+5. 当前 `1.0.0` 没有自动数据库迁移器；版本不一致时不得强行恢复；
 6. 升级失败时停止新版本，切回旧发布包和旧数据目录，确认 ready 后再恢复服务。
 
 确定性本地源代码发布包：
@@ -267,7 +296,7 @@ uv run python scripts/run_m10_p4_release_drill.py
 
 该脚本连续构建两次，只有 ZIP SHA-256 相同才写出
 `artifacts/m10-p4/ScholarTrace-0.5.0-final.zip`，公开摘要写入
-`evaluation/reports/m10_p4_release.json`。包包含锁文件但不捆绑 Docker 镜像或依赖缓存，首次
+`artifacts/reports/m10_p4_release.json`。包包含锁文件但不捆绑 Docker 镜像或依赖缓存，首次
 安装仍需要可用的软件包/镜像源。
 
 ### 5.5 DocuMind 恢复边界
@@ -315,3 +344,65 @@ DocuMind 应按其自己的版本和备份说明独立恢复，随后检查 `com
   不把摘要当作全文 Evidence；
 - M10-P4 备份不包含 `.env`、PDF、缓存或 SQLite sidecar，恢复只允许新目录。DocuMind 和
   ScholarGraph 都是独立上游，不被 ScholarTrace 备份隐式覆盖。
+
+## 8. 当前契约检查与历史复现
+
+默认检查已提交、由分支/tag 可达的 DocuMind ref，不读取未提交文件为契约，不默认访问网络：
+
+~~~powershell
+uv run python scripts/verify_m2_documind_compatibility.py --provider-repo ../DocuMind --provider-ref HEAD
+~~~
+
+显式 --base-url 才增加一次 readiness GET；这不证明部署 SHA 或在线全文链路。当前明确接受3.0.0及原2.x；不接受任意新版。3.0.0的组件ready在HTTP 200/503下均可表示纯检索可用，其他HTTP错误不得通过。离线Schema和合成HTTP流程通过不等于真实在线全文/模型验证通过。
+
+历史2.1/2.2对象只用于档案重放：使用 --historical，并通过 --provider-repo 指向保有旧对象的私有归档。verify_upstreams.ps1 和 verify_m5_scholargraph.ps1 也要求显式 -Historical；它们不是当前版本验收入口。Git 历史清理后旧 SHA 不可用是正常边界，不应依赖 dangling 对象维持当前部署。
+
+## 9. 运行目录、日志与发布范围
+
+data/、logs/、artifacts/ 只跟踪 .gitkeep；程序使用时创建子目录。既有默认任务根 artifacts/m6-delivery 不自动迁移，新部署可显式选择 data/tasks。更改变量不会自动搬迁或恢复旧数据库。
+
+应用默认输出日志到标准输出/错误流，不自动创建日志文件。需要留存时可在项目根执行：
+
+~~~powershell
+New-Item -ItemType Directory -Force logs | Out-Null
+uv run uvicorn scholartrace.api.app:app --host 127.0.0.1 --port 8000 --no-access-log *> logs/api.log
+~~~
+
+不要在日志中记录请求查询串、token、全文或模型原始回答；该示例覆盖同名日志，长期运行需另配轮转。Compose 使用 docker compose logs 查看标准日志。
+
+新运行默认报告在 artifacts/reports/；显式输出选项可能覆盖指定文件，请勿指向 evaluation/reports 中的冻结证据。备份文件应存放在数据根之外、Git 忽略的私有目录；下述根目录 backups 已加入忽略，不进入源码发布包。工具状态与私有记录不进入源码包；保留的三份 .gitkeep 只用于初始化目录，不含实际数据。
+
+## 10. DocuMind 3.0.0 兼容与复现范围
+
+- 入库函数必须显式接收已经核对的documind_version；当前smoke将readiness、绑定、检索审计及RunManifest串联为同一服务版本。旧2.2.0绑定不能直接冒充3.0.0，应在受控部署重新确认入库/活动索引，再通过显式CAS更新绑定，不能批量替换数据库字符串。
+- 文档列表、multipart上传、活动索引状态与单文档retrieve路径仍在/api/v1下。源文件hash、返回document/index/source、页码、Chunk hash与顺序约束保持严格。
+- 删除404按幂等完成、204按无正文完成；200必须返回同一document_key、status=deleted且cleanup_pending=false。待清理、错误身份或异常正文不会计为清理通过，不自动扩大删除范围。
+- 使用隔离DocuMind测试实例、独立注册表/向量集合和新的工件目录验证；默认脚本按运行前列表保护既有文档，不提供并发所有权锁，不可对多人共享业务实例试跑。同名文件上传可能影响已有逻辑文档。
+- 历史M6收集脚本prepare_m6_b3_b4_evidence.py仍是2.2.0固定实验入口，本轮只让它显式传入已确认版本，未把旧实验重新解释为3.0.0实验；新版联调使用run_m2_live_smoke.py或run_m10_p3_smoke.py。
+- tests/fixtures/documind/v3_0_0_provider.json记录已提交上游的模型Schema与来源hash，不是在线测量。旧contracts/openapi、实验Fixture及evaluation报告保留原身份；只更新当前Consumer生成Schema。
+- 上游示例的重复字符内容hash仅用于结构示意，不是有效证据。合成测试计算真实hash，Consumer不会为接入新版而关闭完整性检查。
+
+
+## 交付数据库与本地回归
+
+交付库当前 schema v4：v2增加计划/审批，v3增加整任务预算预留，v4增加已记录用量与
+待对账状态。迁移使用可嵌套 SAVEPOINT，失败回滚全部新DDL和版本记录；v3的已结算
+记录回填已知用量，旧任务/工件不删除。checkpoint、Runtime Ledger 与交付库仍物理分离。
+
+升级前停止写入并备份全部关联 SQLite 文件；不要在线复制有活动WAL的单一数据库文件。
+本版本的合成回归验证失败回滚与重试，不代替真实部署备份/还原演练。旧程序拒绝新schema，
+需要回退时恢复升级前完整备份并使用匹配程序，不直接修改版本号或删除列。
+
+real 任务留下的未确认预算不会自动归零或释放；保留本地用量和未知占用，先核对外部
+结果，再接入明确的恢复流程。当前没有自动重放真实付费调用的授权或实现。
+
+effect journal 另有独立 schema 1：保留原 effects/effect_budgets 布局，增加授权、
+调用上下文与版本侧表；迁移失败整体回滚。旧数据不自动获得真实调用资格。
+即便旧程序能读取原两表，它也不具备新授权检查，不能直接配合新 live 库降级运行；
+降级必须停机，并同时使用匹配的旧源码和完整旧备份。任务库 schema 4 与 effect schema 1
+不是同一个版本序列。
+
+前端运行 `npm ci --ignore-scripts`、`npm test`、`npm run build`；测试使用与React主版本
+匹配的 react-test-renderer 和 Node 内置 test runner，不调用模型。类型检查、hook单测与
+构建不等同于浏览器视觉/E2E验收。后端运行 `uv run pytest`、`uv run ruff check src tests scripts`、
+`uv run mypy src`、`uv lock --check`；通过 `scripts/export_schemas.py` 重新生成并核对契约漂移。

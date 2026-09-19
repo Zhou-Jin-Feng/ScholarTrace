@@ -18,6 +18,7 @@ from pathlib import Path, PurePosixPath
 from typing import Any
 
 from scholartrace import __version__
+from scholartrace.restore_fence import create_restore_fence
 
 BACKUP_SCHEMA_VERSION = "scholartrace-data-backup/1.0"
 BACKUP_MANIFEST_NAME = "backup-manifest.json"
@@ -367,6 +368,9 @@ def restore_data(*, archive_path: Path, target_dir: Path) -> dict[str, Any]:
                         "tables": actual_tables,
                     }
                 )
+        # Every restore is potentially stale, including a backup of restored data.
+        # Publish provenance with the tree; never rewrite historical SQL grants.
+        create_restore_fence(temporary)
         os.replace(temporary, destination)
     except (OSError, sqlite3.Error, zipfile.BadZipFile) as exc:
         if temporary.exists():

@@ -66,15 +66,13 @@ ELIGIBLE = ROOT / "evaluation" / "seeds" / "m5_scholargraph_eligible_eval.jsonl"
 BOUNDARY = ROOT / "evaluation" / "seeds" / "m5_scholargraph_boundary_eval.jsonl"
 SCOPES = ROOT / "evaluation" / "seeds" / "m5_scholargraph_routing_scopes.json"
 SOURCE_PLAN = ROOT / "evaluation" / "seeds" / "m6_b3_b4_evidence_sources.json"
-COVERAGE_REPORT = ROOT / "evaluation" / "reports" / "m6_b3_b4_evidence_coverage.json"
+COVERAGE_REPORT = ROOT / "artifacts" / "reports" / "m6_b3_b4_evidence_coverage.json"
 M2_REPORT = ROOT / "artifacts" / "m2-evidence-live" / "evidence_report.json"
 M2_PAPERS = ROOT / "tests" / "fixtures" / "documind" / "m2_three_papers.json"
 M6_EVIDENCE = ROOT / "artifacts" / "m6-b3-b4-evidence"
 MODEL_POLICY = ROOT / "contracts" / "examples" / "m0_bundle.json"
-PILOT_INPUT = (
-    ROOT / "agent" / "过程记录" / "M6-B3B4-paid-pilot" / "verified_input.json"
-)
-PUBLIC_OUTPUT = ROOT / "evaluation" / "reports" / "m6_b3_b4_paid_full.json"
+PILOT_INPUT = ROOT / "agent" / "过程记录" / "M6-B3B4-paid-pilot" / "verified_input.json"
+PUBLIC_OUTPUT = ROOT / "artifacts" / "reports" / "m6_b3_b4_paid_full.json"
 PRIVATE_DIR = ROOT / "agent" / "过程记录" / "M6-B3B4-paid-full"
 MAX_EVIDENCE_CONTEXT_CHARACTERS = 25_000
 REPORT_SERIALIZED_INPUT_UPPER_BOUND = 40_000
@@ -168,9 +166,7 @@ def _preflight_frozen_inputs(
         or coverage.get("source_plan_sha256") != actual_source_plan_sha256
     ):
         raise ValueError("public Evidence coverage report drifted or did not pass")
-    coverage_rows = {
-        str(row["question_id"]): row for row in coverage.get("questions", [])
-    }
+    coverage_rows = {str(row["question_id"]): row for row in coverage.get("questions", [])}
     if set(coverage_rows) != expected_planned:
         raise ValueError("public Evidence coverage rows drifted from the source plan")
 
@@ -201,11 +197,9 @@ def _preflight_frozen_inputs(
     pilot_verifications = [
         Verification.model_validate(item) for item in pilot.get("verifications", [])
     ]
-    if (
-        len({item.claim_id for item in pilot_verifications}) != len(pilot_verifications)
-        or {item.claim_id for item in pilot_verifications}
-        != {item.claim_id for item in pilot_packet.claims}
-    ):
+    if len({item.claim_id for item in pilot_verifications}) != len(pilot_verifications) or {
+        item.claim_id for item in pilot_verifications
+    } != {item.claim_id for item in pilot_packet.claims}:
         raise ValueError("paid pilot Verification coverage drifted from the Claim set")
     return pilot_verifications
 
@@ -433,6 +427,7 @@ async def _prepare_inputs(
     private_dir: Path,
 ) -> tuple[dict[str, PreparedEvidenceInput], dict[str, Any]]:
     from scholartrace.model_provider.settings import ProviderSettings
+
     if not isinstance(settings, ProviderSettings):
         raise TypeError("M6 full run received invalid Provider settings")
     progress_path = private_dir / "verifier_progress.json"
@@ -493,8 +488,7 @@ async def _prepare_inputs(
             else:
                 question_progress = progress["questions"].get(question_id, {})
                 if question_progress and (
-                    question_progress.get("source_report_sha256")
-                    != packet.source_report_sha256
+                    question_progress.get("source_report_sha256") != packet.source_report_sha256
                     or question_progress.get("question_paper_pool_sha256")
                     != packet.paper_pool_sha256
                 ):
@@ -779,8 +773,7 @@ async def run(args: argparse.Namespace) -> dict[str, object]:
             prompt_template_sha256=generator.prompt_template_sha256,
             paper_pool_sha256=global_pool_sha256,
             question_input_sha256={
-                question_id: item.input_sha256
-                for question_id, item in sorted(prepared.items())
+                question_id: item.input_sha256 for question_id, item in sorted(prepared.items())
             },
             report_length_limit=5000,
             budget=RunBudgetEnvelope(
@@ -812,9 +805,7 @@ async def run(args: argparse.Namespace) -> dict[str, object]:
                 counter_payload.get(
                     "actual_reference_cost_cny",
                     VariantRunUsage.model_validate(progress["b3_usage"]).reference_cost_cny
-                    + VariantRunUsage.model_validate(
-                        progress["b4_usage"]
-                    ).reference_cost_cny,
+                    + VariantRunUsage.model_validate(progress["b4_usage"]).reference_cost_cny,
                 )
             )
         else:
@@ -831,10 +822,7 @@ async def run(args: argparse.Namespace) -> dict[str, object]:
             current_b4: VariantRunUsage,
         ) -> None:
             key = "b3" if variant == "B3" else "b4"
-            rows = {
-                item["result"]["question_id"]: item
-                for item in progress[key]
-            }
+            rows = {item["result"]["question_id"]: item for item in progress[key]}
             rows[row.result.question_id] = row.model_dump(mode="json")
             progress[key] = [rows[item] for item in sorted(rows)]
             progress["b3_usage"] = current_b3.model_dump(mode="json")
@@ -861,12 +849,10 @@ async def run(args: argparse.Namespace) -> dict[str, object]:
             questions=questions,
             scopes=scopes,
             evidence_contexts={
-                question_id: item.evidence_context
-                for question_id, item in prepared.items()
+                question_id: item.evidence_context for question_id, item in prepared.items()
             },
             allowed_evidence_ids={
-                question_id: item.allowed_evidence_ids
-                for question_id, item in prepared.items()
+                question_id: item.allowed_evidence_ids for question_id, item in prepared.items()
             },
             b3_run_id="run:m6:paid-full:b3",
             b4_run_id="run:m6:paid-full:b4",
@@ -920,12 +906,9 @@ async def run(args: argparse.Namespace) -> dict[str, object]:
                 "reused_pilot_usage_observability": "exact_usage_unavailable",
             },
             "reports": {
-                "calls": archive.b3_usage.provider_api_calls
-                + archive.b4_usage.provider_api_calls,
-                "input_tokens": archive.b3_usage.input_tokens
-                + archive.b4_usage.input_tokens,
-                "output_tokens": archive.b3_usage.output_tokens
-                + archive.b4_usage.output_tokens,
+                "calls": archive.b3_usage.provider_api_calls + archive.b4_usage.provider_api_calls,
+                "input_tokens": archive.b3_usage.input_tokens + archive.b4_usage.input_tokens,
+                "output_tokens": archive.b3_usage.output_tokens + archive.b4_usage.output_tokens,
                 "reference_cost_cny": round(report_cost, 6),
             },
             "total_new_reference_cost_cny": round(verifier_cost + report_cost, 6),
@@ -943,10 +926,7 @@ async def run(args: argparse.Namespace) -> dict[str, object]:
                 and archive.b3_usage.reference_cost_cny <= args.max_report_cost_cny / 2
                 and archive.b4_usage.reference_cost_cny <= args.max_report_cost_cny / 2
                 and verifier_cost <= args.max_verifier_cost_cny
-                and all(
-                    row.result.status == "succeeded"
-                    for row in archive.b3 + archive.b4
-                )
+                and all(row.result.status == "succeeded" for row in archive.b3 + archive.b4)
             ),
         }
     )

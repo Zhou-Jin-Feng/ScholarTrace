@@ -1,0 +1,21 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "plan_digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "title": "Plan Digest",
+      "type": "string"
+    },
+    "plan_version": {
+      "minimum": 1,
+      "title": "Plan Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "plan_version",
+    "plan_digest"
+  ],
+  "title": "ResumeRequest",
+  "type": "object"
+}

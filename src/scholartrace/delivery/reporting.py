@@ -1,9 +1,8 @@
-"""Safe Markdown, HTML, and minimal PDF report renderers."""
+"""Safe Markdown, HTML, and paginated PDF report renderers."""
 
 from __future__ import annotations
 
 import html
-import re
 from collections.abc import Mapping, Sequence
 
 
@@ -102,49 +101,7 @@ def render_html(
 
 
 def render_pdf(*, markdown: str) -> bytes:
-    """Build a dependency-free, text-only PDF for reliable local export."""
+    """Export every line with CJK text, wrapping and automatic pagination."""
+    from scholartrace.delivery.pdf import build_pdf
 
-    lines = [re.sub(r"[`*_]", "", line)[:110] for line in markdown.splitlines()]
-    lines = lines[:48]
-    text_commands = ["BT", "/F1 10 Tf", "50 760 Td"]
-    for index, line in enumerate(lines):
-        escaped = line.replace("\\", "\\\\").replace("(", "\\(").replace(")", "\\)")
-        if index:
-            text_commands.append("0 -15 Td")
-        text_commands.append(f"({escaped}) Tj")
-    text_commands.append("ET")
-    stream = "\n".join(text_commands).encode("latin-1", errors="replace")
-    objects = [
-        b"<< /Type /Catalog /Pages 2 0 R >>",
-        b"<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
-        (
-            b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] "
-            b"/Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>"
-        ),
-        b"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
-        (
-            b"<< /Length "
-            + str(len(stream)).encode("ascii")
-            + b" >>\nstream\n"
-            + stream
-            + b"\nendstream"
-        ),
-    ]
-    result = bytearray(b"%PDF-1.4\n%\xe2\xe3\xcf\xd3\n")
-    offsets = [0]
-    for number, obj in enumerate(objects, start=1):
-        offsets.append(len(result))
-        result.extend(f"{number} 0 obj\n".encode("ascii"))
-        result.extend(obj)
-        result.extend(b"\nendobj\n")
-    xref = len(result)
-    result.extend(f"xref\n0 {len(objects) + 1}\n".encode("ascii"))
-    result.extend(b"0000000000 65535 f \n")
-    for offset in offsets[1:]:
-        result.extend(f"{offset:010d} 00000 n \n".encode("ascii"))
-    result.extend(
-        f"trailer\n<< /Size {len(objects) + 1} /Root 1 0 R >>\nstartxref\n{xref}\n%%EOF\n".encode(
-            "ascii"
-        )
-    )
-    return bytes(result)
+    return build_pdf(markdown)

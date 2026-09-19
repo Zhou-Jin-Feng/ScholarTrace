@@ -9,7 +9,7 @@ from scholartrace.scholargraph.budget import build_b3_b4_budget_estimate
 from scholartrace.search.storage import write_json
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTPUT = ROOT / "evaluation" / "reports" / "m6_b3_b4_budget_estimate.json"
+OUTPUT = ROOT / "artifacts" / "reports" / "m6_b3_b4_budget_estimate.json"
 
 
 def main() -> int:

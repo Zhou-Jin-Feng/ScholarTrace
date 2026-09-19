@@ -17,6 +17,11 @@ RELEASE_SCHEMA_VERSION = "scholartrace-local-release/1.0"
 RELEASE_MANIFEST_NAME = "release-manifest.json"
 ROOT_FILES = (
     ".dockerignore",
+    ".gitattributes",
+    ".gitignore",
+    "data/.gitkeep",
+    "artifacts/.gitkeep",
+    "logs/.gitkeep",
     ".env.example",
     ".python-version",
     "Dockerfile",
@@ -39,6 +44,15 @@ INCLUDED_DIRECTORIES = (
 EXCLUDED_DIRECTORY_NAMES = frozenset(
     {
         ".git",
+        ".monkeycode",
+        ".ohmyagent",
+        ".serena",
+        ".claude",
+        ".kilo",
+        ".playwright-mcp",
+        "graphify-out",
+        "local_docs",
+        ".pytest-tmp",
         ".mypy_cache",
         ".pytest_cache",
         ".ruff_cache",

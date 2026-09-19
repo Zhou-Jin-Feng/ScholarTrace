@@ -14,7 +14,8 @@ def main() -> None:
     parser.add_argument(
         "--output",
         type=Path,
-        default=Path("evaluation/reports/m6_b0_b4_delivery_matrix.json"),
+        default=Path(__file__).resolve().parents[1]
+        / "artifacts/reports/m6_b0_b4_delivery_matrix.json",
     )
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]

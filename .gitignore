@@ -12,12 +12,28 @@ __pycache__/
 .env
 .env.*
 !.env.example
-data/
-logs/
-artifacts/
+/data/*
+!/data/.gitkeep
+/logs/*
+!/logs/.gitkeep
+/artifacts/*
+!/artifacts/.gitkeep
 /dist/
 
 # Frontend build output
 frontend/node_modules/
 frontend/dist/
 frontend/*.tsbuildinfo
+
+# Local tooling and private notes
+.serena/
+.monkeycode/
+.ohmyagent/
+.claude/
+.kilo/
+.playwright-mcp/
+graphify-out/
+local_docs/
+
+# Private local backups
+/backups/

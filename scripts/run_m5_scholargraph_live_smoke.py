@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 ELIGIBLE = ROOT / "evaluation" / "seeds" / "m5_scholargraph_eligible_eval.jsonl"
 BOUNDARY = ROOT / "evaluation" / "seeds" / "m5_scholargraph_boundary_eval.jsonl"
 SCOPES = ROOT / "evaluation" / "seeds" / "m5_scholargraph_routing_scopes.json"
-OUTPUT = ROOT / "evaluation" / "reports" / "m5_scholargraph_live_smoke.json"
+OUTPUT = ROOT / "artifacts" / "reports" / "m5_scholargraph_live_smoke.json"
 
 
 def main() -> int:
@@ -29,9 +29,7 @@ def main() -> int:
     args = parser.parse_args()
     questions = load_question_sets(ELIGIBLE, BOUNDARY)
     scope_document = json.loads(SCOPES.read_text("utf-8"))
-    scopes = TypeAdapter(dict[str, ScholarGraphScope]).validate_python(
-        scope_document["scopes"]
-    )
+    scopes = TypeAdapter(dict[str, ScholarGraphScope]).validate_python(scope_document["scopes"])
     summary = asyncio.run(
         run_live_smoke(
             base_url=args.base_url,

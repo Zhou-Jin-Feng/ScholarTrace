@@ -1,8 +1,8 @@
 # M8-G GraphHint 查漏补缺与 Evidence 门禁结果
 
-> 日期：2026-08-31  
-> 阶段结论：**PASS WITH NOTES**  
-> Gate A：**NO_GO / keep_disabled**  
+> 日期：2026-08-31<br>
+> 阶段结论：**PASS WITH NOTES**<br>
+> Gate A：**NO_GO / keep_disabled**<br>
 > Gate B/C：按协议未启动
 
 ## 范围

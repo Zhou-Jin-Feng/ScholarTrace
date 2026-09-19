@@ -6,7 +6,7 @@
 
 - 状态：Accepted
 - 决策：ScholarTrace 通过 HTTP/OpenAPI 调用 DocuMind，不复制 Retriever、Milvus 或解析器。
-- 当前基线：最低 DocuMind `2.1.0/32c5eb8`；已验证兼容 `2.2.0/212f60a`，retrieve Schema `1.0`。
+- 历史基线：最低 DocuMind `2.1.0/32c5eb8`；已验证兼容 `2.2.0/212f60a`，retrieve Schema `1.0`。
 - 原因：DocuMind 已拥有文档生命周期、active index 和可追溯 Chunk。
 - 代价：ScholarTrace 必须维护 Paper 到 DocuMindBinding 的唯一版本映射。
 
@@ -130,3 +130,11 @@
 - 原因：ScholarGraph 查询会触发本地 GraphRAG 生成，自动重试可能重复长耗时推理；固定语料只有摘要，当前真实联调只证明兼容性，未证明 B4 质量收益。
 - 约束：输出不得变成 fulltext Evidence；B3/B4 必须同问题、模型、论文池、预算和报告限制配对；缺少盲评质量分时默认启用决策只能是关闭。
 - 代价：短暂查询故障不会在 Consumer 内自动恢复，调用方得到 B3 结果；正式启用 ScholarGraph 需要 M6 的真实配对评测和人工决策。
+
+## ADR-018：显式接入DocuMind 3.0.0而不泛化主版本
+
+- 状态：Accepted（离线契约与Consumer适配；真实部署验证独立进行）。
+- 决策：集中维护服务版本策略，保留原2.x并精确接入3.0.0；响应、绑定、readiness与CLI统一使用。Schema仍为retrieve-1.0，不新增虚构的协议版本。
+- 原因：只更新响应正则会遗漏绑定模型门禁和入库硬编码，导致检索前后身份冲突；整体健康降级也不等于纯检索不可用。
+- 约束：不接受任意3.x，保留所有hash/作用域校验；3.0.0必须明确retrieval组件ready。显式部署SHA来自操作者，健康探针不提供SHA证明；旧报告/绑定不自动升级。
+- 代价：其他新版须重新审查；合成HTTP回归证明Consumer逻辑，不替代真实Milvus、embedding或模型验收。

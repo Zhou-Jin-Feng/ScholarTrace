@@ -1,0 +1,1795 @@
+{
+  "$defs": {
+    "ArtifactRef": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Artifact Id",
+          "type": "string"
+        },
+        "artifact_type": {
+          "enum": [
+            "research_plan",
+            "paper_card",
+            "evidence",
+            "claim",
+            "verification",
+            "citation_graph",
+            "tool_run",
+            "report",
+            "search_snapshot",
+            "baseline_report",
+            "validation",
+            "follow_up"
+          ],
+          "title": "Artifact Type",
+          "type": "string"
+        },
+        "content_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Content Sha256",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "storage_uri": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "title": "Storage Uri",
+          "type": "string"
+        }
+      },
+      "required": [
+        "artifact_id",
+        "artifact_type",
+        "content_sha256",
+        "storage_uri",
+        "created_at"
+      ],
+      "title": "ArtifactRef",
+      "type": "object"
+    },
+    "CitationEdge": {
+      "additionalProperties": false,
+      "properties": {
+        "cited_paper_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Cited Paper Id",
+          "type": "string"
+        },
+        "citing_paper_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Citing Paper Id",
+          "type": "string"
+        },
+        "edge_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Edge Id",
+          "type": "string"
+        },
+        "relation": {
+          "const": "references",
+          "default": "references",
+          "title": "Relation",
+          "type": "string"
+        },
+        "request_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Request Id",
+          "type": "string"
+        },
+        "response_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Response Sha256",
+          "type": "string"
+        },
+        "retrieved_at": {
+          "format": "date-time",
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "source": {
+          "enum": [
+            "openalex",
+            "semantic_scholar"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "source_work_id": {
+          "pattern": "^W\\d+$",
+          "title": "Source Work Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "edge_id",
+        "citing_paper_id",
+        "cited_paper_id",
+        "source",
+        "source_work_id",
+        "request_id",
+        "response_sha256",
+        "retrieved_at"
+      ],
+      "title": "CitationEdge",
+      "type": "object"
+    },
+    "CitationGraphArtifact": {
+      "additionalProperties": false,
+      "properties": {
+        "communities": {
+          "items": {
+            "items": {
+              "maxLength": 160,
+              "minLength": 3,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "maxItems": 10000,
+          "minItems": 1,
+          "title": "Communities",
+          "type": "array"
+        },
+        "components": {
+          "items": {
+            "items": {
+              "maxLength": 160,
+              "minLength": 3,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "maxItems": 10000,
+          "minItems": 1,
+          "title": "Components",
+          "type": "array"
+        },
+        "content_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Content Sha256",
+          "type": "string"
+        },
+        "edges": {
+          "items": {
+            "$ref": "#/$defs/CitationEdge"
+          },
+          "maxItems": 50000,
+          "title": "Edges",
+          "type": "array"
+        },
+        "generated_at": {
+          "format": "date-time",
+          "title": "Generated At",
+          "type": "string"
+        },
+        "graph_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Graph Id",
+          "type": "string"
+        },
+        "metrics": {
+          "items": {
+            "$ref": "#/$defs/CitationNodeMetric"
+          },
+          "maxItems": 10000,
+          "minItems": 1,
+          "title": "Metrics",
+          "type": "array"
+        },
+        "nodes": {
+          "items": {
+            "$ref": "#/$defs/CitationNode"
+          },
+          "maxItems": 10000,
+          "minItems": 1,
+          "title": "Nodes",
+          "type": "array"
+        },
+        "partial": {
+          "default": false,
+          "title": "Partial",
+          "type": "boolean"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "timeline_candidates": {
+          "items": {
+            "$ref": "#/$defs/CitationTimelineCandidate"
+          },
+          "maxItems": 50000,
+          "title": "Timeline Candidates",
+          "type": "array"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 1000,
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "graph_id",
+        "nodes",
+        "metrics",
+        "components",
+        "communities",
+        "generated_at",
+        "content_sha256"
+      ],
+      "title": "CitationGraphArtifact",
+      "type": "object"
+    },
+    "CitationNode": {
+      "additionalProperties": false,
+      "properties": {
+        "analysis_ready": {
+          "default": false,
+          "title": "Analysis Ready",
+          "type": "boolean"
+        },
+        "lifecycle_stage": {
+          "anyOf": [
+            {
+              "enum": [
+                "normalized",
+                "relevance_passed",
+                "access_resolved",
+                "acquired",
+                "ingested",
+                "analyzed",
+                "rejected",
+                "failed"
+              ],
+              "type": "string"
+            },
+            {
+              "const": "external_metadata_missing",
+              "type": "string"
+            }
+          ],
+          "title": "Lifecycle Stage"
+        },
+        "paper_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Paper Id",
+          "type": "string"
+        },
+        "publication_year": {
+          "anyOf": [
+            {
+              "maximum": 2100,
+              "minimum": 1900,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Publication Year"
+        },
+        "seed": {
+          "default": false,
+          "title": "Seed",
+          "type": "boolean"
+        },
+        "title": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "paper_id",
+        "title",
+        "lifecycle_stage"
+      ],
+      "title": "CitationNode",
+      "type": "object"
+    },
+    "CitationNodeMetric": {
+      "additionalProperties": false,
+      "properties": {
+        "community_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Community Id",
+          "type": "string"
+        },
+        "component_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Component Id",
+          "type": "string"
+        },
+        "in_degree": {
+          "minimum": 0,
+          "title": "In Degree",
+          "type": "integer"
+        },
+        "out_degree": {
+          "minimum": 0,
+          "title": "Out Degree",
+          "type": "integer"
+        },
+        "pagerank": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Pagerank",
+          "type": "number"
+        },
+        "paper_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Paper Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "paper_id",
+        "in_degree",
+        "out_degree",
+        "pagerank",
+        "component_id",
+        "community_id"
+      ],
+      "title": "CitationNodeMetric",
+      "type": "object"
+    },
+    "CitationPaperLifecycle": {
+      "additionalProperties": false,
+      "properties": {
+        "access_url": {
+          "anyOf": [
+            {
+              "maxLength": 2048,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Access Url"
+        },
+        "acquired_source_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[a-f0-9]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Acquired Source Sha256"
+        },
+        "analysis_ref": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ArtifactRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "binding": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DocuMindBinding"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "canonical_paper_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Canonical Paper Id",
+          "type": "string"
+        },
+        "paper": {
+          "$ref": "#/$defs/Paper"
+        },
+        "public_reason": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Public Reason"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "stage": {
+          "enum": [
+            "normalized",
+            "relevance_passed",
+            "access_resolved",
+            "acquired",
+            "ingested",
+            "analyzed",
+            "rejected",
+            "failed"
+          ],
+          "title": "Stage",
+          "type": "string"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "title": "Updated At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "canonical_paper_id",
+        "paper",
+        "stage",
+        "updated_at"
+      ],
+      "title": "CitationPaperLifecycle",
+      "type": "object"
+    },
+    "CitationTimelineCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "citation_edge_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Citation Edge Id",
+          "type": "string"
+        },
+        "earlier_paper_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Earlier Paper Id",
+          "type": "string"
+        },
+        "later_paper_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Later Paper Id",
+          "type": "string"
+        },
+        "year_gap": {
+          "maximum": 200,
+          "minimum": 0,
+          "title": "Year Gap",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "earlier_paper_id",
+        "later_paper_id",
+        "year_gap",
+        "citation_edge_id"
+      ],
+      "title": "CitationTimelineCandidate",
+      "type": "object"
+    },
+    "Claim": {
+      "additionalProperties": false,
+      "properties": {
+        "claim_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Claim Id",
+          "type": "string"
+        },
+        "claim_type": {
+          "enum": [
+            "fact",
+            "result",
+            "comparison",
+            "causal",
+            "inference"
+          ],
+          "title": "Claim Type",
+          "type": "string"
+        },
+        "counter_evidence_ids": {
+          "items": {
+            "maxLength": 160,
+            "minLength": 3,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+            "type": "string"
+          },
+          "maxItems": 100,
+          "title": "Counter Evidence Ids",
+          "type": "array"
+        },
+        "evidence_ids": {
+          "items": {
+            "maxLength": 160,
+            "minLength": 3,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+            "type": "string"
+          },
+          "maxItems": 100,
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "importance": {
+          "default": "supporting",
+          "enum": [
+            "critical",
+            "supporting"
+          ],
+          "title": "Importance",
+          "type": "string"
+        },
+        "origin": {
+          "enum": [
+            "author_stated",
+            "cross_paper_synthesis",
+            "system_inferred"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 8000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "claim_id",
+        "text",
+        "claim_type",
+        "origin"
+      ],
+      "title": "Claim",
+      "type": "object"
+    },
+    "ClaimValidation": {
+      "additionalProperties": false,
+      "properties": {
+        "checked_evidence_ids": {
+          "items": {
+            "maxLength": 160,
+            "minLength": 3,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+            "type": "string"
+          },
+          "maxItems": 200,
+          "title": "Checked Evidence Ids",
+          "type": "array"
+        },
+        "claim_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Claim Id",
+          "type": "string"
+        },
+        "issues": {
+          "items": {
+            "$ref": "#/$defs/ValidationIssue"
+          },
+          "maxItems": 1000,
+          "title": "Issues",
+          "type": "array"
+        },
+        "passed": {
+          "title": "Passed",
+          "type": "boolean"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "validated_at": {
+          "format": "date-time",
+          "title": "Validated At",
+          "type": "string"
+        },
+        "validation_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Validation Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "validation_id",
+        "claim_id",
+        "passed",
+        "validated_at"
+      ],
+      "title": "ClaimValidation",
+      "type": "object"
+    },
+    "DocuMindBinding": {
+      "additionalProperties": false,
+      "properties": {
+        "canonical_paper_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Canonical Paper Id",
+          "type": "string"
+        },
+        "document_key": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Document Key",
+          "type": "string"
+        },
+        "documind_version": {
+          "pattern": "^(?:2\\.[1-9][0-9]*\\.[0-9]+|3\\.0\\.0)$",
+          "title": "Documind Version",
+          "type": "string"
+        },
+        "index_id": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Index Id",
+          "type": "string"
+        },
+        "retrieval_schema_version": {
+          "const": "1.0",
+          "title": "Retrieval Schema Version",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "source_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Source Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "canonical_paper_id",
+        "document_key",
+        "index_id",
+        "source_sha256",
+        "documind_version",
+        "retrieval_schema_version"
+      ],
+      "title": "DocuMindBinding",
+      "type": "object"
+    },
+    "Evidence": {
+      "additionalProperties": false,
+      "properties": {
+        "canonical_paper_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Canonical Paper Id",
+          "type": "string"
+        },
+        "char_end": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Char End"
+        },
+        "char_start": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Char Start"
+        },
+        "chunk_content_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[a-f0-9]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Chunk Content Sha256"
+        },
+        "chunk_id": {
+          "anyOf": [
+            {
+              "pattern": "^[a-f0-9]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Chunk Id"
+        },
+        "content_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Content Sha256",
+          "type": "string"
+        },
+        "document_key": {
+          "anyOf": [
+            {
+              "pattern": "^[a-f0-9]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Document Key"
+        },
+        "evidence_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Evidence Id",
+          "type": "string"
+        },
+        "evidence_level": {
+          "enum": [
+            "fulltext",
+            "abstract",
+            "metadata"
+          ],
+          "title": "Evidence Level",
+          "type": "string"
+        },
+        "index_id": {
+          "anyOf": [
+            {
+              "pattern": "^[a-f0-9]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Index Id"
+        },
+        "page_number": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Number"
+        },
+        "parser_version": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parser Version"
+        },
+        "quote": {
+          "maxLength": 8000,
+          "minLength": 1,
+          "title": "Quote",
+          "type": "string"
+        },
+        "retrieval_run_id": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "minLength": 3,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Retrieval Run Id"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "section": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Section"
+        },
+        "source_sha256": {
+          "anyOf": [
+            {
+              "pattern": "^[a-f0-9]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Sha256"
+        },
+        "source_url": {
+          "anyOf": [
+            {
+              "maxLength": 2048,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Url"
+        }
+      },
+      "required": [
+        "evidence_id",
+        "canonical_paper_id",
+        "quote",
+        "evidence_level",
+        "content_sha256"
+      ],
+      "title": "Evidence",
+      "type": "object"
+    },
+    "FollowUpRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "claim_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Claim Id",
+          "type": "string"
+        },
+        "max_additional_queries": {
+          "const": 1,
+          "default": 1,
+          "title": "Max Additional Queries",
+          "type": "integer"
+        },
+        "missing_evidence_type": {
+          "enum": [
+            "fulltext",
+            "counter_evidence",
+            "experimental_setup",
+            "citation_path"
+          ],
+          "title": "Missing Evidence Type",
+          "type": "string"
+        },
+        "reason": {
+          "maxLength": 8000,
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "request_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Request Id",
+          "type": "string"
+        },
+        "round_index": {
+          "const": 1,
+          "default": 1,
+          "title": "Round Index",
+          "type": "integer"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "subquestion_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Subquestion Id",
+          "type": "string"
+        },
+        "target_paper_ids": {
+          "items": {
+            "maxLength": 160,
+            "minLength": 3,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+            "type": "string"
+          },
+          "maxItems": 20,
+          "title": "Target Paper Ids",
+          "type": "array"
+        },
+        "task_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Task Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "request_id",
+        "task_id",
+        "claim_id",
+        "subquestion_id",
+        "reason",
+        "missing_evidence_type"
+      ],
+      "title": "FollowUpRequest",
+      "type": "object"
+    },
+    "M4ReliabilityResult": {
+      "additionalProperties": false,
+      "properties": {
+        "follow_up_requests": {
+          "items": {
+            "$ref": "#/$defs/FollowUpRequest"
+          },
+          "maxItems": 1,
+          "title": "Follow Up Requests",
+          "type": "array"
+        },
+        "outcome": {
+          "enum": [
+            "succeeded",
+            "degraded",
+            "failed"
+          ],
+          "title": "Outcome",
+          "type": "string"
+        },
+        "report_gate": {
+          "$ref": "#/$defs/ReportGateResult"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "validation": {
+          "$ref": "#/$defs/ValidationBundle"
+        },
+        "verifications": {
+          "items": {
+            "$ref": "#/$defs/Verification"
+          },
+          "title": "Verifications",
+          "type": "array"
+        }
+      },
+      "required": [
+        "validation",
+        "verifications",
+        "report_gate",
+        "outcome"
+      ],
+      "title": "M4ReliabilityResult",
+      "type": "object"
+    },
+    "Paper": {
+      "additionalProperties": false,
+      "properties": {
+        "abstract": {
+          "anyOf": [
+            {
+              "maxLength": 100000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Abstract"
+        },
+        "access_level": {
+          "enum": [
+            "fulltext",
+            "abstract",
+            "metadata"
+          ],
+          "title": "Access Level",
+          "type": "string"
+        },
+        "arxiv_id": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Arxiv Id"
+        },
+        "authors": {
+          "items": {
+            "maxLength": 8000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 200,
+          "minItems": 1,
+          "title": "Authors",
+          "type": "array"
+        },
+        "canonical_paper_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Canonical Paper Id",
+          "type": "string"
+        },
+        "doi": {
+          "anyOf": [
+            {
+              "maxLength": 512,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Doi"
+        },
+        "normalized_title": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Normalized Title",
+          "type": "string"
+        },
+        "openalex_id": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Openalex Id"
+        },
+        "publication_year": {
+          "maximum": 2100,
+          "minimum": 1900,
+          "title": "Publication Year",
+          "type": "integer"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "semantic_scholar_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Semantic Scholar Id"
+        },
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/PaperSource"
+          },
+          "minItems": 1,
+          "title": "Sources",
+          "type": "array"
+        },
+        "title": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "version_of": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "minLength": 3,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Version Of"
+        }
+      },
+      "required": [
+        "canonical_paper_id",
+        "title",
+        "normalized_title",
+        "authors",
+        "publication_year",
+        "access_level",
+        "sources"
+      ],
+      "title": "Paper",
+      "type": "object"
+    },
+    "PaperSource": {
+      "additionalProperties": false,
+      "properties": {
+        "record_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Record Sha256",
+          "type": "string"
+        },
+        "retrieved_at": {
+          "format": "date-time",
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "source": {
+          "enum": [
+            "arxiv",
+            "openalex",
+            "crossref",
+            "semantic_scholar"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "source_id": {
+          "maxLength": 512,
+          "minLength": 1,
+          "title": "Source Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source",
+        "source_id",
+        "retrieved_at",
+        "record_sha256"
+      ],
+      "title": "PaperSource",
+      "type": "object"
+    },
+    "PersistedEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Artifact Id"
+        },
+        "created_at": {
+          "title": "Created At",
+          "type": "string"
+        },
+        "event_id": {
+          "title": "Event Id",
+          "type": "string"
+        },
+        "kind": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Kind",
+          "type": "string"
+        },
+        "node": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Node",
+          "type": "string"
+        },
+        "payload": {
+          "additionalProperties": true,
+          "title": "Payload",
+          "type": "object"
+        },
+        "sequence": {
+          "minimum": 1,
+          "title": "Sequence",
+          "type": "integer"
+        },
+        "task_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Task Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_id",
+        "sequence",
+        "task_id",
+        "node",
+        "kind",
+        "created_at"
+      ],
+      "title": "PersistedEvent",
+      "type": "object"
+    },
+    "ReportClaimDisposition": {
+      "additionalProperties": false,
+      "properties": {
+        "claim_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Claim Id",
+          "type": "string"
+        },
+        "importance": {
+          "enum": [
+            "critical",
+            "supporting"
+          ],
+          "title": "Importance",
+          "type": "string"
+        },
+        "included": {
+          "title": "Included",
+          "type": "boolean"
+        },
+        "marker": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Marker"
+        },
+        "rendered_text": {
+          "maxLength": 8200,
+          "minLength": 1,
+          "title": "Rendered Text",
+          "type": "string"
+        },
+        "verification_status": {
+          "enum": [
+            "supported",
+            "partially_supported",
+            "unsupported",
+            "conflicted"
+          ],
+          "title": "Verification Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "claim_id",
+        "importance",
+        "verification_status",
+        "included",
+        "rendered_text"
+      ],
+      "title": "ReportClaimDisposition",
+      "type": "object"
+    },
+    "ReportGateResult": {
+      "additionalProperties": false,
+      "properties": {
+        "blocked_critical_claim_ids": {
+          "items": {
+            "maxLength": 160,
+            "minLength": 3,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+            "type": "string"
+          },
+          "title": "Blocked Critical Claim Ids",
+          "type": "array"
+        },
+        "dispositions": {
+          "items": {
+            "$ref": "#/$defs/ReportClaimDisposition"
+          },
+          "title": "Dispositions",
+          "type": "array"
+        },
+        "report_safe": {
+          "title": "Report Safe",
+          "type": "boolean"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dispositions",
+        "report_safe"
+      ],
+      "title": "ReportGateResult",
+      "type": "object"
+    },
+    "ValidationBundle": {
+      "additionalProperties": false,
+      "properties": {
+        "bundle_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Bundle Id",
+          "type": "string"
+        },
+        "generated_at": {
+          "format": "date-time",
+          "title": "Generated At",
+          "type": "string"
+        },
+        "outcome": {
+          "enum": [
+            "succeeded",
+            "degraded",
+            "failed"
+          ],
+          "title": "Outcome",
+          "type": "string"
+        },
+        "results": {
+          "items": {
+            "$ref": "#/$defs/ClaimValidation"
+          },
+          "title": "Results",
+          "type": "array"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bundle_id",
+        "results",
+        "outcome",
+        "generated_at"
+      ],
+      "title": "ValidationBundle",
+      "type": "object"
+    },
+    "ValidationIssue": {
+      "additionalProperties": false,
+      "properties": {
+        "claim_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Claim Id",
+          "type": "string"
+        },
+        "code": {
+          "enum": [
+            "claim_missing_evidence",
+            "evidence_missing",
+            "evidence_paper_missing",
+            "content_hash_mismatch",
+            "binding_missing",
+            "document_key_mismatch",
+            "index_id_mismatch",
+            "source_hash_mismatch",
+            "chunk_missing",
+            "chunk_hash_mismatch",
+            "quote_not_in_chunk",
+            "char_range_mismatch",
+            "page_mismatch",
+            "numeric_mismatch",
+            "version_target_missing",
+            "citation_edge_missing",
+            "lifecycle_incomplete"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "evidence_id": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "minLength": 3,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Evidence Id"
+        },
+        "issue_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Issue Id",
+          "type": "string"
+        },
+        "message": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "paper_id": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "minLength": 3,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Paper Id"
+        },
+        "severity": {
+          "enum": [
+            "error",
+            "warning"
+          ],
+          "title": "Severity",
+          "type": "string"
+        }
+      },
+      "required": [
+        "issue_id",
+        "code",
+        "severity",
+        "message",
+        "claim_id"
+      ],
+      "title": "ValidationIssue",
+      "type": "object"
+    },
+    "Verification": {
+      "additionalProperties": false,
+      "properties": {
+        "checked_evidence_ids": {
+          "items": {
+            "maxLength": 160,
+            "minLength": 3,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+            "type": "string"
+          },
+          "maxItems": 200,
+          "title": "Checked Evidence Ids",
+          "type": "array"
+        },
+        "claim_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Claim Id",
+          "type": "string"
+        },
+        "reason": {
+          "maxLength": 8000,
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "recommended_action": {
+          "enum": [
+            "keep",
+            "weaken",
+            "follow_up",
+            "remove"
+          ],
+          "title": "Recommended Action",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "supported",
+            "partially_supported",
+            "unsupported",
+            "conflicted"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "verification_id": {
+          "maxLength": 160,
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:/-]*$",
+          "title": "Verification Id",
+          "type": "string"
+        },
+        "verified_at": {
+          "format": "date-time",
+          "title": "Verified At",
+          "type": "string"
+        },
+        "verifier": {
+          "enum": [
+            "deterministic",
+            "model",
+            "human",
+            "fixture"
+          ],
+          "title": "Verifier",
+          "type": "string"
+        }
+      },
+      "required": [
+        "verification_id",
+        "claim_id",
+        "status",
+        "reason",
+        "recommended_action",
+        "verifier",
+        "verified_at"
+      ],
+      "title": "Verification",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "bindings": {
+      "items": {
+        "$ref": "#/$defs/DocuMindBinding"
+      },
+      "title": "Bindings",
+      "type": "array"
+    },
+    "citation_graph": {
+      "$ref": "#/$defs/CitationGraphArtifact"
+    },
+    "claim_subquestions": {
+      "additionalProperties": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "title": "Claim Subquestions",
+      "type": "object"
+    },
+    "claims": {
+      "items": {
+        "$ref": "#/$defs/Claim"
+      },
+      "title": "Claims",
+      "type": "array"
+    },
+    "evidence": {
+      "items": {
+        "$ref": "#/$defs/Evidence"
+      },
+      "title": "Evidence",
+      "type": "array"
+    },
+    "execution_kind": {
+      "enum": [
+        "offline_fixture",
+        "live"
+      ],
+      "title": "Execution Kind",
+      "type": "string"
+    },
+    "lifecycle": {
+      "items": {
+        "$ref": "#/$defs/CitationPaperLifecycle"
+      },
+      "title": "Lifecycle",
+      "type": "array"
+    },
+    "limitations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "outcome": {
+      "enum": [
+        "succeeded",
+        "degraded",
+        "failed"
+      ],
+      "title": "Outcome",
+      "type": "string"
+    },
+    "papers": {
+      "items": {
+        "$ref": "#/$defs/Paper"
+      },
+      "title": "Papers",
+      "type": "array"
+    },
+    "plan_digest": {
+      "title": "Plan Digest",
+      "type": "string"
+    },
+    "plan_version": {
+      "minimum": 1,
+      "title": "Plan Version",
+      "type": "integer"
+    },
+    "reliability": {
+      "$ref": "#/$defs/M4ReliabilityResult"
+    },
+    "report_markdown": {
+      "title": "Report Markdown",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "task_id": {
+      "title": "Task Id",
+      "type": "string"
+    },
+    "timeline": {
+      "items": {
+        "$ref": "#/$defs/PersistedEvent"
+      },
+      "title": "Timeline",
+      "type": "array"
+    }
+  },
+  "required": [
+    "task_id",
+    "plan_version",
+    "plan_digest",
+    "execution_kind",
+    "outcome",
+    "papers",
+    "claims",
+    "evidence",
+    "bindings",
+    "citation_graph",
+    "lifecycle",
+    "timeline",
+    "reliability",
+    "report_markdown",
+    "limitations"
+  ],
+  "title": "ResearchResult",
+  "type": "object"
+}

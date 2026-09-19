@@ -5,7 +5,9 @@
 - 产品名：ScholarTrace
 - 英文副标题：Evidence-Grounded Research Agent
 - 上游能力：`DocuMind` 原文 RAG、`ScholarGraph` GraphRAG 语义检索
-- 当前阶段：M0-M10 已冻结；M9-P2 Gate A 为 `INCONCLUSIVE`（50 条 eligible 中 0 个 B5 miss opportunity），ScholarGraph 继续默认关闭且未进入 Evidence Gate；M10-P0-P4 已完成实施与工程复审，冻结结论为 `PASS WITH NOTES`
+- 当前阶段：M0-M10 已冻结；M9-P2 Gate A 为 `INCONCLUSIVE`（历史账本50条 eligible、0个可评分机会，样本来源/Gold依据有限，见 `docs/M9_P2_GATE_A_REVIEW.md` 的后续抽核限制），ScholarGraph 继续默认关闭且未进入 Evidence Gate；M10-P0-P4 已完成实施与工程复审，冻结结论为 `PASS WITH NOTES`
+
+> 当前 Web/API 是确定性 Demo 装配；下述研究能力包含独立组件与历史实验入口，不代表已装配为完整生产研究任务。当前运行与兼容限制以 README 和 RUNBOOK 为准。
 
 ## 目标交付
 

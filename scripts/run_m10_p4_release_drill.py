@@ -19,12 +19,12 @@ def main() -> None:
     parser.add_argument(
         "--output",
         type=Path,
-        default=ROOT / "artifacts" / "m10-p4" / "ScholarTrace-0.5.0-final.zip",
+        default=ROOT / "artifacts" / "m10-p4" / "ScholarTrace-1.0.0-final.zip",
     )
     parser.add_argument(
         "--report",
         type=Path,
-        default=ROOT / "evaluation" / "reports" / "m10_p4_release.json",
+        default=ROOT / "artifacts" / "reports" / "m10_p4_release.json",
     )
     args = parser.parse_args()
     if args.output.exists():

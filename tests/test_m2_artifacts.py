@@ -130,3 +130,35 @@ def test_budget_violation_fails_before_any_artifact_is_written(tmp_path: Path) -
             source_tree_sha256="b" * 64,
         )
     assert not output.exists()
+
+
+def test_live_artifacts_require_explicit_provider_identity_before_writing(tmp_path: Path) -> None:
+    output = tmp_path / "live"
+    with pytest.raises(ValueError, match="provider identity"):
+        persist_m2_artifacts(
+            root=ROOT,
+            output_dir=output,
+            result=_result(),
+            git_commit="a" * 40,
+            worktree_dirty=True,
+            source_tree_sha256="b" * 64,
+            capability_id="single-document-dense-retrieval-live-smoke",
+        )
+    assert not output.exists()
+
+
+def test_live_artifacts_record_explicit_provider_identity(tmp_path: Path) -> None:
+    persisted = persist_m2_artifacts(
+        root=ROOT,
+        output_dir=tmp_path / "live",
+        result=_result(),
+        git_commit="a" * 40,
+        worktree_dirty=True,
+        source_tree_sha256="b" * 64,
+        capability_id="single-document-dense-retrieval-live-smoke",
+        documind_version="2.2.0",
+        documind_commit="c" * 40,
+    )
+    provider = next(b for b in persisted.manifest.service_baselines if b.service == "documind")
+    assert provider.version == "2.2.0"
+    assert provider.git_commit == "c" * 40

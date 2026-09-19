@@ -11,7 +11,7 @@ from scholartrace.search.storage import write_json
 ROOT = Path(__file__).resolve().parents[1]
 ELIGIBLE = ROOT / "evaluation" / "seeds" / "m5_scholargraph_eligible_eval.jsonl"
 BOUNDARY = ROOT / "evaluation" / "seeds" / "m5_scholargraph_boundary_eval.jsonl"
-OUTPUT = ROOT / "evaluation" / "reports" / "m5_scholargraph_fixture_smoke.json"
+OUTPUT = ROOT / "artifacts" / "reports" / "m5_scholargraph_fixture_smoke.json"
 
 
 def main() -> int:
