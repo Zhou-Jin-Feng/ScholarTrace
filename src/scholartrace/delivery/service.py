@@ -166,6 +166,7 @@ class M6TaskService:
         offline_research_runner: OfflineResearchRunner | None = None,
         runtime_policy: RuntimePolicy | None = None,
         live_runner: LiveResearchRunner | None = None,
+        provider_api_key: str | None = None,
     ) -> None:
         if reservation_capacity_cny is not None:
             validate_budget_values(reservation_capacity_cny, 0)
@@ -182,7 +183,8 @@ class M6TaskService:
         self._offline_research_runner = offline_research_runner
         self._runtime_policy = runtime_policy
         self._dependency_probes = (
-            None if runtime_policy is None else DependencyProbes(runtime_policy)
+            None if runtime_policy is None
+            else DependencyProbes(runtime_policy, provider_api_key=provider_api_key)
         )
         self.root = root.resolve()
         storage_root = data_dir or Path("artifacts/m6-delivery")

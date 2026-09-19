@@ -39,7 +39,10 @@ function symbolFor(state: DependencyState): string {
 export interface ServiceStatusProps {
   /** Injectable so tests and stories do not need a live backend. */
   fetchReport?: (signal: AbortSignal) => Promise<DependencyReport>;
+  /** Explicit, bounded metadata probe; a rejected probe never hides the last report. */
+  probe?: (signal: AbortSignal) => Promise<void>;
   pollMs?: number;
+  probeMs?: number;
 }
 
 async function defaultFetch(signal: AbortSignal): Promise<DependencyReport> {
@@ -48,13 +51,31 @@ async function defaultFetch(signal: AbortSignal): Promise<DependencyReport> {
   return (await response.json()) as DependencyReport;
 }
 
-export function ServiceStatus({ fetchReport, pollMs = 30000 }: ServiceStatusProps) {
+async function defaultProbe(signal: AbortSignal): Promise<void> {
+  // The read-only report only reflects a recent bounded probe. Demo assemblies without
+  // a runtime policy answer 409, which is not a failure of this panel.
+  const response = await fetch("/api/v1/health/dependencies/probe", {
+    method: "POST",
+    signal,
+  });
+  if (!response.ok && response.status !== 409) {
+    throw new Error(`dependency probe failed (${response.status})`);
+  }
+}
+
+export function ServiceStatus({
+  fetchReport,
+  probe,
+  pollMs = 30000,
+  probeMs = 120000,
+}: ServiceStatusProps) {
   const [report, setReport] = useState<DependencyReport | null>(null);
   const [failed, setFailed] = useState(false);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const load = fetchReport ?? defaultFetch;
+    const runProbe = probe ?? defaultProbe;
     let cancelled = false;
     const controller = new AbortController();
 
@@ -71,14 +92,26 @@ export function ServiceStatus({ fetchReport, pollMs = 30000 }: ServiceStatusProp
       }
     };
 
-    void run();
+    const refresh = async () => {
+      try {
+        await runProbe(controller.signal);
+      } catch {
+        // A probe that cannot run (closed paid gate or demo assembly) must not blank
+        // out the read-only report that is already on screen.
+      }
+      await run();
+    };
+
+    void refresh();
     const timer = window.setInterval(run, pollMs);
+    const probeTimer = window.setInterval(refresh, probeMs);
     return () => {
       cancelled = true;
       controller.abort();
       window.clearInterval(timer);
+      window.clearInterval(probeTimer);
     };
-  }, [fetchReport, pollMs]);
+  }, [fetchReport, probe, pollMs, probeMs]);
 
   if (failed || report === null) {
     const state: DependencyState = failed ? "unknown" : "unknown";

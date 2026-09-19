@@ -219,7 +219,7 @@ Invoke-WebRequest http://127.0.0.1:5173 -UseBasicParsing
 New-Item -ItemType Directory -Force backups | Out-Null
 uv run scholartrace-backup `
   --data-dir artifacts/m6-delivery `
-  --output backups/scholartrace-1.0.0-20260919.zip
+  --output backups/scholartrace-1.0.1-20260919.zip
 ```
 
 命令输出的 `archive_sha256`、`manifest_sha256`、数据库数量和字节数应另行保存。备份包含
@@ -230,7 +230,7 @@ hash 校验 BLOB。`.env`、PDF、缓存、日志、临时文件、`*-wal` 和 `
 
 ```powershell
 uv run scholartrace-restore `
-  --archive backups/scholartrace-1.0.0-20260919.zip `
+  --archive backups/scholartrace-1.0.1-20260919.zip `
   --target-dir artifacts/m6-delivery-restored-20260904
 $env:SCHOLARTRACE_DATA_DIR = "artifacts/m6-delivery-restored-20260904"
 uv run uvicorn scholartrace.api.app:app --host 127.0.0.1 --port 8000 --no-access-log
@@ -262,7 +262,7 @@ docker compose run --rm --no-deps `
   -v "${PWD}/backups:/backup" `
   scholartrace-api scholartrace-backup `
   --data-dir /var/lib/scholartrace `
-  --output /backup/scholartrace-1.0.0-20260919.zip
+  --output /backup/scholartrace-1.0.1-20260919.zip
 ```
 
 恢复到同一数据卷中的新子目录，再显式切换：
@@ -271,7 +271,7 @@ docker compose run --rm --no-deps `
 docker compose run --rm --no-deps `
   -v "${PWD}/backups:/backup" `
   scholartrace-api scholartrace-restore `
-  --archive /backup/scholartrace-1.0.0-20260919.zip `
+  --archive /backup/scholartrace-1.0.1-20260919.zip `
   --target-dir /var/lib/scholartrace/restored-20260904
 ```
 
@@ -285,7 +285,7 @@ docker compose run --rm --no-deps `
 2. 用当前版本创建备份并完成一次隔离恢复校验；
 3. 解压新发布包到新目录，执行 `uv sync --locked`/`npm ci` 或重新构建 Compose；
 4. 先用恢复副本启动新版本，再检查 live、ready、SSE、任务和报告；
-5. 当前 `1.0.0` 没有自动数据库迁移器；版本不一致时不得强行恢复；
+5. 当前 `1.0.1` 没有自动数据库迁移器；版本不一致时不得强行恢复；
 6. 升级失败时停止新版本，切回旧发布包和旧数据目录，确认 ready 后再恢复服务。
 
 确定性本地源代码发布包：

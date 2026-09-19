@@ -69,6 +69,7 @@ def configured_app(
         root=root, data_dir=data_dir, live_runner=runner,
         runtime_policy=settings.policy, worker_count=1,
         deployment_mode=deployment_mode, auth_token=auth_token,
+        provider_api_key=api_key,
     )
 
 

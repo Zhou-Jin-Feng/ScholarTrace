@@ -19,7 +19,7 @@ def main() -> None:
     parser.add_argument(
         "--output",
         type=Path,
-        default=ROOT / "artifacts" / "m10-p4" / "ScholarTrace-1.0.0-final.zip",
+        default=ROOT / "artifacts" / "m10-p4" / "ScholarTrace-1.0.1-final.zip",
     )
     parser.add_argument(
         "--report",

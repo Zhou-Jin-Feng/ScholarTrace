@@ -21,22 +21,30 @@ def probe_policy():
     })
 
 
+def ready_handler(calls, *, documind_status=200):
+    def handler(request):
+        calls.append(request.url.path)
+        if request.url.path == "/api/v1/health/ready":
+            return httpx.Response(documind_status, json={
+                "version": "3.0.0", "ready": documind_status == 200, "status": "ready",
+                "components": {"retrieval": "ready", "generation": "error"},
+            })
+        if request.url.path == "/api/tags":
+            return httpx.Response(200, json={"models": [{"name": "local-synthetic"}]})
+        if request.url.path == "/api/query":
+            return httpx.Response(200, content=b"<feed xmlns='http://www.w3.org/2005/Atom'/>")
+        return httpx.Response(200, json={"data": [{"id": "synthetic"}]})
+    return handler
+
+
 def test_metadata_only_cache_expiry_and_503_retrieval_ready():
     now = [100.0]
     probes = DependencyProbes(probe_policy(), clock=lambda: now[0])
     calls = []
     assert probes.snapshot()["local_model"]["state"] == "unknown"
 
-    def handler(request):
-        calls.append((request.method, request.url.path))
-        if request.url.path == "/api/v1/health/ready":
-            return httpx.Response(503, json={"version": "3.0.0", "ready": False,
-                "status": "degraded", "components": {"retrieval": "ready", "generation": "error"}})
-        if request.url.path == "/api/tags":
-            return httpx.Response(200, json={"models": [{"name": "local-synthetic"}]})
-        return httpx.Response(200, json={"data": [{"id": "synthetic"}]})
-
     async def run():
+        handler = ready_handler(calls, documind_status=503)
         async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
             for _ in range(2):
                 report = await probes.refresh(client)
@@ -44,26 +52,27 @@ def test_metadata_only_cache_expiry_and_503_retrieval_ready():
                 assert report["local_model"]["state"] == "ready"
                 assert report["api_strong"]["state"] == "ready"
                 assert report["api_strong"]["approved"] is False
-                assert report["search_provider"]["state"] == "unknown"
-            assert len(calls) == 3
+                assert report["search_provider"]["state"] == "ready"
+            assert len(calls) == 4
             now[0] += 31
             assert probes.snapshot()["documind"]["state"] == "unknown"
             await probes.refresh(client)
-            assert len(calls) == 6
+            assert len(calls) == 8
     asyncio.run(run())
-    assert {method for method, _ in calls} == {"GET"}
-    assert {path for _, path in calls} == {"/api/v1/health/ready", "/api/tags", "/v1/models"}
+    assert set(calls) == {"/api/v1/health/ready", "/api/tags", "/v1/models", "/api/query"}
 
 
 @pytest.mark.parametrize("fault", ["401", "redirect", "malformed", "large", "timeout", "version"])
 def test_metadata_faults_are_bounded_and_do_not_echo_raw_errors(fault):
-    probes = DependencyProbes(probe_policy(), timeout_seconds=0.02)
+    probes = DependencyProbes(probe_policy(), timeout_seconds=0.02, live_timeout_seconds=0.05)
     calls = []
 
     async def handler(request):
         calls.append(request.url.path)
+        if request.url.path == "/api/query":
+            return httpx.Response(500)
         if fault == "timeout":
-            await asyncio.sleep(0.1)
+            await asyncio.sleep(0.5)
         if fault == "401":
             return httpx.Response(401, text="CANARY-private-response")
         if fault == "redirect":
@@ -83,7 +92,7 @@ def test_metadata_faults_are_bounded_and_do_not_echo_raw_errors(fault):
             assert "CANARY" not in json.dumps(result)
             await probes.refresh(client)
     asyncio.run(run())
-    assert len(calls) == 3
+    assert len(calls) == 4
 
 
 def test_concurrent_refresh_does_not_duplicate_requests():
@@ -108,7 +117,7 @@ def test_concurrent_refresh_does_not_duplicate_requests():
             release.set()
             await first
     asyncio.run(run())
-    assert len(calls) == 3
+    assert len(calls) == 4
 
 
 def test_service_probe_then_draining_preserves_cache_without_new_http(tmp_path, monkeypatch):
@@ -126,15 +135,51 @@ def test_service_probe_then_draining_preserves_cache_without_new_http(tmp_path, 
         async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
             report = await service.probe_dependencies(client)
             assert report["real_mode"]["state"] == "unavailable"
-            assert len(calls) == 3
+            assert len(calls) == 4
             snapshot = service.queue_snapshot()
             monkeypatch.setattr(service, "queue_snapshot", lambda: snapshot | {"accepting": False})
             with pytest.raises(TaskStateError, match="draining"):
                 await service.probe_dependencies(client)
-            assert len(calls) == 3
+            assert len(calls) == 4
             assert service.dependency_report()["api"] == "draining"
 
     try:
         asyncio.run(run())
     finally:
         service.close()
+
+
+def test_probe_uses_provider_credential_without_echoing_it(tmp_path):
+    secret = "CANARY-provider-credential-0123456789"
+    service = M6TaskService(root=Path(__file__).resolve().parents[1], data_dir=tmp_path,
+                            runtime_policy=probe_policy(), provider_api_key=secret)
+    seen = []
+
+    def handler(request):
+        seen.append((request.url.path, request.headers.get("authorization")))
+        if request.url.path == "/api/v1/health/ready":
+            return httpx.Response(200, json={"version": "3.0.0", "ready": True,
+                                             "status": "ready",
+                                             "components": {"retrieval": "ready"}})
+        if request.url.path == "/api/tags":
+            return httpx.Response(200, json={"models": [{"name": "local-synthetic"}]})
+        if request.url.path == "/api/query":
+            return httpx.Response(200, content=b"<feed/>")
+        return httpx.Response(200, json={"data": [{"id": "synthetic"}]})
+
+    async def run():
+        async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+            report = await service.probe_dependencies(client)
+            dependencies = report["dependencies"]
+            assert dependencies["api_strong"]["state"] == "ready"
+            assert dependencies["documind"]["state"] == "ready"
+            assert dependencies["local_model"]["state"] == "ready"
+            assert dependencies["search_provider"]["state"] == "ready"
+            assert secret not in json.dumps(report)
+    try:
+        asyncio.run(run())
+    finally:
+        service.close()
+    headers = dict(seen)
+    assert headers["/v1/models"] == f"Bearer {secret}"
+    assert all(value is None for path, value in seen if path != "/v1/models")

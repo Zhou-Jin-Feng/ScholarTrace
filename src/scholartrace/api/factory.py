@@ -62,6 +62,7 @@ def create_app(
     offline_research_runner: OfflineResearchRunner | None = None,
     runtime_policy: RuntimePolicy | None = None,
     live_runner: LiveResearchRunner | None = None,
+    provider_api_key: str | None = None,
 ) -> FastAPI:
     project_root = root or Path(__file__).resolve().parents[3]
     configured_data_dir = data_dir
@@ -82,6 +83,7 @@ def create_app(
         offline_research_runner=offline_research_runner,
         runtime_policy=runtime_policy,
         live_runner=live_runner,
+        provider_api_key=provider_api_key,
     )
 
     @asynccontextmanager

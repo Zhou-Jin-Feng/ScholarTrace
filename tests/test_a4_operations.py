@@ -92,7 +92,7 @@ def test_research_restore_keeps_plans_budget_claims_evidence_events_and_exports(
     assert not (tmp_path / "bad-restore").exists()
     with zipfile.ZipFile(archive) as source:
         manifest = json.loads(source.read("backup-manifest.json"))
-    assert manifest["application_version"] == "1.0.0"
+    assert manifest["application_version"] == "1.0.1"
 
 
 @pytest.mark.parametrize(
