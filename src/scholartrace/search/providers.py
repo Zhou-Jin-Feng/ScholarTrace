@@ -53,6 +53,19 @@ def _clean_text(value: str | None) -> str:
     return " ".join((value or "").split())
 
 
+def _openalex_search_text(value: str) -> str:
+    """Return a query OpenAlex stemmed search accepts.
+
+    OpenAlex interprets ``*`` and ``?`` as wildcards and answers HTTP 400 when
+    one appears in the default (stemmed) search. A natural-language question is
+    not a wildcard expression, so wildcard characters become spaces.
+    """
+    cleaned = " ".join(value.replace("*", " ").replace("?", " ").split())
+    if not cleaned:
+        raise ValueError("OpenAlex search text must contain a non-wildcard character")
+    return cleaned
+
+
 def _calendar_date(value: Any) -> date | None:
     """Only retain complete valid dates; missing precision is never invented."""
     if not isinstance(value, str) or len(value) < 10:
@@ -130,10 +143,11 @@ class BaseAcademicSource:
         self.http = http
 
     async def search(self, request: SearchRequest) -> SourceSearchResult:
-        public_params, private_params, headers = self.request_parts(request)
+        public_params: dict[str, str] = {}
         started_at = datetime.now(UTC)
         started = time.perf_counter()
         try:
+            public_params, private_params, headers = self.request_parts(request)
             payload = await self.http.get(
                 url=self.endpoint,
                 public_params=public_params,
@@ -319,7 +333,7 @@ class OpenAlexSource(BaseAcademicSource):
         self, request: SearchRequest
     ) -> tuple[dict[str, str], dict[str, str], dict[str, str]]:
         params = {
-            "search": request.query,
+            "search": _openalex_search_text(request.query),
             "per-page": str(request.max_results),
             "select": self.select_fields,
         }

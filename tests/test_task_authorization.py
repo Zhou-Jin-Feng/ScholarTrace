@@ -1000,3 +1000,56 @@ def test_open_journal_checks_fence_at_admission_and_fails_closed(
         assert tuple(journal.db.iterdump()) == snapshot
     finally:
         journal.close()
+
+def test_local_transport_admits_one_structured_repair_attempt(tmp_path):
+    import json
+
+    import httpx
+
+    from scholartrace.delivery.metering import MeteredLocalTransport
+
+    local = dict(endpoint="http://127.0.0.1:11434/api/chat", model="local-synthetic",
+                 model_version="fixture-v1", protocol="ollama", input_cny_per_million="0",
+                 output_cny_per_million="0", max_input_tokens=1000, max_output_tokens=20,
+                 price_observed_at=NOW.isoformat())
+    approved = policy(local=local)
+    journal = EffectJournal(tmp_path / "effects.sqlite")
+    journal.authorize_task(grant(policy=approved, deadline_at="2099-01-01T00:00:00+00:00"), now=NOW)
+    execution = phase(policy_sha256=approved.digest(), authorization_id="execution:1",
+                      phase="execution", plan_version=1, plan_digest="e" * 64,
+                      max_local_calls=2)
+    journal.prepare_phase(execution, now=NOW)
+    journal.activate_phase(execution, now=NOW)
+    ctx = context(call_kind="local_model", policy_sha256=approved.digest(),
+                  authorization_id="execution:1", plan_version=1, plan_digest="e" * 64)
+    bodies = []
+
+    def handler(request):
+        bodies.append(json.loads(request.content))
+        return httpx.Response(200, json={
+            "model": "local-synthetic", "done": True,
+            "prompt_eval_count": 100, "eval_count": 10,
+        })
+
+    async def run():
+        transport = MeteredLocalTransport(
+            inner=httpx.MockTransport(handler), journal=journal, task_id="task:synthetic",
+            context=ctx, model_version="fixture-v1", cancel_event=threading.Event(),
+        )
+        base = {"model": "local-synthetic", "stream": False, "options": {"num_predict": 20}}
+        async with httpx.AsyncClient(transport=transport) as client:
+            first = await client.post(local["endpoint"], json=base)
+            assert first.status_code == 200
+            repair = dict(base, messages=[{"role": "system", "content": "correction"}])
+            second = await client.post(local["endpoint"], json=repair)
+            assert second.status_code == 200
+
+    try:
+        asyncio.run(run())
+        assert len(bodies) == 2
+        attempts = [row[0] for row in journal.db.execute(
+            "SELECT attempt FROM effect_contexts ORDER BY attempt"
+        ).fetchall()]
+        assert attempts == [1, 2]
+    finally:
+        journal.close()

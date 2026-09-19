@@ -6,6 +6,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 import httpx
+import pytest
 import respx
 
 from scholartrace.search.cache import MemoryResponseCache
@@ -66,6 +67,38 @@ def test_openalex_fixture_rebuilds_abstract_and_records_reported_cost() -> None:
     public, private, _ = source.request_parts(SearchRequest(query="CRAG"))
     assert "api_key" not in public
     assert private == {"api_key": test_credential}
+
+
+def test_openalex_search_text_drops_wildcard_characters() -> None:
+    source = OpenAlexSource(_http("openalex"))
+    public, _, _ = source.request_parts(SearchRequest(query="What about RAG?"))
+    assert public["search"] == "What about RAG"
+    public, _, _ = source.request_parts(SearchRequest(query="retrieval* ranking ?"))
+    assert public["search"] == "retrieval ranking"
+
+
+def test_openalex_wildcard_only_query_is_rejected() -> None:
+    source = OpenAlexSource(_http("openalex"))
+    with pytest.raises(ValueError, match="non-wildcard"):
+        source.request_parts(SearchRequest(query="??"))
+
+
+def test_openalex_wildcard_only_query_fails_without_network_call() -> None:
+    async def scenario() -> str:
+        async with httpx.AsyncClient() as client:
+            source = OpenAlexSource(
+                AcademicHttpClient(
+                    source="openalex",
+                    client=client,
+                    cache=MemoryResponseCache(),
+                    policy=SourcePolicy(max_network_requests=1, max_attempts=1),
+                )
+            )
+            result = await source.search(SearchRequest(query="??"))
+            return result.request.status
+
+    with respx.mock(assert_all_called=False):
+        assert asyncio.run(scenario()) == "failed"
 
 
 def test_crossref_fixture_uses_valid_select_and_strips_jats_markup() -> None:

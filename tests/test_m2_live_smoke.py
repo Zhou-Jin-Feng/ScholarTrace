@@ -62,13 +62,15 @@ def _paper(source_id: str) -> Paper:
 def test_arxiv_pdf_url_requires_and_preserves_exact_version() -> None:
     url, filename = _arxiv_pdf_url(_paper("http://arxiv.org/abs/2401.15884v3"))
 
-    assert url == "https://arxiv.org/pdf/2401.15884v3.pdf"
+    assert url == "https://arxiv.org/pdf/2401.15884v3"
     assert filename == "2401.15884v3.pdf"
 
 
-def test_arxiv_pdf_url_rejects_unversioned_source() -> None:
-    with pytest.raises(ValueError, match="versioned arXiv source"):
-        _arxiv_pdf_url(_paper("https://arxiv.org/abs/2401.15884"))
+def test_arxiv_pdf_url_uses_identifier_route_without_version() -> None:
+    url, filename = _arxiv_pdf_url(_paper("https://arxiv.org/abs/2401.15884"))
+
+    assert url == "https://arxiv.org/pdf/2401.15884"
+    assert filename == "2401.15884.pdf"
 
 
 def test_pdf_validation_checks_magic_and_size(tmp_path: Path) -> None:

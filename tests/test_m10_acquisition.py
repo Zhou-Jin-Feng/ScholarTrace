@@ -47,7 +47,7 @@ def test_acquire_pdf_records_hash_and_reuses_valid_destination(tmp_path: Path) -
     def handler(request: httpx.Request) -> httpx.Response:
         nonlocal calls
         calls += 1
-        assert request.url == httpx.URL("https://arxiv.org/pdf/2401.15884v3.pdf")
+        assert request.url == httpx.URL("https://arxiv.org/pdf/2401.15884v3")
         return httpx.Response(
             200,
             headers={"Content-Type": "application/pdf", "Content-Length": str(len(PDF))},
@@ -77,6 +77,75 @@ def test_arxiv_pdf_url_rejects_non_fulltext_access_level() -> None:
         live.arxiv_pdf_url(paper)
 
     assert raised.value.code == "access_policy"
+
+
+def _metadata_paper() -> Paper:
+    return Paper.model_validate(
+        {
+            "canonical_paper_id": "doi:10.48550/arxiv.2401.15884",
+            "title": "Corrective Retrieval Augmented Generation",
+            "normalized_title": "corrective retrieval augmented generation",
+            "authors": ["Author"],
+            "publication_year": 2024,
+            "doi": "10.48550/arxiv.2401.15884",
+            "arxiv_id": "2401.15884",
+            "access_level": "fulltext",
+            "sources": [
+                {
+                    "source": "openalex",
+                    "source_id": "https://openalex.org/W4391418506",
+                    "retrieved_at": "2026-08-29T00:00:00Z",
+                    "record_sha256": "b" * 64,
+                }
+            ],
+        }
+    )
+
+
+def test_acquire_pdf_uses_identifier_route_for_metadata_only_paper(tmp_path: Path) -> None:
+    calls = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        calls.append(str(request.url))
+        assert request.url == httpx.URL("https://arxiv.org/pdf/2401.15884")
+        return httpx.Response(
+            200,
+            headers={"Content-Type": "application/pdf", "Content-Length": str(len(PDF))},
+            content=PDF,
+        )
+
+    async def scenario() -> live.PdfAcquisition:
+        async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+            return await live.acquire_pdf(
+                client, paper=_metadata_paper(), output_dir=tmp_path
+            )
+
+    acquired = _run(scenario())
+    assert acquired.filename == "2401.15884.pdf"
+    assert acquired.source_url == "https://arxiv.org/pdf/2401.15884"
+    assert acquired.sha256 == hashlib.sha256(PDF).hexdigest()
+    assert calls == ["https://arxiv.org/pdf/2401.15884"]
+
+
+@pytest.mark.parametrize("arxiv_id", ["../evil", "hep-th/9901001"])
+def test_acquire_pdf_rejects_non_modern_arxiv_identifier(arxiv_id: str, tmp_path: Path) -> None:
+    paper = _metadata_paper().model_copy(update={"arxiv_id": arxiv_id})
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        raise AssertionError(f"unexpected request: {request.url}")
+
+    async def scenario() -> None:
+        async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+            await live.acquire_pdf(client, paper=paper, output_dir=tmp_path)
+
+    with pytest.raises(live.FullTextAcquisitionError) as raised:
+        _run(scenario())
+
+    assert raised.value.code == "source_policy"
+    assert str(raised.value) == (
+        f"arXiv identifier is not a modern public identifier: {arxiv_id}"
+    )
+    assert not list(tmp_path.iterdir())
 
 
 def test_acquire_pdf_rejects_content_type_and_cleans_temp_file(tmp_path: Path) -> None:

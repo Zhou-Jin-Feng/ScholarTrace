@@ -9,7 +9,7 @@ from __future__ import annotations
 import hashlib
 import json
 import threading
-from collections.abc import Callable
+from collections.abc import Callable, Iterable
 from datetime import UTC, datetime
 from functools import partial
 from pathlib import Path
@@ -56,6 +56,20 @@ from scholartrace.workflow.storage import ArtifactStore, RuntimeLedger
 
 class ResearchCancelledError(RuntimeError):
     """Cancellation prevents starting the next operation, not a refund of dispatched calls."""
+
+
+def _merge_retrieved_chunks(
+    target: dict[str, RetrievalChunk], chunks: Iterable[RetrievalChunk],
+) -> None:
+    """Keep one copy per chunk identity; rank and distance vary by question."""
+    for chunk in chunks:
+        previous = target.get(chunk.chunk_id)
+        if previous is not None:
+            excluded = {"rank", "distance"}
+            if previous.model_dump(exclude=excluded) != chunk.model_dump(exclude=excluded):
+                raise ValueError("conflicting retrieved chunks across subquestions")
+            continue
+        target[chunk.chunk_id] = chunk
 
 
 def _merge_evidence(target: dict[str, Evidence], item: Evidence) -> None:
@@ -371,10 +385,7 @@ class ResearchPipeline:
         for _, _, batch in batches:
             for row in batch.rows:
                 chunks = chunks_by_paper.setdefault(row.paper.canonical_paper_id, {})
-                for chunk in row.retrieval.response.chunks:
-                    if chunk.chunk_id in chunks and chunks[chunk.chunk_id] != chunk:
-                        raise ValueError("conflicting retrieved chunks across subquestions")
-                    chunks[chunk.chunk_id] = chunk
+                _merge_retrieved_chunks(chunks, row.retrieval.response.chunks)
         claims = list(claims_by_id.values())
         evidence = list(evidence_by_id.values())
         batch = batches[0][2]

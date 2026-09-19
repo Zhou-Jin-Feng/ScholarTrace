@@ -150,7 +150,7 @@ class ExecutionModels:
                 base_url=local.endpoint.removesuffix("/api/chat"),
                 model=local.model,
                 model_version=local.model_version,
-                max_attempts=1,
+                max_attempts=2,
             ).analyze(paper=paper, binding=binding, retrieval=retrieval, question=question)
 
 

@@ -16,6 +16,7 @@ from scholartrace.contracts import (
     Paper,
     PaperSource,
 )
+from scholartrace.delivery.authorization import AuthorizationError
 from scholartrace.evidence.analysis import OllamaPaperAnalyzer
 from scholartrace.evidence.bindings import DocuMindBindingRepository
 from scholartrace.evidence.client import RetrievalResult
@@ -263,6 +264,31 @@ def test_local_analyzer_fails_closed_on_unknown_chunk() -> None:
                 )
 
     asyncio.run(scenario())
+
+
+def test_local_analyzer_propagates_authorization_error_without_retry() -> None:
+    class AuthorizationClient:
+        def __init__(self) -> None:
+            self.calls = 0
+
+        async def post(self, *args: object, **kwargs: object) -> httpx.Response:
+            self.calls += 1
+            raise AuthorizationError("synthetic")
+
+    client = AuthorizationClient()
+
+    async def scenario() -> None:
+        analyzer = OllamaPaperAnalyzer(client=client)  # type: ignore[arg-type]
+        with pytest.raises(AuthorizationError, match="synthetic"):
+            await analyzer.analyze(
+                paper=_paper(),
+                binding=_binding(),
+                retrieval=_retrieval(),
+                question="How is retrieval adapted?",
+            )
+
+    asyncio.run(scenario())
+    assert client.calls == 1
 
 
 def test_report_has_locators_and_rejects_cross_paper_evidence() -> None:

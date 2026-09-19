@@ -10,6 +10,7 @@ from __future__ import annotations
 import base64
 import hashlib
 import json
+import logging
 import re
 import threading
 from collections.abc import Callable
@@ -31,6 +32,29 @@ def _resolve_context(source: ContextSource) -> CallContext:
     if not isinstance(context, CallContext):
         raise AuthorizationError("context provider did not return CallContext")
     return context
+
+logger = logging.getLogger(__name__)
+
+
+def _log_rejected_response(
+    service: str, request: httpx.Request, status: int, raw: bytes | bytearray,
+) -> None:
+    """Record why a dispatched request was not durably confirmed.
+
+    Only the service label, host, route, status and a bounded body prefix are
+    written. Request headers and credentials are not read; provider error bodies
+    may echo request content, so only a very short prefix is recorded.
+    """
+    prefix = " ".join(bytes(raw[:200]).decode("utf-8", "ignore").split())
+    body_prefix = prefix.encode("utf-8")[:200].decode("utf-8", "ignore")
+    logger.warning(json.dumps({
+        "event": "response_rejected_without_confirmation",
+        "service": service,
+        "host": request.url.host,
+        "route": request.url.path,
+        "status": status,
+        "body_prefix": body_prefix,
+    }, ensure_ascii=False))
 
 
 @dataclass(frozen=True)
@@ -128,8 +152,20 @@ class MeteredModelTransport(httpx.AsyncBaseTransport):
             raise ValueError("request model differs from the approved model")
         if body.get("stream"):
             raise ValueError("streamed provider metering is not enabled")
-        limit = body.get("max_completion_tokens", body.get("max_output_tokens"))
-        if type(limit) is not int or not 1 <= limit <= policy.max_output_tokens:
+        # Responses honours only max_output_tokens; Chat Completions dialects may use
+        # any of these names, but every supplied ceiling must fit the approved policy.
+        if httpx.URL(policy.endpoint).path == "/v1/responses":
+            ceilings = [body.get("max_output_tokens")]
+        else:
+            ceilings = [
+                body[key]
+                for key in ("max_completion_tokens", "max_output_tokens", "max_tokens")
+                if key in body
+            ]
+        if not ceilings or any(
+            type(value) is not int or not 1 <= value <= policy.max_output_tokens
+            for value in ceilings
+        ):
             raise ValueError("request must enforce the approved output-token ceiling")
         if len(content) > policy.max_input_tokens:
             raise ValueError("request exceeds the conservative input-size allowance")
@@ -157,8 +193,15 @@ class MeteredModelTransport(httpx.AsyncBaseTransport):
                 async for block in response.aiter_bytes():
                     raw.extend(block)
                     if len(raw) > 2_000_000:
+                        if not 200 <= response.status_code < 300:
+                            _log_rejected_response(
+                                "remote_model", request, response.status_code, raw
+                            )
                         raise EffectUncertainError("provider response exceeded its size limit")
                 if response.status_code < 200 or response.status_code >= 300:
+                    _log_rejected_response(
+                        "remote_model", request, response.status_code, raw
+                    )
                     raise EffectUncertainError("provider response did not confirm successful usage")
                 envelope = json.loads(raw)
                 if not isinstance(envelope, dict) or envelope.get("model") != policy.model:
@@ -210,7 +253,13 @@ class MeteredModelTransport(httpx.AsyncBaseTransport):
 
 
 class MeteredLocalTransport(httpx.AsyncBaseTransport):
-    """One explicitly identified Ollama operation; no hidden retries or warm-up."""
+    """One explicitly identified Ollama operation with at most one repair re-ask.
+
+    Identical repeats replay the stored effect. A request whose body differs from
+    the first dispatch is a structured repair: it is journaled as the bounded
+    second attempt of the same operation and is only admitted once the first
+    attempt is durably completed.
+    """
 
     def __init__(
         self, *, inner: httpx.AsyncBaseTransport, journal: EffectJournal, task_id: str,
@@ -225,6 +274,7 @@ class MeteredLocalTransport(httpx.AsyncBaseTransport):
         self.context = context
         self.model_version = model_version
         self.cancel_event = cancel_event
+        self._first_body_sha256: str | None = None
 
     async def aclose(self) -> None:
         await self.inner.aclose()
@@ -240,6 +290,11 @@ class MeteredLocalTransport(httpx.AsyncBaseTransport):
             raise AuthorizationError("request is outside the approved local inference route")
         content = await request.aread()
         request_context = context
+        body_sha256 = hashlib.sha256(content).hexdigest()
+        if self._first_body_sha256 is None:
+            self._first_body_sha256 = body_sha256
+        elif body_sha256 != self._first_body_sha256:
+            request_context = context.model_copy(update={"attempt": 2})
         if len(content) > local.max_input_tokens:
             raise AuthorizationError("local request exceeds conservative input allowance")
         body = json.loads(content)
@@ -259,8 +314,15 @@ class MeteredLocalTransport(httpx.AsyncBaseTransport):
                 async for block in response.aiter_bytes():
                     raw.extend(block)
                     if len(raw) > 2_000_000:
+                        if not 200 <= response.status_code < 300:
+                            _log_rejected_response(
+                                "local_model", request, response.status_code, raw
+                            )
                         raise EffectUncertainError("local response exceeds its size limit")
                 if not 200 <= response.status_code < 300:
+                    _log_rejected_response(
+                        "local_model", request, response.status_code, raw
+                    )
                     raise EffectUncertainError("local response did not confirm successful usage")
                 envelope = json.loads(raw)
                 if (not isinstance(envelope, dict) or envelope.get("model") != local.model
@@ -349,7 +411,7 @@ class MeteredExternalTransport(httpx.AsyncBaseTransport):
                 or request.url.port not in {None, 443}
                 or "arxiv" not in policy.allowed_search_providers
                 or request.url.query
-                or not re.fullmatch(r"/pdf/\d{4}\.\d{4,5}v\d+\.pdf", request.url.path)
+                or not re.fullmatch(r"/pdf/\d{4}\.\d{4,5}(?:v\d+)?(?:\.pdf)?", request.url.path)
             ):
                 raise AuthorizationError("PDF request is outside the arXiv allowlist")
         else:
@@ -387,8 +449,15 @@ class MeteredExternalTransport(httpx.AsyncBaseTransport):
                 async for block in response.aiter_bytes():
                     raw.extend(block)
                     if len(raw) > self.max_response_bytes:
+                        if not 200 <= response.status_code < 300:
+                            _log_rejected_response(
+                                self.service, request, response.status_code, raw
+                            )
                         raise EffectUncertainError("external response exceeds its size limit")
                 if not 200 <= response.status_code < 300:
+                    _log_rejected_response(
+                        self.service, request, response.status_code, raw
+                    )
                     raise EffectUncertainError("external operation did not confirm success")
                 return {"body": base64.b64encode(raw).decode(), "status": response.status_code,
                         "headers": {"content-type": response.headers.get("content-type", "")},

@@ -7,6 +7,7 @@ import html
 import json
 import logging
 import os
+import re
 import threading
 import uuid
 from collections.abc import Callable
@@ -73,6 +74,26 @@ from scholartrace.workflow.models import PersistedEvent
 from scholartrace.workflow.storage import RuntimeLedger
 
 logger = logging.getLogger(__name__)
+
+
+def _bounded_error_chain(exc: BaseException) -> list[dict[str, str]]:
+    """Return a bounded, payload-free view of an exception chain.
+
+    Provider and validation errors may embed payloads (``input_value=...``)
+    or multi-line context that can include model output or paper text. Only
+    the first line of each cause is kept and inline payload markers are
+    stripped, so diagnostics never copy evaluated content into the log.
+    """
+    chain: list[dict[str, str]] = []
+    node: BaseException | None = exc
+    for _ in range(4):
+        if node is None:
+            break
+        message = str(node).splitlines()[0] if str(node) else ""
+        message = re.sub(r"\s*input_value=.*$", "", message).strip()
+        chain.append({"type": type(node).__name__, "message": message[:200]})
+        node = node.__cause__ or node.__context__
+    return chain
 
 
 class TaskNotFoundError(KeyError):
@@ -1275,7 +1296,13 @@ class M6TaskService:
             executor.run(task_id, cancel_event=cancel_event)
         except (ResearchCancelledError, EffectCancelledError):
             self._finish_cancelled(task_id, reason="research cancelled")
-        except (EffectUncertainError, AuthorizationError):
+        except (EffectUncertainError, AuthorizationError) as exc:
+            chain = _bounded_error_chain(exc)
+            logger.warning(json.dumps({
+                "event": "task_interrupted_uncertain",
+                "task_id": task_id,
+                "error_chain": chain,
+            }, ensure_ascii=False))
             self.store.update_task(
                 task_id,
                 status=TaskStatus.INTERRUPTED,
@@ -1309,8 +1336,12 @@ class M6TaskService:
             )
             self._write_exports(task_id)
         except Exception as exc:  # pragma: no cover - exercised by failure injection
-            logger.error("task execution failed: %s", type(exc).__name__,
-                         extra={"task_id": task_id})
+            chain = _bounded_error_chain(exc)
+            logger.error(json.dumps({
+                "event": "task_execution_failed",
+                "task_id": task_id,
+                "error_chain": chain,
+            }, ensure_ascii=False))
             task = self._task(task_id)
             if TaskStatus(str(task["status"])) not in {
                 TaskStatus.CANCELLED,

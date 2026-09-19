@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "scholartrace"
-version = "1.0.1"
+version = "1.0.2"
 description = "Evidence-grounded multi-agent academic research workspace"
 readme = "README.md"
 requires-python = ">=3.11,<3.12"

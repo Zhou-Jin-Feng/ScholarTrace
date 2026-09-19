@@ -176,7 +176,7 @@ export default function App() {
       <footer className="page-footer">
         <span>ScholarTrace</span>
         <span>研究不止于答案，更在于证据。</span>
-        <span>1.0.1 · Local</span>
+        <span>1.0.2 · Local</span>
       </footer>
     </div>
   );

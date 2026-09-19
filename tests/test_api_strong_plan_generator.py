@@ -216,6 +216,62 @@ def test_deepseek_chat_uses_json_object_and_max_tokens() -> None:
     assert "exactly these keys" in messages[-1]["content"]
     assert "exactly 2 subquestions" in messages[-1]["content"]
     assert "Both criteria fields must be JSON arrays" in messages[-1]["content"]
+    assert "Every subquestion must set evidence_required to fulltext." in messages[-1]["content"]
+
+
+def test_fulltext_evidence_instruction_is_present_in_every_request_branch() -> None:
+    instruction = "Every subquestion must set evidence_required to fulltext."
+
+    def envelope_for(protocol: str, model: str) -> dict[str, object]:
+        if protocol == "responses":
+            return {
+                "id": "resp_prompt_branch",
+                "model": model,
+                "status": "completed",
+                "output": [
+                    {
+                        "type": "message",
+                        "content": [{"type": "output_text", "text": json.dumps(_draft())}],
+                    }
+                ],
+                "usage": {"input_tokens": 700, "output_tokens": 180},
+            }
+        return {
+            "id": "chat_prompt_branch",
+            "model": model,
+            "choices": [{"message": {"content": json.dumps(_draft())}}],
+            "usage": {"prompt_tokens": 700, "completion_tokens": 180},
+        }
+
+    def capture_request_payload(protocol: str, base_url: str, model: str) -> dict[str, object]:
+        seen: dict[str, object] = {}
+
+        def handler(request: httpx.Request) -> httpx.Response:
+            seen["payload"] = json.loads(request.content)
+            return httpx.Response(200, json=envelope_for(protocol, model))
+
+        async def scenario() -> None:
+            async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as http:
+                generator = _generator(http, protocol=protocol, base_url=base_url)
+                generator.model = model
+                await generator.generate_plan_with_usage(
+                    task_id="task:prompt-branch",
+                    question="How should adaptive RAG systems validate evidence provenance?",
+                    idempotency_key="effect:prompt-branch:coordinator",
+                )
+
+        asyncio.run(scenario())
+        payload = seen["payload"]
+        assert isinstance(payload, dict)
+        return payload
+
+    for protocol, base_url, model in (
+        ("responses", "https://provider.test", "gpt-5.6-terra"),
+        ("chat_completions", "https://provider.test", "gpt-5.6-terra"),
+        ("chat_completions", "https://api.deepseek.com/v1", "deepseek-flash"),
+    ):
+        payload = capture_request_payload(protocol, base_url, model)
+        assert instruction in json.dumps(payload)
 
 
 def test_deepseek_json_object_normalizes_scalar_criteria_lists() -> None:

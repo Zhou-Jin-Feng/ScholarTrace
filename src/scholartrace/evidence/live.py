@@ -93,13 +93,31 @@ def arxiv_pdf_url(paper: Paper) -> tuple[str, str]:
             f"paper is not authorized for fulltext acquisition: {paper.canonical_paper_id}",
         )
     sources = [item for item in paper.sources if item.source == "arxiv"]
-    if len(sources) != 1:
+    if len(sources) > 1:
         raise ValueError(f"paper requires one arXiv source: {paper.canonical_paper_id}")
-    match = ARXIV_SOURCE_PATTERN.fullmatch(sources[0].source_id)
-    if match is None:
-        raise ValueError(f"paper requires a versioned arXiv source: {paper.canonical_paper_id}")
-    version = match.group("version")
-    return f"https://arxiv.org/pdf/{version}.pdf", f"{version}.pdf"
+    if len(sources) == 1:
+        match = ARXIV_SOURCE_PATTERN.fullmatch(sources[0].source_id)
+        if match is not None:
+            version = match.group("version")
+            # arXiv serves the canonical extension-less route; the historical
+            # ".pdf" suffix answers 301, which the metered live transport treats as
+            # an unconfirmed (uncertain) effect instead of following it.
+            return f"https://arxiv.org/pdf/{version}", f"{version}.pdf"
+    if paper.arxiv_id is not None:
+        # Reviewed fallback: metadata providers expose the arXiv identifier without
+        # its version. arXiv answers the identifier route directly and the acquired
+        # bytes are hashed, so the run records exactly which document it read.
+        # Only modern identifiers are supported; legacy ids containing "/" are out of scope.
+        if re.fullmatch(r"\d{4}\.\d{4,5}", paper.arxiv_id) is None:
+            raise FullTextAcquisitionError(
+                "source_policy",
+                f"arXiv identifier is not a modern public identifier: {paper.arxiv_id}",
+            )
+        return (
+            f"https://arxiv.org/pdf/{paper.arxiv_id}",
+            f"{paper.arxiv_id}.pdf",
+        )
+    raise ValueError(f"paper requires one arXiv source: {paper.canonical_paper_id}")
 
 
 def _validate_arxiv_url(url: str, *, code: str = "source_policy") -> None:

@@ -42,6 +42,10 @@ PAPER_ANALYSIS_SYSTEM_PROMPT = (
 )
 
 
+class UnsatisfiedDraftError(ValueError):
+    """A model response failed draft parsing or paper-analysis contract checks."""
+
+
 @dataclass(frozen=True, slots=True)
 class GeneratedPaperAnalysis:
     bundle: PaperAnalysisBundle
@@ -153,19 +157,24 @@ class OllamaPaperAnalyzer:
                 response.raise_for_status()
                 raw_envelope = response.json()
                 if not isinstance(raw_envelope, dict):
-                    raise ValueError("Ollama returned a non-object envelope")
+                    raise UnsatisfiedDraftError("Ollama returned a non-object envelope")
                 input_tokens += self._metric(raw_envelope, "prompt_eval_count")
                 output_tokens += self._metric(raw_envelope, "eval_count")
                 message = raw_envelope.get("message")
                 if not isinstance(message, dict) or not isinstance(message.get("content"), str):
-                    raise ValueError("Ollama response has no message content")
-                candidate = PaperAnalysisDraft.model_validate_json(message["content"])
+                    raise UnsatisfiedDraftError("Ollama response has no message content")
+                try:
+                    candidate = PaperAnalysisDraft.model_validate_json(message["content"])
+                except ValidationError as exc:
+                    raise UnsatisfiedDraftError(
+                        "Ollama response is not a valid paper analysis draft"
+                    ) from exc
                 self._verify_draft(candidate, excerpts, quote_refs_to_chunk)
                 parsed = candidate
                 break
             except httpx.HTTPError as exc:
                 last_error = exc
-            except (ValidationError, ValueError) as exc:
+            except (UnsatisfiedDraftError, json.JSONDecodeError) as exc:
                 structured_repairs += 1
                 last_error = exc
                 messages = request_payload["messages"]
@@ -230,11 +239,17 @@ class OllamaPaperAnalyzer:
         for claim in draft.claims:
             content = excerpts.get(claim.chunk_ref)
             if content is None:
-                raise ValueError("paper analysis cited a chunk outside the supplied input")
+                raise UnsatisfiedDraftError(
+                    "paper analysis cited a chunk outside the supplied input"
+                )
             if quote_refs_to_chunk.get(claim.quote_ref) != claim.chunk_ref:
-                raise ValueError("paper analysis cited a quote outside the supplied chunk")
+                raise UnsatisfiedDraftError(
+                    "paper analysis cited a quote outside the supplied chunk"
+                )
             if OllamaPaperAnalyzer._numbers(claim.text) - OllamaPaperAnalyzer._numbers(content):
-                raise ValueError("paper analysis Claim contains a number absent from its quote")
+                raise UnsatisfiedDraftError(
+                    "paper analysis Claim contains a number absent from its quote"
+                )
 
     @staticmethod
     def _numbers(text: str) -> set[str]:
