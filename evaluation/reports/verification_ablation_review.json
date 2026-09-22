@@ -1,0 +1,809 @@
+{
+  "artifact_sha256": {
+    "formal_archive": "95719be485b66bcaf64293ce349fdca4982cd52f0da669ff9f1a62ca376ea3c4",
+    "frozen_inputs": "4c8de9c4a401c948d816118b5660f1d78c239249dadb2ab84258dc21a7587a96",
+    "reference": "be755ff71ca5c1ed4535ee61f2de032406f926e38f39f9de59dea82bd10328d5",
+    "review_input": "17c8ca2e467b928885e2d6b91e53cdec14313ce469ad52ef617c8fc346072cf3"
+  },
+  "claim_evidence_relation_violations": 0,
+  "condition_rows": 20,
+  "cost": {
+    "by_variant": {
+      "V-off": {
+        "duration_seconds": 386.0050202998682,
+        "input_tokens": 71708,
+        "model_calls": 10,
+        "output_tokens": 19071,
+        "provider_api_calls": 10,
+        "reference_cost_cny": 2.7920100000000003,
+        "report_calls": 10,
+        "unknown_attempts": 0,
+        "unknown_reserved_reference_cost_cny": 0.0,
+        "verifier_attempted_calls": 0,
+        "verifier_calls": 0,
+        "verifier_duration_seconds": 0.0,
+        "verifier_input_tokens": 0,
+        "verifier_output_tokens": 0,
+        "verifier_reference_cost_cny": 0.0,
+        "verifier_reserved_reference_cost_cny": 0.0
+      },
+      "V-on": {
+        "duration_seconds": 383.96478730015224,
+        "input_tokens": 70702,
+        "model_calls": 10,
+        "output_tokens": 18098,
+        "provider_api_calls": 10,
+        "reference_cost_cny": 2.6893499999999997,
+        "report_calls": 10,
+        "unknown_attempts": 0,
+        "unknown_reserved_reference_cost_cny": 0.0,
+        "verifier_attempted_calls": 56,
+        "verifier_calls": 56,
+        "verifier_duration_seconds": 341.04337280010805,
+        "verifier_input_tokens": 267762,
+        "verifier_output_tokens": 12586,
+        "verifier_reference_cost_cny": 5.14917,
+        "verifier_reserved_reference_cost_cny": 11.882115000000002
+      }
+    },
+    "formal_logical_reference_cost_cny": 10.63053,
+    "historical_debug_and_failed_attempts": "partially_known_separate_records",
+    "provider_actual_billing": "unknown"
+  },
+  "formal_questions": 10,
+  "limitations": [
+    "Ten questions derive from five source runs and are not independent retrieval samples.",
+    "Only supplied excerpts were reviewed; this is not full-paper or independent blind review.",
+    "Two unsupported findings were removed, but V-off already warned about their bibliography evidence.",
+    "Removal counts do not establish newly detected errors or causal quality improvement.",
+    "The actual fixed V-off/V-on order differs from the planned alternating order.",
+    "Historical successful reports remain unchanged; repaired recovery is not retrospective."
+  ],
+  "model_requests": {
+    "report": 20,
+    "verifier": 56
+  },
+  "per_question": [
+    {
+      "by_variant": {
+        "V-off": {
+          "finding_count": 3,
+          "finding_labels": {
+            "indeterminate": 0,
+            "partially_supported": 0,
+            "supported": 3,
+            "unsupported": 0
+          },
+          "indeterminate": 0,
+          "key_point_count": 2,
+          "key_point_coverage": {
+            "covered": 1,
+            "partially_covered": 1
+          },
+          "unsupported": {
+            "denominator": 3,
+            "numerator": 0
+          },
+          "weighted_coverage": 0.75
+        },
+        "V-on": {
+          "finding_count": 3,
+          "finding_labels": {
+            "indeterminate": 0,
+            "partially_supported": 0,
+            "supported": 3,
+            "unsupported": 0
+          },
+          "indeterminate": 0,
+          "key_point_count": 2,
+          "key_point_coverage": {
+            "covered": 2
+          },
+          "unsupported": {
+            "denominator": 3,
+            "numerator": 0
+          },
+          "weighted_coverage": 1.0
+        }
+      },
+      "false_interceptions": {
+        "denominator": 3,
+        "numerator": 0
+      },
+      "interpretation": "Descriptive source-quote review; not independent blind evaluation.",
+      "protocol_conclusion": "INCONCLUSIVE_CEILING",
+      "question_id": "sa02-formal-01",
+      "removed_claims": [],
+      "removed_indeterminate_claims": 0,
+      "removed_unsupported_claims": 0
+    },
+    {
+      "by_variant": {
+        "V-off": {
+          "finding_count": 6,
+          "finding_labels": {
+            "indeterminate": 0,
+            "partially_supported": 1,
+            "supported": 5,
+            "unsupported": 0
+          },
+          "indeterminate": 0,
+          "key_point_count": 3,
+          "key_point_coverage": {
+            "covered": 1,
+            "partially_covered": 2
+          },
+          "unsupported": {
+            "denominator": 6,
+            "numerator": 0
+          },
+          "weighted_coverage": 0.6666666666666666
+        },
+        "V-on": {
+          "finding_count": 6,
+          "finding_labels": {
+            "indeterminate": 0,
+            "partially_supported": 1,
+            "supported": 5,
+            "unsupported": 0
+          },
+          "indeterminate": 0,
+          "key_point_count": 3,
+          "key_point_coverage": {
+            "covered": 1,
+            "partially_covered": 2
+          },
+          "unsupported": {
+            "denominator": 6,
+            "numerator": 0
+          },
+          "weighted_coverage": 0.6666666666666666
+        }
+      },
+      "false_interceptions": {
+        "denominator": 6,
+        "numerator": 0
+      },
+      "interpretation": "Descriptive source-quote review; not independent blind evaluation.",
+      "protocol_conclusion": "INCONCLUSIVE_CEILING",
+      "question_id": "sa02-formal-02",
+      "removed_claims": [],
+      "removed_indeterminate_claims": 0,
+      "removed_unsupported_claims": 0
+    },
+    {
+      "by_variant": {
+        "V-off": {
+          "finding_count": 7,
+          "finding_labels": {
+            "indeterminate": 2,
+            "partially_supported": 0,
+            "supported": 5,
+            "unsupported": 0
+          },
+          "indeterminate": 2,
+          "key_point_count": 4,
+          "key_point_coverage": {
+            "covered": 1,
+            "missing": 2,
+            "partially_covered": 1
+          },
+          "unsupported": {
+            "denominator": 5,
+            "numerator": 0
+          },
+          "weighted_coverage": 0.375
+        },
+        "V-on": {
+          "finding_count": 6,
+          "finding_labels": {
+            "indeterminate": 1,
+            "partially_supported": 0,
+            "supported": 5,
+            "unsupported": 0
+          },
+          "indeterminate": 1,
+          "key_point_count": 4,
+          "key_point_coverage": {
+            "covered": 1,
+            "missing": 2,
+            "partially_covered": 1
+          },
+          "unsupported": {
+            "denominator": 5,
+            "numerator": 0
+          },
+          "weighted_coverage": 0.375
+        }
+      },
+      "false_interceptions": {
+        "denominator": 5,
+        "numerator": 0
+      },
+      "interpretation": "Descriptive source-quote review; not independent blind evaluation.",
+      "protocol_conclusion": "INCONCLUSIVE_CEILING",
+      "question_id": "sa02-formal-03",
+      "removed_claims": [
+        {
+          "claim_id": "claim:m2:fa5225eb8cf47b6b0c66d0df",
+          "label": "indeterminate",
+          "question_id": "sa02-formal-03"
+        }
+      ],
+      "removed_indeterminate_claims": 1,
+      "removed_unsupported_claims": 0
+    },
+    {
+      "by_variant": {
+        "V-off": {
+          "finding_count": 4,
+          "finding_labels": {
+            "indeterminate": 0,
+            "partially_supported": 0,
+            "supported": 4,
+            "unsupported": 0
+          },
+          "indeterminate": 0,
+          "key_point_count": 3,
+          "key_point_coverage": {
+            "covered": 2,
+            "partially_covered": 1
+          },
+          "unsupported": {
+            "denominator": 4,
+            "numerator": 0
+          },
+          "weighted_coverage": 0.8333333333333334
+        },
+        "V-on": {
+          "finding_count": 4,
+          "finding_labels": {
+            "indeterminate": 0,
+            "partially_supported": 0,
+            "supported": 4,
+            "unsupported": 0
+          },
+          "indeterminate": 0,
+          "key_point_count": 3,
+          "key_point_coverage": {
+            "covered": 3
+          },
+          "unsupported": {
+            "denominator": 4,
+            "numerator": 0
+          },
+          "weighted_coverage": 1.0
+        }
+      },
+      "false_interceptions": {
+        "denominator": 4,
+        "numerator": 0
+      },
+      "interpretation": "Descriptive source-quote review; not independent blind evaluation.",
+      "protocol_conclusion": "INCONCLUSIVE_CEILING",
+      "question_id": "sa02-formal-04",
+      "removed_claims": [],
+      "removed_indeterminate_claims": 0,
+      "removed_unsupported_claims": 0
+    },
+    {
+      "by_variant": {
+        "V-off": {
+          "finding_count": 5,
+          "finding_labels": {
+            "indeterminate": 0,
+            "partially_supported": 4,
+            "supported": 1,
+            "unsupported": 0
+          },
+          "indeterminate": 0,
+          "key_point_count": 3,
+          "key_point_coverage": {
+            "missing": 1,
+            "partially_covered": 2
+          },
+          "unsupported": {
+            "denominator": 5,
+            "numerator": 0
+          },
+          "weighted_coverage": 0.3333333333333333
+        },
+        "V-on": {
+          "finding_count": 5,
+          "finding_labels": {
+            "indeterminate": 0,
+            "partially_supported": 4,
+            "supported": 1,
+            "unsupported": 0
+          },
+          "indeterminate": 0,
+          "key_point_count": 3,
+          "key_point_coverage": {
+            "partially_covered": 3
+          },
+          "unsupported": {
+            "denominator": 5,
+            "numerator": 0
+          },
+          "weighted_coverage": 0.5
+        }
+      },
+      "false_interceptions": {
+        "denominator": 5,
+        "numerator": 0
+      },
+      "interpretation": "Descriptive source-quote review; not independent blind evaluation.",
+      "protocol_conclusion": "INCONCLUSIVE_CEILING",
+      "question_id": "sa02-formal-05",
+      "removed_claims": [],
+      "removed_indeterminate_claims": 0,
+      "removed_unsupported_claims": 0
+    },
+    {
+      "by_variant": {
+        "V-off": {
+          "finding_count": 4,
+          "finding_labels": {
+            "indeterminate": 0,
+            "partially_supported": 1,
+            "supported": 1,
+            "unsupported": 2
+          },
+          "indeterminate": 0,
+          "key_point_count": 2,
+          "key_point_coverage": {
+            "covered": 1,
+            "partially_covered": 1
+          },
+          "unsupported": {
+            "denominator": 4,
+            "numerator": 2
+          },
+          "weighted_coverage": 0.75
+        },
+        "V-on": {
+          "finding_count": 2,
+          "finding_labels": {
+            "indeterminate": 0,
+            "partially_supported": 1,
+            "supported": 1,
+            "unsupported": 0
+          },
+          "indeterminate": 0,
+          "key_point_count": 2,
+          "key_point_coverage": {
+            "covered": 1,
+            "partially_covered": 1
+          },
+          "unsupported": {
+            "denominator": 2,
+            "numerator": 0
+          },
+          "weighted_coverage": 0.75
+        }
+      },
+      "false_interceptions": {
+        "denominator": 2,
+        "numerator": 0
+      },
+      "interpretation": "Descriptive source-quote review; not independent blind evaluation.",
+      "protocol_conclusion": "INCONCLUSIVE_CEILING",
+      "question_id": "sa02-formal-06",
+      "removed_claims": [
+        {
+          "claim_id": "claim:m2:96b2eeca06a82021fc096f98",
+          "label": "unsupported",
+          "question_id": "sa02-formal-06"
+        },
+        {
+          "claim_id": "claim:m2:998234aa679253943b310652",
+          "label": "unsupported",
+          "question_id": "sa02-formal-06"
+        }
+      ],
+      "removed_indeterminate_claims": 0,
+      "removed_unsupported_claims": 2
+    },
+    {
+      "by_variant": {
+        "V-off": {
+          "finding_count": 8,
+          "finding_labels": {
+            "indeterminate": 0,
+            "partially_supported": 1,
+            "supported": 7,
+            "unsupported": 0
+          },
+          "indeterminate": 0,
+          "key_point_count": 4,
+          "key_point_coverage": {
+            "covered": 1,
+            "partially_covered": 3
+          },
+          "unsupported": {
+            "denominator": 8,
+            "numerator": 0
+          },
+          "weighted_coverage": 0.625
+        },
+        "V-on": {
+          "finding_count": 8,
+          "finding_labels": {
+            "indeterminate": 0,
+            "partially_supported": 1,
+            "supported": 7,
+            "unsupported": 0
+          },
+          "indeterminate": 0,
+          "key_point_count": 4,
+          "key_point_coverage": {
+            "covered": 1,
+            "partially_covered": 3
+          },
+          "unsupported": {
+            "denominator": 8,
+            "numerator": 0
+          },
+          "weighted_coverage": 0.625
+        }
+      },
+      "false_interceptions": {
+        "denominator": 8,
+        "numerator": 0
+      },
+      "interpretation": "Descriptive source-quote review; not independent blind evaluation.",
+      "protocol_conclusion": "INCONCLUSIVE_CEILING",
+      "question_id": "sa02-formal-07",
+      "removed_claims": [],
+      "removed_indeterminate_claims": 0,
+      "removed_unsupported_claims": 0
+    },
+    {
+      "by_variant": {
+        "V-off": {
+          "finding_count": 8,
+          "finding_labels": {
+            "indeterminate": 0,
+            "partially_supported": 2,
+            "supported": 6,
+            "unsupported": 0
+          },
+          "indeterminate": 0,
+          "key_point_count": 3,
+          "key_point_coverage": {
+            "covered": 1,
+            "partially_covered": 2
+          },
+          "unsupported": {
+            "denominator": 8,
+            "numerator": 0
+          },
+          "weighted_coverage": 0.6666666666666666
+        },
+        "V-on": {
+          "finding_count": 8,
+          "finding_labels": {
+            "indeterminate": 0,
+            "partially_supported": 2,
+            "supported": 6,
+            "unsupported": 0
+          },
+          "indeterminate": 0,
+          "key_point_count": 3,
+          "key_point_coverage": {
+            "covered": 2,
+            "partially_covered": 1
+          },
+          "unsupported": {
+            "denominator": 8,
+            "numerator": 0
+          },
+          "weighted_coverage": 0.8333333333333334
+        }
+      },
+      "false_interceptions": {
+        "denominator": 8,
+        "numerator": 0
+      },
+      "interpretation": "Descriptive source-quote review; not independent blind evaluation.",
+      "protocol_conclusion": "INCONCLUSIVE_CEILING",
+      "question_id": "sa02-formal-08",
+      "removed_claims": [],
+      "removed_indeterminate_claims": 0,
+      "removed_unsupported_claims": 0
+    },
+    {
+      "by_variant": {
+        "V-off": {
+          "finding_count": 8,
+          "finding_labels": {
+            "indeterminate": 0,
+            "partially_supported": 1,
+            "supported": 7,
+            "unsupported": 0
+          },
+          "indeterminate": 0,
+          "key_point_count": 3,
+          "key_point_coverage": {
+            "covered": 2,
+            "partially_covered": 1
+          },
+          "unsupported": {
+            "denominator": 8,
+            "numerator": 0
+          },
+          "weighted_coverage": 0.8333333333333334
+        },
+        "V-on": {
+          "finding_count": 8,
+          "finding_labels": {
+            "indeterminate": 0,
+            "partially_supported": 1,
+            "supported": 7,
+            "unsupported": 0
+          },
+          "indeterminate": 0,
+          "key_point_count": 3,
+          "key_point_coverage": {
+            "covered": 2,
+            "partially_covered": 1
+          },
+          "unsupported": {
+            "denominator": 8,
+            "numerator": 0
+          },
+          "weighted_coverage": 0.8333333333333334
+        }
+      },
+      "false_interceptions": {
+        "denominator": 8,
+        "numerator": 0
+      },
+      "interpretation": "Descriptive source-quote review; not independent blind evaluation.",
+      "protocol_conclusion": "INCONCLUSIVE_CEILING",
+      "question_id": "sa02-formal-09",
+      "removed_claims": [],
+      "removed_indeterminate_claims": 0,
+      "removed_unsupported_claims": 0
+    },
+    {
+      "by_variant": {
+        "V-off": {
+          "finding_count": 3,
+          "finding_labels": {
+            "indeterminate": 0,
+            "partially_supported": 1,
+            "supported": 2,
+            "unsupported": 0
+          },
+          "indeterminate": 0,
+          "key_point_count": 3,
+          "key_point_coverage": {
+            "partially_covered": 3
+          },
+          "unsupported": {
+            "denominator": 3,
+            "numerator": 0
+          },
+          "weighted_coverage": 0.5
+        },
+        "V-on": {
+          "finding_count": 2,
+          "finding_labels": {
+            "indeterminate": 0,
+            "partially_supported": 1,
+            "supported": 1,
+            "unsupported": 0
+          },
+          "indeterminate": 0,
+          "key_point_count": 3,
+          "key_point_coverage": {
+            "covered": 3
+          },
+          "unsupported": {
+            "denominator": 2,
+            "numerator": 0
+          },
+          "weighted_coverage": 1.0
+        }
+      },
+      "false_interceptions": {
+        "denominator": 3,
+        "numerator": 1
+      },
+      "interpretation": "Descriptive source-quote review; not independent blind evaluation.",
+      "protocol_conclusion": "INCONCLUSIVE_CEILING",
+      "question_id": "sa02-formal-10",
+      "removed_claims": [
+        {
+          "claim_id": "claim:m2:b4e82ba29f241c9bc114f893",
+          "label": "supported",
+          "question_id": "sa02-formal-10"
+        }
+      ],
+      "removed_indeterminate_claims": 0,
+      "removed_unsupported_claims": 0
+    }
+  ],
+  "purpose": "verification-ablation-source-review",
+  "quality": {
+    "by_variant": {
+      "V-off": {
+        "finding_count": 56,
+        "finding_labels": {
+          "indeterminate": 2,
+          "partially_supported": 11,
+          "supported": 41,
+          "unsupported": 2
+        },
+        "indeterminate": 2,
+        "key_point_count": 30,
+        "key_point_coverage": {
+          "covered": 10,
+          "missing": 3,
+          "partially_covered": 17
+        },
+        "unsupported": {
+          "denominator": 54,
+          "numerator": 2
+        },
+        "weighted_coverage": 0.6166666666666667
+      },
+      "V-on": {
+        "finding_count": 52,
+        "finding_labels": {
+          "indeterminate": 1,
+          "partially_supported": 11,
+          "supported": 40,
+          "unsupported": 0
+        },
+        "indeterminate": 1,
+        "key_point_count": 30,
+        "key_point_coverage": {
+          "covered": 16,
+          "missing": 2,
+          "partially_covered": 12
+        },
+        "unsupported": {
+          "denominator": 51,
+          "numerator": 0
+        },
+        "weighted_coverage": 0.7333333333333333
+      }
+    },
+    "false_interceptions": {
+      "denominator": 52,
+      "numerator": 1
+    },
+    "interpretation": "Descriptive source-quote review; not independent blind evaluation.",
+    "protocol_conclusion": "INCONCLUSIVE_CEILING",
+    "removed_claims": [
+      {
+        "claim_id": "claim:m2:fa5225eb8cf47b6b0c66d0df",
+        "label": "indeterminate",
+        "question_id": "sa02-formal-03"
+      },
+      {
+        "claim_id": "claim:m2:96b2eeca06a82021fc096f98",
+        "label": "unsupported",
+        "question_id": "sa02-formal-06"
+      },
+      {
+        "claim_id": "claim:m2:998234aa679253943b310652",
+        "label": "unsupported",
+        "question_id": "sa02-formal-06"
+      },
+      {
+        "claim_id": "claim:m2:b4e82ba29f241c9bc114f893",
+        "label": "supported",
+        "question_id": "sa02-formal-10"
+      }
+    ],
+    "removed_indeterminate_claims": 1,
+    "removed_unsupported_claims": 2,
+    "successful_pairs": 10
+  },
+  "quality_view": {
+    "blinded_review_claimed": false,
+    "mapping_sha256": "ad899c9f446cf4a05f03150e503ea633c191b26a7b434ac836b8a6bd7547a897",
+    "review_sha256": "b17c8266d1a6a44ad1085ec642b218f11da58d0c27acfa5ae0bf6b42ed061346",
+    "rows": 10
+  },
+  "review_method": {
+    "blinded": false,
+    "mode": "ai_assisted_source_quote_review",
+    "reviewed_at": "2026-09-22",
+    "scope": "Frozen excerpts and historical report wording; not full-paper independent evaluation."
+  },
+  "schema_version": "2.0",
+  "status": "passed",
+  "validation": {
+    "checks": [
+      {
+        "command": [
+          "python",
+          "-m",
+          "pytest",
+          "-q",
+          "-p",
+          "no:cacheprovider",
+          "--basetemp",
+          "artifacts/verification-ablation-validation",
+          "--junitxml",
+          "agent/validation/verification-ablation/pytest.xml"
+        ],
+        "completed_at": "2026-09-22T11:13:44.388928+00:00",
+        "exit_code": 0,
+        "name": "pytest",
+        "started_at": "2026-09-22T11:11:16.059265+00:00"
+      },
+      {
+        "command": [
+          "python",
+          "-m",
+          "ruff",
+          "check",
+          "--no-cache",
+          "src",
+          "scripts",
+          "tests"
+        ],
+        "completed_at": "2026-09-22T11:13:44.951273+00:00",
+        "exit_code": 0,
+        "name": "ruff",
+        "started_at": "2026-09-22T11:13:44.388928+00:00"
+      },
+      {
+        "command": [
+          "python",
+          "-m",
+          "mypy",
+          "src/scholartrace",
+          "scripts/build_verification_ablation_review.py",
+          "scripts/validate_verification_ablation.py",
+          "scripts/run_sa05_formal.py"
+        ],
+        "completed_at": "2026-09-22T11:13:46.580392+00:00",
+        "exit_code": 0,
+        "name": "mypy",
+        "started_at": "2026-09-22T11:13:44.951273+00:00"
+      },
+      {
+        "command": [
+          "python",
+          "-m",
+          "compileall",
+          "-q",
+          "src",
+          "scripts"
+        ],
+        "completed_at": "2026-09-22T11:13:46.981085+00:00",
+        "exit_code": 0,
+        "name": "compileall",
+        "started_at": "2026-09-22T11:13:46.580392+00:00"
+      },
+      {
+        "command": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "completed_at": "2026-09-22T11:13:47.134287+00:00",
+        "exit_code": 0,
+        "name": "diff_check",
+        "started_at": "2026-09-22T11:13:46.981085+00:00"
+      },
+      {
+        "command": [
+          "public_content_check"
+        ],
+        "exit_code": 0,
+        "findings": [],
+        "name": "public_content"
+      }
+    ],
+    "record_sha256": "d91c813d264399aea48d2deb5a7ef54a6cffa95f622462ece64df9801489fcfa",
+    "recorded_at": "2026-09-22T11:13:50.068267+00:00",
+    "status": "passed"
+  }
+}

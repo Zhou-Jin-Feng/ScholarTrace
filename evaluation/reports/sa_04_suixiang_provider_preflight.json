@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0",
+  "purpose": "scholartrace-sa04-suixiang-provider-preflight",
+  "status": "blocked_catalog_unavailable",
+  "provider_notes": "SUIXIANG",
+  "provider_hostname": "sui-xiang.com",
+  "configured_model": "gpt-6-astra",
+  "catalog_probe_attempts": 2,
+  "catalog_probe_outcomes": [
+    "connect_timeout",
+    "connect_error_all_connection_attempts_failed"
+  ],
+  "inference_calls_made": 0,
+  "api_key_stored_publicly": false,
+  "raw_response_stored_publicly": false,
+  "next_action": "provider must become reachable before any inference request"
+}

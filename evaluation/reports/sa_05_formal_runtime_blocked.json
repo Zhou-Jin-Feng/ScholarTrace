@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.0",
+  "purpose": "scholartrace-sa05-formal-runtime-blocked",
+  "status": "blocked_provider_report_failure",
+  "selected_model": "gpt-5.6-luna",
+  "reasoning_effort": "max",
+  "expected_condition_rows": 20,
+  "checkpoint_rows": 17,
+  "successful_rows": 16,
+  "failed_rows": 1,
+  "remaining_unexecuted_rows": 3,
+  "checkpoint_attempts": 34,
+  "failed_condition": "sa02-formal-09 / V-off",
+  "failed_error_code": "ProviderInferenceError",
+  "failed_error_diagnostics": null,
+  "final_archive_created": false,
+  "quality_scores_present": false,
+  "automatic_retry": false,
+  "resume_checkpoint_present": true,
+  "raw_response_stored_publicly": false,
+  "api_key_stored_publicly": false,
+  "next_action": "diagnose the failed formal report contract before any resume; do not rerun successful rows"
+}

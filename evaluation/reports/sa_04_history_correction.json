@@ -1,0 +1,38 @@
+{
+  "artifact_hashes": {
+    "agent/verification-ablation/SA-04/pilot_archive.json": "7346eb2994347cdb2c8d9bf2b4f3e27540d77d8e5b63395fd454de3771ba6f09",
+    "agent/verification-ablation/SA-04/pilot_archive_attempt1.json": "7346eb2994347cdb2c8d9bf2b4f3e27540d77d8e5b63395fd454de3771ba6f09",
+    "agent/verification-ablation/SA-04/pilot_checkpoint.json": "91f1b3747ae64cdb572cd2d0f32fd6b424f74cc4e0c62f2da68248bf6ca5c217",
+    "agent/verification-ablation/SA-04/pilot_checkpoint_attempt1.json": "09ec0b897595170fe7377bc591ad89c6e72bbb3336505926d9158bd3f5fb9c24",
+    "agent/verification-ablation/SA-04/pilot_retry_history.json": "13f0c7b92f3f32834fc81206d9c5dead759e645761cef59156c6e70631265d68",
+    "evaluation/reports/sa_04_verification_ablation_pilot.json": "6170ea2f34312741c96e8df7ebfe2d34474f7f5fcf2fecf0e82aedd8779aa7fd",
+    "evaluation/reports/sa_04_verification_ablation_pilot_attempt1.json": "d6505baca81aeaedca4e5fd96c73ebc21631b887f6e8c680890f8321572c2102"
+  },
+  "complete_total_reference_cost_cny": null,
+  "complete_upper_bound_reference_cost_cny": null,
+  "cost_correction_reason": "The previous total omitted two failed report attempts whose exact usage/cost was not persisted. Known successful and known Verifier costs are separated; the complete total remains unknown.",
+  "failed_report_attempts": 2,
+  "failed_report_cost_cny": null,
+  "historical_inference_attempts": 17,
+  "known_successful_cost_cny": 1.447155,
+  "known_verifier_reference_cost_cny": 0.92388,
+  "model_catalog_probe_attempts": 4,
+  "privacy": {
+    "api_key_stored": false,
+    "provider_response_body_stored_publicly": false,
+    "raw_claims_or_quotes_stored_publicly": false
+  },
+  "purpose": "scholartrace-sa04-history-cost-correction",
+  "schema_version": "1.0",
+  "source_hashes": {
+    "scripts/prepare_sa_04_pilot.py": "903dabc0d57dc210c91c447fbbcfc9be2009607700c3f056bd55435e4567a8f8",
+    "scripts/run_sa_04_verification_ablation_pilot.py": "e023f450f37a86401908c82ac60ebfed7be6c2c7a0195164bd4f2794b8b89c17",
+    "src/scholartrace/verification_ablation/models.py": "b5ea9d64cfcf192261e33895983a441de67a36b6b4b67d7775f56e03ff857307",
+    "src/scholartrace/verification_ablation/provider.py": "0297d9028d9477ab0557ee72ca0c7c0d4a44551a2089a21a455c1cc1949ebd59",
+    "src/scholartrace/verification_ablation/runner.py": "7b0769ea3bd1e8555eb3e9a15ed7b9508eb7ff820048ff3401997ceac73e905a"
+  },
+  "status": "pilot_executed_acceptance_failed",
+  "successful_report_reference_cost_cny": 0.523275,
+  "superseded_incomplete_total_reference_cost_cny": 1.247775,
+  "superseded_incomplete_upper_bound_cny": 2.163675
+}

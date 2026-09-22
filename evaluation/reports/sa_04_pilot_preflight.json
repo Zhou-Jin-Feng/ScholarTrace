@@ -1,0 +1,88 @@
+{
+  "baseline_commit": "3d095a79feff257b57b041de40b7b5ed73021f9e",
+  "calls_made_during_preflight": 0,
+  "counts": {
+    "claim_count": 12,
+    "question_count": 2,
+    "total_expected_model_calls": 16,
+    "total_expected_report_calls": 4,
+    "unique_evidence_count": 11,
+    "v_off_report_calls": 2,
+    "v_off_verifier_calls": 0,
+    "v_on_report_calls": 2,
+    "v_on_verifier_calls": 12
+  },
+  "dataset_fingerprint_sha256": "c2e017a11df5677d1363a27a10f3361f00d5478d8b7b6a8a52c878185b48dddf",
+  "frozen_configuration": {
+    "automatic_retry": false,
+    "budget_scope": "shared",
+    "max_response_bytes": 1000000,
+    "model_identifier_reference": "gpt-5.6-terra",
+    "model_profile": "api-strong",
+    "model_upgrade": false,
+    "protocol_fallback": false,
+    "provider_hostname": "www.mxou.ai",
+    "provider_protocol": "responses",
+    "report_length_limit_chars": 5000,
+    "report_prompt_sha256": "01d2fd85f1a24427d6c53ff9ce07787b13f2a2011bb0818a9a8cd39c395f67db",
+    "report_schema": "sa02-ablation-report-v1",
+    "report_schema_sha256": "0dd96ec5ee605da146a4d58c2ef3d5811ee3757251f721a0f3c089f1e74755a5",
+    "request_timeout_seconds": 180,
+    "structured_output_mode": "json_schema",
+    "verifier_prompt_sha256": "6fb7bd2fdffb62613e38feb07c02838972e677edf8e5844fecd2d59fbcab97cd"
+  },
+  "generated_at": "2026-09-21T00:00:00+08:00",
+  "limitations": [
+    "This preflight does not prove model availability, price, context, or billing behavior.",
+    "Historical M6 pilot evidence is not SA-04 evidence.",
+    "The pilot cannot establish formal quality benefit; it only validates the real adapter and resource ledger."
+  ],
+  "local_provider_preflight": {
+    "api_key_present": true,
+    "base_hostname": "www.mxou.ai",
+    "configured_model": null,
+    "model_catalog_probe_performed": false,
+    "network_probe_performed": false,
+    "paid_call_performed": false,
+    "structured_output_mode": "auto",
+    "timeout_seconds": 20.0
+  },
+  "pilot_question_ids": [
+    "sa02-pilot-01",
+    "sa02-pilot-02"
+  ],
+  "pilot_questions": [
+    {
+      "claim_count": 4,
+      "evidence_count": 3,
+      "input_sha256": "23a26c3d931a4390546831538978cd1b2da511ae26c5dc5c8455554601a17ce9",
+      "question_id": "sa02-pilot-01",
+      "split": "pilot"
+    },
+    {
+      "claim_count": 8,
+      "evidence_count": 8,
+      "input_sha256": "c9e8b21d47f865e11d219e1e4a1b7cbcab071a1906ddb5e2d5c3e900df5ed14c",
+      "question_id": "sa02-pilot-02",
+      "split": "pilot"
+    }
+  ],
+  "privacy": {
+    "api_key_stored": false,
+    "raw_claims_public": false,
+    "raw_provider_response_public": false,
+    "source_quotes_public": false
+  },
+  "purpose": "scholartrace-sa04-paid-pilot-preflight",
+  "reference_budget": {
+    "actual_provider_billing": "unknown_until_provider_exposes_billing",
+    "hard_failure_close_envelope_cny": 5.0,
+    "input_usd_per_million_reference": 2.0,
+    "output_usd_per_million_reference": 12.0,
+    "planning_cap_cny": 3.0,
+    "prices_require_revalidation": true,
+    "usd_to_cny_reference": 7.5
+  },
+  "schema_version": "1.0",
+  "status": "prepared"
+}

@@ -88,6 +88,7 @@ class VerifierRunner:
         validations: list[ClaimValidation],
         verified_at: datetime,
         existing: list[Verification] | None = None,
+        on_dispatch: Callable[[Claim], None] | None = None,
         on_result: Callable[[list[Verification]], None] | None = None,
     ) -> list[Verification]:
         validation_by_claim = {item.claim_id: item for item in validations}
@@ -148,6 +149,8 @@ class VerifierRunner:
                 for evidence_id in validation.checked_evidence_ids
                 if evidence_id in evidence_by_id
             ]
+            if on_dispatch is not None:
+                on_dispatch(claim)
             draft = await self.backend.verify(claim=claim, evidence=supplied)
             if draft.status == "conflicted" and not claim.counter_evidence_ids:
                 raise ValueError("conflicted verification requires explicit counter-evidence")

@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "purpose": "scholartrace-sa04-current-luna-max-failure",
+  "status": "blocked_provider_gateway_timeout",
+  "provider_source": "cc-switch",
+  "provider_name": "SuperBoy",
+  "provider_notes": "Luna",
+  "provider_hostname": "share-api.top",
+  "model": "gpt-5.6-luna",
+  "reasoning_effort": "max",
+  "catalog_preflight": "passed",
+  "report_attempts": 1,
+  "verifier_attempts": 0,
+  "http_status": 524,
+  "error_category": "http",
+  "inference_usage": "unknown",
+  "automatic_retry": false,
+  "remaining_conditions_dispatched": false,
+  "api_key_stored_publicly": false,
+  "raw_response_stored_publicly": false,
+  "next_action": "do not blind-retry; compare client request contracts or use a provider route that completes strict Responses requests"
+}

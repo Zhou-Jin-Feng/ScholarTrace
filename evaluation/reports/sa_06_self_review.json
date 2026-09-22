@@ -1,0 +1,366 @@
+{
+  "all_rows_succeeded": true,
+  "blind_review_score_fields_empty": true,
+  "formal_question_count": 10,
+  "paired_rows": 20,
+  "private_self_review_sha256": "8ff403032eac08883a457c566c3f761c66cbbb9b41b8613a4b1cf69c5761dc16",
+  "purpose": "scholartrace-sa06-self-review-summary",
+  "questions": [
+    {
+      "key_point_count": 2,
+      "question_id": "sa02-formal-01",
+      "variants": {
+        "V-off": {
+          "claim_presence_count": 3,
+          "disposition_counts": {
+            "unverified": 3
+          },
+          "key_point_claim_id_traceability": {
+            "absent": 0,
+            "covered": 2,
+            "partial": 0
+          },
+          "report_sha256": "5a4738e2e79a21f6cf13316e2edb23b76a2040eb387c9ec9a4928e27fc39c321",
+          "status": "succeeded"
+        },
+        "V-on": {
+          "claim_presence_count": 3,
+          "disposition_counts": {
+            "supported": 3
+          },
+          "key_point_claim_id_traceability": {
+            "absent": 0,
+            "covered": 2,
+            "partial": 0
+          },
+          "report_sha256": "f99d6fbb944244d1439f38045a9815cfd9080003c4943d145705039427a11ccf",
+          "status": "succeeded"
+        }
+      }
+    },
+    {
+      "key_point_count": 3,
+      "question_id": "sa02-formal-02",
+      "variants": {
+        "V-off": {
+          "claim_presence_count": 6,
+          "disposition_counts": {
+            "unverified": 6
+          },
+          "key_point_claim_id_traceability": {
+            "absent": 0,
+            "covered": 3,
+            "partial": 0
+          },
+          "report_sha256": "81f37e4788795d6ca2434ecf360c8174bccaabc6a07cf1bf71517adea88a3b42",
+          "status": "succeeded"
+        },
+        "V-on": {
+          "claim_presence_count": 6,
+          "disposition_counts": {
+            "partially_supported": 3,
+            "supported": 3
+          },
+          "key_point_claim_id_traceability": {
+            "absent": 0,
+            "covered": 3,
+            "partial": 0
+          },
+          "report_sha256": "41b625a6d01e75fd7a0da38394b35a55532e813215fd2c0061603e2df72620d5",
+          "status": "succeeded"
+        }
+      }
+    },
+    {
+      "key_point_count": 4,
+      "question_id": "sa02-formal-03",
+      "variants": {
+        "V-off": {
+          "claim_presence_count": 7,
+          "disposition_counts": {
+            "unverified": 7
+          },
+          "key_point_claim_id_traceability": {
+            "absent": 0,
+            "covered": 4,
+            "partial": 0
+          },
+          "report_sha256": "e278e75adef29c93969d59b459f1ecfee301d530ae5927de5bd3004da0747838",
+          "status": "succeeded"
+        },
+        "V-on": {
+          "claim_presence_count": 6,
+          "disposition_counts": {
+            "partially_supported": 2,
+            "supported": 4,
+            "unsupported": 1
+          },
+          "key_point_claim_id_traceability": {
+            "absent": 0,
+            "covered": 3,
+            "partial": 1
+          },
+          "report_sha256": "292a835b1ddd383322e321e270ddb621de930a6e09c180a0c9ae3b89a4fbeaa5",
+          "status": "succeeded"
+        }
+      }
+    },
+    {
+      "key_point_count": 3,
+      "question_id": "sa02-formal-04",
+      "variants": {
+        "V-off": {
+          "claim_presence_count": 4,
+          "disposition_counts": {
+            "unverified": 4
+          },
+          "key_point_claim_id_traceability": {
+            "absent": 0,
+            "covered": 3,
+            "partial": 0
+          },
+          "report_sha256": "0c61234cd5f62bd3e7674a5a4d0e7e3d31a291f792a7bb7fe6c4df46ba7fbd4d",
+          "status": "succeeded"
+        },
+        "V-on": {
+          "claim_presence_count": 4,
+          "disposition_counts": {
+            "partially_supported": 1,
+            "supported": 3
+          },
+          "key_point_claim_id_traceability": {
+            "absent": 0,
+            "covered": 3,
+            "partial": 0
+          },
+          "report_sha256": "a5815af885c4b16314af087e4236d8bd97234e5d17bb6eacb21e16eb9d42c765",
+          "status": "succeeded"
+        }
+      }
+    },
+    {
+      "key_point_count": 3,
+      "question_id": "sa02-formal-05",
+      "variants": {
+        "V-off": {
+          "claim_presence_count": 5,
+          "disposition_counts": {
+            "unverified": 5
+          },
+          "key_point_claim_id_traceability": {
+            "absent": 0,
+            "covered": 3,
+            "partial": 0
+          },
+          "report_sha256": "4d87af5da130853bbfd94349ecf76f340d15fe131885cb20df68853f605200f8",
+          "status": "succeeded"
+        },
+        "V-on": {
+          "claim_presence_count": 5,
+          "disposition_counts": {
+            "partially_supported": 4,
+            "supported": 1
+          },
+          "key_point_claim_id_traceability": {
+            "absent": 0,
+            "covered": 3,
+            "partial": 0
+          },
+          "report_sha256": "961dd0a692577586a1afb8d448968deaaf47afce67e6df9fb28230072ec43b9e",
+          "status": "succeeded"
+        }
+      }
+    },
+    {
+      "key_point_count": 2,
+      "question_id": "sa02-formal-06",
+      "variants": {
+        "V-off": {
+          "claim_presence_count": 4,
+          "disposition_counts": {
+            "unverified": 4
+          },
+          "key_point_claim_id_traceability": {
+            "absent": 0,
+            "covered": 2,
+            "partial": 0
+          },
+          "report_sha256": "eef9338d62b55e0ce4855fea0027f6129d19ae786573f0825e24f82da3670edb",
+          "status": "succeeded"
+        },
+        "V-on": {
+          "claim_presence_count": 2,
+          "disposition_counts": {
+            "partially_supported": 2,
+            "unsupported": 2
+          },
+          "key_point_claim_id_traceability": {
+            "absent": 1,
+            "covered": 1,
+            "partial": 0
+          },
+          "report_sha256": "d8810a00201d3b6129d06458ae625b0fa09a63487ca8a497d97d957608ef0e5f",
+          "status": "succeeded"
+        }
+      }
+    },
+    {
+      "key_point_count": 4,
+      "question_id": "sa02-formal-07",
+      "variants": {
+        "V-off": {
+          "claim_presence_count": 8,
+          "disposition_counts": {
+            "unverified": 8
+          },
+          "key_point_claim_id_traceability": {
+            "absent": 0,
+            "covered": 4,
+            "partial": 0
+          },
+          "report_sha256": "ff1e3b7d53d211e76c3f8910b76400745b895d7b3f42e71bec24b5ac83fce895",
+          "status": "succeeded"
+        },
+        "V-on": {
+          "claim_presence_count": 8,
+          "disposition_counts": {
+            "partially_supported": 2,
+            "supported": 6
+          },
+          "key_point_claim_id_traceability": {
+            "absent": 0,
+            "covered": 4,
+            "partial": 0
+          },
+          "report_sha256": "5d44f8803028b5ed1a3316acdec236b9f091bde1d0a34d3eec96cc6750dd0e8c",
+          "status": "succeeded"
+        }
+      }
+    },
+    {
+      "key_point_count": 3,
+      "question_id": "sa02-formal-08",
+      "variants": {
+        "V-off": {
+          "claim_presence_count": 8,
+          "disposition_counts": {
+            "unverified": 8
+          },
+          "key_point_claim_id_traceability": {
+            "absent": 0,
+            "covered": 3,
+            "partial": 0
+          },
+          "report_sha256": "a20c4146318b169bf6ac5f85b8ab0c76379a02cff94d480b873c7dd6189a8460",
+          "status": "succeeded"
+        },
+        "V-on": {
+          "claim_presence_count": 8,
+          "disposition_counts": {
+            "partially_supported": 4,
+            "supported": 4
+          },
+          "key_point_claim_id_traceability": {
+            "absent": 0,
+            "covered": 3,
+            "partial": 0
+          },
+          "report_sha256": "6f72b159a52a53e886e29e0f3fe4fdc52c11e48704460490113f7ebc9adbfc2c",
+          "status": "succeeded"
+        }
+      }
+    },
+    {
+      "key_point_count": 3,
+      "question_id": "sa02-formal-09",
+      "variants": {
+        "V-off": {
+          "claim_presence_count": 8,
+          "disposition_counts": {
+            "unverified": 8
+          },
+          "key_point_claim_id_traceability": {
+            "absent": 0,
+            "covered": 3,
+            "partial": 0
+          },
+          "report_sha256": "2fb4c78a141803aedcedc9598d6b59811dad59c5b8b0da658bae1376bc5a0fac",
+          "status": "succeeded"
+        },
+        "V-on": {
+          "claim_presence_count": 8,
+          "disposition_counts": {
+            "partially_supported": 1,
+            "supported": 7
+          },
+          "key_point_claim_id_traceability": {
+            "absent": 0,
+            "covered": 3,
+            "partial": 0
+          },
+          "report_sha256": "58ebeaeb7fa317bb2fd7c4e092a73f9326835518ab0f0d82072c93bbb9fe6cf4",
+          "status": "succeeded"
+        }
+      }
+    },
+    {
+      "key_point_count": 3,
+      "question_id": "sa02-formal-10",
+      "variants": {
+        "V-off": {
+          "claim_presence_count": 3,
+          "disposition_counts": {
+            "unverified": 3
+          },
+          "key_point_claim_id_traceability": {
+            "absent": 0,
+            "covered": 3,
+            "partial": 0
+          },
+          "report_sha256": "2902952c92c172c82738efade48a0c31fcd96f61a3e26836b69baf87e1a16536",
+          "status": "succeeded"
+        },
+        "V-on": {
+          "claim_presence_count": 2,
+          "disposition_counts": {
+            "partially_supported": 1,
+            "supported": 1,
+            "unsupported": 1
+          },
+          "key_point_claim_id_traceability": {
+            "absent": 1,
+            "covered": 2,
+            "partial": 0
+          },
+          "report_sha256": "097ad7a7203c53288d3a0cbe140f3c2fa451f87c7be79e9c47fa825ab625db4f",
+          "status": "succeeded"
+        }
+      }
+    }
+  ],
+  "report_calls": 20,
+  "resource_by_variant": {
+    "V-off": {
+      "duration_seconds": 386.0050202998682,
+      "input_tokens": 71708,
+      "output_tokens": 19071,
+      "reference_cost_cny": 2.7920100000000003
+    },
+    "V-on": {
+      "duration_seconds": 383.96478730015224,
+      "input_tokens": 70702,
+      "output_tokens": 18098,
+      "reference_cost_cny": 2.6893499999999997
+    }
+  },
+  "reviewer_mode": "codex_self_review_not_independent_blind_review",
+  "schema_version": "1.0",
+  "self_review_conclusion": [
+    "V-off preserved unverified markers for all formal Claims.",
+    "V-on preserved supported/partial markers and excluded unsupported Claims.",
+    "Legacy self-review found no obvious Evidence-ID binding or extra-exclusion anomaly.",
+    "This does not establish causal quality improvement; independent blind scores remain pending."
+  ],
+  "status": "self_review_complete_independent_blind_review_pending",
+  "verifier_calls": 56
+}

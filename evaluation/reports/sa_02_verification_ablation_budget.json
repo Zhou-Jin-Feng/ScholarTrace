@@ -1,0 +1,94 @@
+{
+  "calls_made_during_sa02": 0,
+  "combined": {
+    "question_count": 12,
+    "rounded_hard_cap_cny": 29,
+    "rounded_planning_cap_cny": 17,
+    "total_model_calls": 92,
+    "v_off_report_calls": 12,
+    "v_on_report_calls": 12,
+    "v_on_verifier_calls": 68
+  },
+  "dataset_fingerprint_sha256": "c2e017a11df5677d1363a27a10f3361f00d5478d8b7b6a8a52c878185b48dddf",
+  "fixed_limits": {
+    "automatic_retry": false,
+    "per_call_timeout_seconds": 180,
+    "report_length_limit_chars": 5000,
+    "report_max_input_token_upper_bound": 20000,
+    "report_max_output_tokens": 1200,
+    "verifier_max_input_token_upper_bound": 10000,
+    "verifier_max_output_tokens": 500
+  },
+  "limitations": [
+    "Costs are arithmetic reference estimates, not Provider bills.",
+    "No online price, account multiplier, model availability, or billed-cost field was checked in SA-02.",
+    "Planning shapes use the exact frozen call counts and conservative per-call token shapes; the hard envelope is the fail-closed preflight bound.",
+    "Unknown usage, missing response usage, input drift, or any cap breach stops the affected stage without automatic retry."
+  ],
+  "model_identifier": "gpt-5.6-terra",
+  "provider_protocol": "responses",
+  "purpose": "scholartrace-sa02-verification-ablation-reference-budget",
+  "reference_rates": {
+    "input_usd_per_million": 2.0,
+    "online_revalidation_required_before_paid_run": true,
+    "output_usd_per_million": 12.0,
+    "source": "locally recorded gpt-5.6-terra reference rate",
+    "usd_to_cny": 7.5
+  },
+  "schema_version": "1.0",
+  "stages": [
+    {
+      "hard_envelope": {
+        "reference_cost_cny_before_contingency": 3.972,
+        "reference_cost_cny_with_25_percent_contingency": 4.965,
+        "report_input_tokens_per_call": 20000,
+        "report_output_tokens_per_call": 1200,
+        "rounded_hard_cap_cny": 5,
+        "verifier_input_tokens_per_call": 10000,
+        "verifier_output_tokens_per_call": 500
+      },
+      "planning_shape": {
+        "reference_cost_cny_before_contingency": 2.274,
+        "reference_cost_cny_with_25_percent_contingency": 2.8425,
+        "report_input_tokens_per_call": 10000,
+        "report_output_tokens_per_call": 800,
+        "rounded_planning_cap_cny": 3,
+        "verifier_input_tokens_per_call": 6500,
+        "verifier_output_tokens_per_call": 200
+      },
+      "question_count": 2,
+      "stage": "pilot",
+      "total_model_calls": 16,
+      "v_off_report_calls": 2,
+      "v_on_report_calls": 2,
+      "v_on_verifier_calls": 12
+    },
+    {
+      "hard_envelope": {
+        "reference_cost_cny_before_contingency": 19.08,
+        "reference_cost_cny_with_25_percent_contingency": 23.85,
+        "report_input_tokens_per_call": 20000,
+        "report_output_tokens_per_call": 1200,
+        "rounded_hard_cap_cny": 24,
+        "verifier_input_tokens_per_call": 10000,
+        "verifier_output_tokens_per_call": 500
+      },
+      "planning_shape": {
+        "reference_cost_cny_before_contingency": 10.908,
+        "reference_cost_cny_with_25_percent_contingency": 13.635,
+        "report_input_tokens_per_call": 10000,
+        "report_output_tokens_per_call": 800,
+        "rounded_planning_cap_cny": 14,
+        "verifier_input_tokens_per_call": 6500,
+        "verifier_output_tokens_per_call": 200
+      },
+      "question_count": 10,
+      "stage": "formal",
+      "total_model_calls": 76,
+      "v_off_report_calls": 10,
+      "v_on_report_calls": 10,
+      "v_on_verifier_calls": 56
+    }
+  ],
+  "status": "estimated"
+}

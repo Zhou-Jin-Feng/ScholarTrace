@@ -111,6 +111,7 @@ Pop-Location
 - [模型路由与预算](docs/MODEL_STRATEGY.md)
 - [证据基线与历史在线条件](docs/M2_EVIDENCE_BASELINE.md)
 - [B3/B4 评测协议](docs/M6_B3_B4_PROTOCOL.md)
+- [核验消融结果与边界](docs/VERIFICATION_ABLATION_RESULTS.md) · [复现与运行](docs/VERIFICATION_ABLATION_RUNBOOK.md)
 
 应用版本为 `1.0.2`；服务版本、接口 Schema、数据格式和 Git tag 是不同概念。冻结报告中的旧版本与旧 SHA 表示当时的实验身份，不应改写成当前版本。
 

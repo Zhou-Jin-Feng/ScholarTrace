@@ -1,0 +1,56 @@
+{
+  "additional_failed_report_cost_cny": null,
+  "additional_inference_attempts": 2,
+  "api_key_stored_publicly": false,
+  "historical_inference_attempts_before_switch": 17,
+  "known_successful_cost_cny": 1.447155,
+  "model_catalog_probe": "both_models_visible",
+  "models_tested": [
+    "gpt-5.6-sol",
+    "gpt-5.6-luna"
+  ],
+  "next_required_action": "Obtain a functioning provider/quota or explicitly choose another provider; do not retry this 503 route automatically.",
+  "provider_hostname": "share-api.top",
+  "provider_profile": "cc-switch:SuperBoy:GPT",
+  "purpose": "scholartrace-sa04-ccswitch-provider-failure-record",
+  "raw_response_stored_publicly": false,
+  "rounds": [
+    {
+      "checkpoint_sha256": "16a44c9a612d585580ef1e62c8a0abf3333d1f62f618cbc6cdea4792ff0ee820",
+      "error_code": "ProviderInferenceError",
+      "error_diagnostics": {
+        "category": "http",
+        "status_code": 503
+      },
+      "model": "gpt-5.6-sol",
+      "provider_hostname": "share-api.top",
+      "provider_profile": "cc-switch:SuperBoy:GPT",
+      "question_id": "sa02-pilot-01",
+      "report_attempts": 1,
+      "round": "sol",
+      "status": "failed",
+      "variant": "V-off",
+      "verifier_attempts": 0
+    },
+    {
+      "checkpoint_sha256": "146c9aa07f0ce8e857673319e1d79718dbd2da92347342ca42ef5c31a7052071",
+      "error_code": "ProviderInferenceError",
+      "error_diagnostics": {
+        "category": "http",
+        "status_code": 503
+      },
+      "model": "gpt-5.6-luna",
+      "provider_hostname": "share-api.top",
+      "provider_profile": "cc-switch:SuperBoy:GPT",
+      "question_id": "sa02-pilot-01",
+      "report_attempts": 1,
+      "round": "luna",
+      "status": "failed",
+      "variant": "V-off",
+      "verifier_attempts": 0
+    }
+  ],
+  "schema_version": "1.0",
+  "status": "blocked_provider_inference_unavailable",
+  "total_inference_attempts_recorded": 19
+}

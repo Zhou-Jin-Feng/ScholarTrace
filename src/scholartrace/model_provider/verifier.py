@@ -28,6 +28,16 @@ from scholartrace.verification.models import SemanticVerificationDraft
 from scholartrace.verification.verifier import VerifierKind
 
 InferenceProtocol = Literal["responses", "chat_completions"]
+ReasoningEffort = Literal[
+    "none",
+    "minimal",
+    "low",
+    "medium",
+    "high",
+    "xhigh",
+    "max",
+    "ultra",
+]
 
 
 @dataclass(frozen=True, slots=True)
@@ -64,6 +74,7 @@ class OpenAICompatibleSemanticVerifier:
         call_counter: ApiCallCounter,
         timeout_seconds: float = 180,
         max_response_bytes: int = 1_000_000,
+        reasoning_effort: ReasoningEffort | None = None,
         on_reserve: Callable[[str, int, float], None] | None = None,
     ) -> None:
         if not settings.base_url.strip() or not settings.api_key.strip():
@@ -80,6 +91,7 @@ class OpenAICompatibleSemanticVerifier:
         self.call_counter = call_counter
         self.timeout_seconds = timeout_seconds
         self.max_response_bytes = max_response_bytes
+        self.reasoning_effort = reasoning_effort
         self.on_reserve = on_reserve
         self.records: list[VerifierCallRecord] = []
 
@@ -98,13 +110,22 @@ class OpenAICompatibleSemanticVerifier:
             sort_keys=True,
             separators=(",", ":"),
         )
-        self.call_counter.reserve(input_token_upper_bound=len(serialized))
-        if self.on_reserve is not None:
-            self.on_reserve(
-                claim.claim_id,
-                self.call_counter.attempted_calls,
-                self.call_counter.reserved_reference_cost_cny,
-            )
+        prior_calls = self.call_counter.attempted_calls
+        prior_reserve = self.call_counter.reserved_reference_cost_cny
+        try:
+            self.call_counter.reserve(input_token_upper_bound=len(serialized))
+            if self.on_reserve is not None:
+                self.on_reserve(
+                    claim.claim_id,
+                    self.call_counter.attempted_calls,
+                    self.call_counter.reserved_reference_cost_cny,
+                )
+        except ProviderBudgetError as exc:
+            self.call_counter.attempted_calls = prior_calls
+            self.call_counter.reserved_reference_cost_cny = prior_reserve
+            raise ProviderBudgetError(
+                str(exc), diagnostics={"category": "request_not_sent"}
+            ) from exc
         started = time.perf_counter()
         body = await self._post(payload, idempotency_key=self._idempotency_key(claim, evidence))
         duration_seconds = time.perf_counter() - started
@@ -114,22 +135,11 @@ class OpenAICompatibleSemanticVerifier:
             raise ProviderInferenceError("provider verifier response was not JSON") from exc
         if not isinstance(envelope, dict):
             raise ProviderInferenceError("provider verifier response was not an object")
-        if envelope.get("model") != self.model:
-            raise ProviderInferenceError("provider verifier model did not match requested model")
-        try:
-            draft = SemanticVerificationDraft.model_validate_json(
-                self._extract_text(envelope)
-            )
-        except ValueError as exc:
-            raise ProviderInferenceError("provider returned an invalid verification draft") from exc
         usage = self._extract_usage(envelope)
-        if usage.output_tokens > self.call_counter.budget.max_output_tokens:
-            raise ProviderBudgetError("provider reported verifier output beyond token budget")
         cost = self.call_counter.budget.estimate_reference_cost_cny(
             usage.input_tokens,
             usage.output_tokens,
         )
-        self.call_counter.record_actual(cost)
         self.records.append(
             VerifierCallRecord(
                 claim_id=claim.claim_id,
@@ -138,12 +148,23 @@ class OpenAICompatibleSemanticVerifier:
                 reference_cost_cny=cost,
             )
         )
+        self.call_counter.record_actual(cost)
+        if usage.output_tokens > self.call_counter.budget.max_output_tokens:
+            raise ProviderBudgetError("provider reported verifier output beyond token budget")
+        if envelope.get("model") != self.model:
+            raise ProviderInferenceError("provider verifier model did not match requested model")
+        try:
+            draft = SemanticVerificationDraft.model_validate_json(
+                self._extract_text(envelope)
+            )
+        except ValueError as exc:
+            raise ProviderInferenceError("provider returned an invalid verification draft") from exc
         return draft
 
     def _request_payload(self, messages: list[dict[str, str]]) -> dict[str, object]:
         schema = SemanticVerificationDraft.model_json_schema(mode="validation")
         if self.protocol == "responses":
-            return {
+            response_payload: dict[str, object] = {
                 "model": self.model,
                 "input": messages,
                 "max_output_tokens": self.call_counter.budget.max_output_tokens,
@@ -156,6 +177,9 @@ class OpenAICompatibleSemanticVerifier:
                     }
                 },
             }
+            if self.reasoning_effort is not None:
+                response_payload["reasoning"] = {"effort": self.reasoning_effort}
+            return response_payload
         structured_mode = resolved_structured_output_mode(self.settings)
         request_messages = messages
         if structured_mode == "json_object":
@@ -189,6 +213,8 @@ class OpenAICompatibleSemanticVerifier:
                     "schema": schema,
                 },
             }
+        if self.reasoning_effort is not None:
+            payload["reasoning_effort"] = self.reasoning_effort
         return payload
 
     def _messages(self, claim: Claim, evidence: list[Evidence]) -> list[dict[str, str]]:

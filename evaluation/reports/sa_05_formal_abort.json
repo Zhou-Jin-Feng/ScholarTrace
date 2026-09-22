@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "purpose": "scholartrace-sa05-formal-abort",
+  "status": "blocked_unknown_usage_without_persisted_checkpoint",
+  "formal_question_count": 10,
+  "expected_verifier_calls": 56,
+  "expected_report_calls": 20,
+  "expected_model_calls": 76,
+  "final_archive_created": false,
+  "formal_checkpoint_created": false,
+  "quality_scores_present": false,
+  "cost_total": null,
+  "cost_upper_bound": null,
+  "raw_response_stored_publicly": false,
+  "api_key_stored_publicly": false,
+  "root_cause": "formal entry omitted request-level checkpoint/attempt persistence; fail-closed stopped after unknown usage",
+  "next_action": "repair formal checkpoint runner before any formal rerun"
+}

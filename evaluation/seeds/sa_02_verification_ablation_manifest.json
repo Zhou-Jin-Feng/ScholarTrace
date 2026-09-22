@@ -1,0 +1,333 @@
+{
+  "baseline_commit": "3d095a79feff257b57b041de40b7b5ed73021f9e",
+  "dataset_fingerprint_sha256": "c2e017a11df5677d1363a27a10f3361f00d5478d8b7b6a8a52c878185b48dddf",
+  "experiment_contract": {
+    "automatic_retry": false,
+    "auxiliary_context": "none",
+    "model_identifier": "gpt-5.6-terra",
+    "provider_protocol": "responses",
+    "report_length_limit_chars": 5000,
+    "report_prompt_sha256": "01d2fd85f1a24427d6c53ff9ce07787b13f2a2011bb0818a9a8cd39c395f67db",
+    "report_schema": "sa02-ablation-report-v1",
+    "shared_checks": [
+      "frozen_input_hash",
+      "paper_evidence_identity",
+      "deterministic_citation_and_provenance_validation",
+      "allowed_evidence_id_validation"
+    ],
+    "temperature": "provider_default_omitted",
+    "treatment": "independent_semantic_verification_and_its_filtering_or_marking",
+    "verifier_prompt_sha256": "6fb7bd2fdffb62613e38feb07c02838972e677edf8e5844fecd2d59fbcab97cd"
+  },
+  "formal_category_counts": {
+    "condition_conclusion_conflict": 7,
+    "cross_paper_comparison": 6,
+    "evidence_incomplete": 3,
+    "ordinary_fact": 5
+  },
+  "formal_claim_count": 56,
+  "formal_unique_evidence_count": 45,
+  "frozen_at": "2026-09-21T00:00:00+08:00",
+  "limitations": [
+    "The ten formal questions are exhaustive thematic partitions of five earlier real Evidence reports, not ten independent retrieval runs.",
+    "The two pilot questions exhaustively partition a separate three-paper real Evidence report.",
+    "Claim selection is exhaustive within each source report, so no Claim was dropped based on historical semantic-verifier status.",
+    "This frozen-input experiment estimates semantic-verification value after Evidence construction; it cannot establish end-to-end search or retrieval quality."
+  ],
+  "pilot_claim_count": 12,
+  "pilot_unique_evidence_count": 11,
+  "privacy": {
+    "historical_gate_output_reused": false,
+    "historical_verifier_results_reused": false,
+    "human_key_points_public": false,
+    "raw_claims_public": false,
+    "source_quotes_public": false
+  },
+  "private_frozen_inputs_file_sha256": "4c8de9c4a401c948d816118b5660f1d78c239249dadb2ab84258dc21a7587a96",
+  "private_human_reference_file_sha256": "be755ff71ca5c1ed4535ee61f2de032406f926e38f39f9de59dea82bd10328d5",
+  "purpose": "scholartrace-sa02-verification-ablation-redacted-manifest",
+  "questions": [
+    {
+      "categories": [
+        "condition_conclusion_conflict"
+      ],
+      "claim_count": 3,
+      "claim_identity_set_sha256": "b22827773f7f30ac1401ae29e9b8bcc02e0c705b404dbaa08d9e102ba62a8f3a",
+      "evidence_count": 3,
+      "evidence_identity_set_sha256": "d1a3ccd8a457c5700f3ce896d1690bef68fa4a45ffa7991e4dcda44b507b6ada",
+      "human_reference_sha256": "b104bfd2300eb6359dcde7dbc6631f19b9866ddbd0027f510f38da17eafed586",
+      "input_sha256": "f042863bc37c0f59ae8c35855e7ef6d3c47f714f23b4ab78671e9b385cc6bb97",
+      "key_point_count": 2,
+      "paper_ids": [
+        "doi:10.48550/arxiv.2404.16130"
+      ],
+      "question": "Under which task, corpus, and model conditions does GraphRAG report improvements over vector RAG?",
+      "question_id": "sa02-formal-01",
+      "serialized_input_chars": 10435,
+      "source_artifact_id": "m6-real-evidence:sg-eligible-01",
+      "source_report_sha256": "f18bfee7affb0500dc7bc931a9e91ab59721ba9fa19d6d4dde1440b03e098bb9",
+      "split": "formal"
+    },
+    {
+      "categories": [
+        "cross_paper_comparison",
+        "condition_conclusion_conflict"
+      ],
+      "claim_count": 6,
+      "claim_identity_set_sha256": "10eb85725e92839a4a037ec401cf10d8df71d391e17c0d20d2b5eadadded773a",
+      "evidence_count": 5,
+      "evidence_identity_set_sha256": "0b47fa5db8eaba030d9e4822bf5fa44c8ed7a6af6e169a6eb7290a94d4830196",
+      "human_reference_sha256": "2b092ab158da99756a04feafe1fb997a05b95276744f3c56f3a6966101cb6caf",
+      "input_sha256": "c0efc3ecbc16cde0dbd056c78c7c424feedae6d672f9a8ecd855929f66f77571",
+      "key_point_count": 3,
+      "paper_ids": [
+        "doi:10.48550/arxiv.2405.14831",
+        "doi:10.48550/arxiv.2410.05779"
+      ],
+      "question": "How do HippoRAG and LightRAG compare with iterative or chunk-based retrieval on quality, speed, cost, and dataset scale?",
+      "question_id": "sa02-formal-02",
+      "serialized_input_chars": 17760,
+      "source_artifact_id": "m6-real-evidence:sg-eligible-01",
+      "source_report_sha256": "f18bfee7affb0500dc7bc931a9e91ab59721ba9fa19d6d4dde1440b03e098bb9",
+      "split": "formal"
+    },
+    {
+      "categories": [
+        "ordinary_fact",
+        "cross_paper_comparison",
+        "evidence_incomplete",
+        "condition_conclusion_conflict"
+      ],
+      "claim_count": 7,
+      "claim_identity_set_sha256": "929121d5e4efd5149f50573404a39ce74fb5654dc45dc7eaea5edfaeb933337a",
+      "evidence_count": 3,
+      "evidence_identity_set_sha256": "a8cec43b917f22b1017cfe2e10cd171f460b42560ba2827d78ec81f2c2e0f9d3",
+      "human_reference_sha256": "4516b19b2d6e097d675993a0761bbb39225151acaea7e5bba9f7d04818c3b65f",
+      "input_sha256": "6c701e50f451bb27c38972e5e171591afc9f38feb86bfd542bd08e073ead32a4",
+      "key_point_count": 4,
+      "paper_ids": [
+        "doi:10.48550/arxiv.2309.01431",
+        "doi:10.48550/arxiv.2309.15217"
+      ],
+      "question": "Which dimensions do RGB and Ragas evaluate, and does the supplied evidence actually separate retrieval quality from generation quality?",
+      "question_id": "sa02-formal-03",
+      "serialized_input_chars": 14273,
+      "source_artifact_id": "m6-real-evidence:sg-eligible-03",
+      "source_report_sha256": "36e60ea4176fa51baab6dbcbe3e1cf532bb581fbb7e721aee7823168e8dc8d0e",
+      "split": "formal"
+    },
+    {
+      "categories": [
+        "ordinary_fact"
+      ],
+      "claim_count": 4,
+      "claim_identity_set_sha256": "6c1429fdcc5f5bff7d8185e502ff0a0e7c8243bcbee74f6f5ab9676678b6e0a2",
+      "evidence_count": 3,
+      "evidence_identity_set_sha256": "c1f327ce7fde2787118ce587d6e57f6d6d68a67a022593c9f00375f6b762141c",
+      "human_reference_sha256": "ee8ee5c3bec2e3e6dfd710c5776ec7ae5be3c6fd8b67a8b239658e80f0ac5edf",
+      "input_sha256": "b45f40567957c58d8cdde6098193b428c0a590036261cb2c1058e52933e90459",
+      "key_point_count": 3,
+      "paper_ids": [
+        "doi:10.48550/arxiv.2311.09476"
+      ],
+      "question": "How does ARES evaluate context relevance, answer faithfulness, and answer relevance, and what evidence supports its judge reliability?",
+      "question_id": "sa02-formal-04",
+      "serialized_input_chars": 11050,
+      "source_artifact_id": "m6-real-evidence:sg-eligible-03",
+      "source_report_sha256": "36e60ea4176fa51baab6dbcbe3e1cf532bb581fbb7e721aee7823168e8dc8d0e",
+      "split": "formal"
+    },
+    {
+      "categories": [
+        "ordinary_fact",
+        "condition_conclusion_conflict"
+      ],
+      "claim_count": 5,
+      "claim_identity_set_sha256": "169ca18463deeb21fa13ed2bb1352721a662e9463593551155653a146701c02b",
+      "evidence_count": 4,
+      "evidence_identity_set_sha256": "f799dbd3f2e105b91223be203e75125e614bc8284d40e2643c4daca2f48fa020",
+      "human_reference_sha256": "6c71a4526570ab465a409037781c8c7cc31a45b4cb710059a24f416b568523d6",
+      "input_sha256": "b5fc37e351ff5a74c5ab26b3562dc5c3e5f868782177841bbb8115f5b48b74ce",
+      "key_point_count": 3,
+      "paper_ids": [
+        "doi:10.48550/arxiv.2402.07867"
+      ],
+      "question": "How does PoisonedRAG define the retrieval knowledge-corruption attack surface, and what defense limitations does it report?",
+      "question_id": "sa02-formal-05",
+      "serialized_input_chars": 13508,
+      "source_artifact_id": "m6-real-evidence:sg-eligible-04",
+      "source_report_sha256": "5c2d22d29dce16d71ddfa40015efd84db9d834569866b404fd4fea8ddb315e21",
+      "split": "formal"
+    },
+    {
+      "categories": [
+        "cross_paper_comparison",
+        "evidence_incomplete",
+        "condition_conclusion_conflict"
+      ],
+      "claim_count": 4,
+      "claim_identity_set_sha256": "899fcfe8db9ffddc653addb2960b0771e2644add89fcd4683f93045c9fc3b717",
+      "evidence_count": 3,
+      "evidence_identity_set_sha256": "a3c8e3d990880adcba9092bdb6bbf993a7e498e817ce5ed3f986aeb88c9ada08",
+      "human_reference_sha256": "a844d085512b3761c9e4de82917000f27b1a5025bfa5eaa0cc66260ee230fb54",
+      "input_sha256": "336a1c2723e278b920f463fa087e2f6da2323e96001e0e7abbfedfa4122b5e81",
+      "key_point_count": 2,
+      "paper_ids": [
+        "doi:10.48550/arxiv.2312.14197",
+        "doi:10.48550/arxiv.2409.10102"
+      ],
+      "question": "What does the supplied evidence support about indirect prompt-injection and adversarial-document mitigation, and where is it insufficient?",
+      "question_id": "sa02-formal-06",
+      "serialized_input_chars": 12289,
+      "source_artifact_id": "m6-real-evidence:sg-eligible-04",
+      "source_report_sha256": "5c2d22d29dce16d71ddfa40015efd84db9d834569866b404fd4fea8ddb315e21",
+      "split": "formal"
+    },
+    {
+      "categories": [
+        "ordinary_fact",
+        "cross_paper_comparison"
+      ],
+      "claim_count": 8,
+      "claim_identity_set_sha256": "d46c67a952d275e6c4b3bc23811c39f4ab945b27f4fe62c20c1189707be33a18",
+      "evidence_count": 7,
+      "evidence_identity_set_sha256": "99a5974a07ec70de2e59a654ab9f1ea6e5f777fda09b5cbe532dc4b00cf59e3c",
+      "human_reference_sha256": "b55599887140580cd2ecc84b98e8d81fc66cba4c7560356ee914cd65c72da5df",
+      "input_sha256": "3e5223e5da755b363e2f1196608353edfb0ef4c8c2fe0fe692c0df974ff218dc",
+      "key_point_count": 4,
+      "paper_ids": [
+        "doi:10.48550/arxiv.2309.15217",
+        "doi:10.48550/arxiv.2312.10997"
+      ],
+      "question": "How do Ragas and the RAG survey define context relevance, answer relevance, and faithfulness, including the cost of irrelevant context?",
+      "question_id": "sa02-formal-07",
+      "serialized_input_chars": 22696,
+      "source_artifact_id": "m6-real-evidence:sg-eligible-05",
+      "source_report_sha256": "9af9fa62aa37867c8321aef0ed6be9809e1fdf2ccc2849b68212d20634de3c27",
+      "split": "formal"
+    },
+    {
+      "categories": [
+        "cross_paper_comparison",
+        "condition_conclusion_conflict"
+      ],
+      "claim_count": 8,
+      "claim_identity_set_sha256": "cdccf977760a67fd94b871e370642922b60d12989de5d246c90371ed3767866a",
+      "evidence_count": 7,
+      "evidence_identity_set_sha256": "2608aa5e15adf4470760394dbd8540c434f3fdf07e563defac7f6b68d82552e7",
+      "human_reference_sha256": "8802615feeda0d7b134a2795bc6a869452a7b63fa837ec1a36973d527448a6b9",
+      "input_sha256": "4dbd00cc5ccf73defbda4d27f2cd19258321f36bef507927b52a998fbadbe7d1",
+      "key_point_count": 3,
+      "paper_ids": [
+        "doi:10.48550/arxiv.2401.15884",
+        "doi:10.48550/arxiv.2405.14831",
+        "doi:10.48550/arxiv.2410.05779"
+      ],
+      "question": "What trade-offs do CRAG, HippoRAG, and LightRAG claim among correction, retrieval quality, latency, and adaptation?",
+      "question_id": "sa02-formal-08",
+      "serialized_input_chars": 23708,
+      "source_artifact_id": "m6-real-evidence:sg-eligible-05",
+      "source_report_sha256": "9af9fa62aa37867c8321aef0ed6be9809e1fdf2ccc2849b68212d20634de3c27",
+      "split": "formal"
+    },
+    {
+      "categories": [
+        "ordinary_fact",
+        "cross_paper_comparison"
+      ],
+      "claim_count": 8,
+      "claim_identity_set_sha256": "eafa3e21f0e256b4bb744350bfbd80378fbfef15b962b6a516a64c5c051f6044",
+      "evidence_count": 8,
+      "evidence_identity_set_sha256": "aa495cdc62f5fe909cb77000683f413c29f92f8957ab914d048ce440c7cf6add",
+      "human_reference_sha256": "bc1a2785758e2a54859d51032ebf58e0770a22f90906435fcaa8046077594626",
+      "input_sha256": "68c2f6f17f4515e0080e25cba36e45637bfa24cd802920e5b7bae54e01e9a715",
+      "key_point_count": 3,
+      "paper_ids": [
+        "doi:10.48550/arxiv.2404.16130",
+        "doi:10.48550/arxiv.2405.14831",
+        "doi:10.48550/arxiv.2410.05779"
+      ],
+      "question": "Which graph and hybrid retrieval mechanisms do GraphRAG, HippoRAG, and LightRAG use for global or multi-hop questions?",
+      "question_id": "sa02-formal-09",
+      "serialized_input_chars": 26259,
+      "source_artifact_id": "m6-real-evidence:sg-eligible-06",
+      "source_report_sha256": "a30bd5cd1bfeba3f90e66d49ab07509765cbd63991e187841fc3fa93688ca8c0",
+      "split": "formal"
+    },
+    {
+      "categories": [
+        "evidence_incomplete",
+        "condition_conclusion_conflict"
+      ],
+      "claim_count": 3,
+      "claim_identity_set_sha256": "ca0d849dd2c6ec0534af97e74964ebe77d4738104e0dfc6e94e46b0a6b4af918",
+      "evidence_count": 3,
+      "evidence_identity_set_sha256": "9408d3e813d3e60bbfb871762d11119fa93bb3cbe209201ecc1f962f564233df",
+      "human_reference_sha256": "1b0030273370ba81a57a1c7251474808ce9126516c21b173747df169afc943e6",
+      "input_sha256": "fe44cc3616e0aed734bb79e022eae107addf3271f16ee4bf5da8fc854718a0cf",
+      "key_point_count": 3,
+      "paper_ids": [
+        "doi:10.48550/arxiv.2404.16130",
+        "doi:10.48550/arxiv.2405.14831",
+        "doi:10.48550/arxiv.2410.05779"
+      ],
+      "question": "What scalability or resource costs are actually evidenced for GraphRAG, HippoRAG, and LightRAG?",
+      "question_id": "sa02-formal-10",
+      "serialized_input_chars": 12896,
+      "source_artifact_id": "m6-real-evidence:sg-eligible-06",
+      "source_report_sha256": "a30bd5cd1bfeba3f90e66d49ab07509765cbd63991e187841fc3fa93688ca8c0",
+      "split": "formal"
+    },
+    {
+      "categories": [
+        "ordinary_fact",
+        "condition_conclusion_conflict"
+      ],
+      "claim_count": 4,
+      "claim_identity_set_sha256": "95b88a3ccbf83970c8a32849fcedef774b614032baccfa7cad535ff661bb29e2",
+      "evidence_count": 3,
+      "evidence_identity_set_sha256": "c86c165cbc277971d0042005aa128bb234644695c8c10e8b1f7d7d2fdfcbda4e",
+      "human_reference_sha256": "14cb30c3f29da1a3570f043e8fd5f1ca990fb169fae5bb338beeeefe83409528",
+      "input_sha256": "23a26c3d931a4390546831538978cd1b2da511ae26c5dc5c8455554601a17ce9",
+      "key_point_count": 3,
+      "paper_ids": [
+        "doi:10.48550/arxiv.2401.15884"
+      ],
+      "question": "How does CRAG map retrieval-evaluator confidence to Correct, Incorrect, or Ambiguous actions?",
+      "question_id": "sa02-pilot-01",
+      "serialized_input_chars": 10637,
+      "source_artifact_id": "m2-real-evidence:sg-eligible-02",
+      "source_report_sha256": "631cae340c6a7d488cb1097235a6869f57767facfeaa160fe8f19c0758a86d24",
+      "split": "pilot"
+    },
+    {
+      "categories": [
+        "cross_paper_comparison",
+        "condition_conclusion_conflict"
+      ],
+      "claim_count": 8,
+      "claim_identity_set_sha256": "ef5ccfc9374c333aad5e970ed7f722909601276b6bbdac4cc3032f6281455c4e",
+      "evidence_count": 8,
+      "evidence_identity_set_sha256": "dd3b6bd1a634680030761aa51f438479cafa9743e7d13d317c273f20acd3af22",
+      "human_reference_sha256": "26540315011cd60b04282bad6cbf6e30fe1c958a7dc5a7be4c8c1bafb1b297e5",
+      "input_sha256": "c9e8b21d47f865e11d219e1e4a1b7cbcab071a1906ddb5e2d5c3e900df5ed14c",
+      "key_point_count": 3,
+      "paper_ids": [
+        "doi:10.48550/arxiv.2312.10997",
+        "doi:10.48550/arxiv.2403.14403"
+      ],
+      "question": "How do the RAG survey and Adaptive-RAG describe when to skip retrieval, retrieve once, retrieve recursively, or use multi-step retrieval?",
+      "question_id": "sa02-pilot-02",
+      "serialized_input_chars": 25025,
+      "source_artifact_id": "m2-real-evidence:sg-eligible-02",
+      "source_report_sha256": "631cae340c6a7d488cb1097235a6869f57767facfeaa160fe8f19c0758a86d24",
+      "split": "pilot"
+    }
+  ],
+  "schema_version": "1.0",
+  "split_counts": {
+    "formal": 10,
+    "pilot": 2
+  },
+  "status": "frozen_not_executed"
+}

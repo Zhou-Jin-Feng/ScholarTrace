@@ -1,0 +1,55 @@
+{
+  "api_key_stored_publicly": false,
+  "budget": {
+    "budget_scope": "shared",
+    "max_context_characters": 40000,
+    "max_duration_seconds": 86400.0,
+    "max_input_tokens": 960000,
+    "max_model_calls": 76,
+    "max_output_tokens": 40000,
+    "max_provider_api_calls": 76,
+    "max_reference_cost_cny": 24.0,
+    "max_report_calls": 20,
+    "max_verifier_calls": 56
+  },
+  "calls_made_during_preflight": 0,
+  "checkpoint": {
+    "attempt_state_after_dispatch": true,
+    "request_intent_before_dispatch": true,
+    "resume_requires_manifest_and_configuration_hash": true,
+    "unknown_usage_blocks_next_dispatch": true
+  },
+  "claim_count": 56,
+  "dataset_fingerprint_sha256": "c2e017a11df5677d1363a27a10f3361f00d5478d8b7b6a8a52c878185b48dddf",
+  "expected_calls": {
+    "reports": 20,
+    "total": 76,
+    "verifier": 56
+  },
+  "manifest_sha256": "eb62682ac5b749c1a877a21130873eb5a4a6d9deb08dbf52e9ec319578e2687c",
+  "prompt_sha256": "4b7710ac43fa26149fb6520c78ef839381689b3243222afe015cf275dc00e7d7",
+  "provider_hostname": "share-api.top",
+  "provider_protocol": "responses",
+  "provider_source": "cc-switch:SuperBoy:Luna",
+  "purpose": "scholartrace-sa05-formal-preflight",
+  "question_count": 10,
+  "question_input_sha256": {
+    "sa02-formal-01": "f042863bc37c0f59ae8c35855e7ef6d3c47f714f23b4ab78671e9b385cc6bb97",
+    "sa02-formal-02": "c0efc3ecbc16cde0dbd056c78c7c424feedae6d672f9a8ecd855929f66f77571",
+    "sa02-formal-03": "6c701e50f451bb27c38972e5e171591afc9f38feb86bfd542bd08e073ead32a4",
+    "sa02-formal-04": "b45f40567957c58d8cdde6098193b428c0a590036261cb2c1058e52933e90459",
+    "sa02-formal-05": "b5fc37e351ff5a74c5ab26b3562dc5c3e5f868782177841bbb8115f5b48b74ce",
+    "sa02-formal-06": "336a1c2723e278b920f463fa087e2f6da2323e96001e0e7abbfedfa4122b5e81",
+    "sa02-formal-07": "3e5223e5da755b363e2f1196608353edfb0ef4c8c2fe0fe692c0df974ff218dc",
+    "sa02-formal-08": "4dbd00cc5ccf73defbda4d27f2cd19258321f36bef507927b52a998fbadbe7d1",
+    "sa02-formal-09": "68c2f6f17f4515e0080e25cba36e45637bfa24cd802920e5b7bae54e01e9a715",
+    "sa02-formal-10": "fe44cc3616e0aed734bb79e022eae107addf3271f16ee4bf5da8fc854718a0cf"
+  },
+  "reasoning_effort": "max",
+  "report_schema_sha256": "0dd96ec5ee605da146a4d58c2ef3d5811ee3757251f721a0f3c089f1e74755a5",
+  "schema_version": "1.0",
+  "selected_model": "gpt-5.6-luna",
+  "status": "prepared",
+  "unique_evidence_count": 45,
+  "verifier_prompt_sha256": "6fb7bd2fdffb62613e38feb07c02838972e677edf8e5844fecd2d59fbcab97cd"
+}
