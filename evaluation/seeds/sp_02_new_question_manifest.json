@@ -1,0 +1,170 @@
+{
+  "baseline_commit": "c63784a26a5e5ef527da8cb65a054913853ef78e",
+  "experiment_scope": "stage-two-new-question-set",
+  "hypothesis": "Strong semantic verification is most valuable for claims with condition or conclusion conflicts, cross-paper extrapolation, or incomplete evidence; ordinary low-risk claims can use the single-pass baseline if their unverified state remains explicit and auditable.",
+  "notes": [
+    "The set is derived from previously validated Evidence packets with new question identities and a separate manifest.",
+    "The set is not added to the historical SA-02 formal result and is not used to tune the candidate rules before freezing.",
+    "No model or external Provider request is made by this freeze command."
+  ],
+  "privacy": {
+    "human_key_points_public": false,
+    "private_inputs": "agent/verification-ablation/SP-02/frozen_inputs.json",
+    "private_reference": "agent/verification-ablation/SP-02/human_reference.json",
+    "raw_claims_public": false,
+    "source_quotes_public": false
+  },
+  "purpose": "scholartrace-sp02-new-question-manifest",
+  "quality_rules": {
+    "fallback": "if any guardrail fails, retain the full-verification scheme as the formal path and keep the candidate experimental",
+    "guardrail_coverage_drop": "no more than 5 percentage points versus the full-verification scheme",
+    "guardrail_state_integrity": "every skipped Claim remains unverified and traceable",
+    "guardrail_unsupported_fact_delta": "no more than +1 across the new set versus the full-verification scheme",
+    "primary_metric": "weighted_key_point_coverage"
+  },
+  "question_count": 8,
+  "question_set_fingerprint_sha256": "a309a94ddbad8669166289c04d21821c2e07112a0c573871d8b64c300ce03ab0",
+  "questions": [
+    {
+      "categories": [
+        "ordinary_fact",
+        "condition_conclusion_conflict"
+      ],
+      "claim_count": 3,
+      "evidence_count": 3,
+      "input_sha256": "4b81b159952cb0a383c57bd1ef1f7a7f171afa1ca5c9bd4b133133ed6f6fd02a",
+      "key_point_count": 3,
+      "paper_count": 1,
+      "question": "What task and corpus conditions are actually evidenced for GraphRAG gains over vector RAG, and what model context is reported?",
+      "question_id": "sp02-new-01",
+      "source_question_ids": [
+        "sa02-formal-01"
+      ]
+    },
+    {
+      "categories": [
+        "ordinary_fact",
+        "evidence_incomplete"
+      ],
+      "claim_count": 2,
+      "evidence_count": 2,
+      "input_sha256": "a5d2f47c40bd76510169f1092285f49c2355d08120d0950c58b1306726edba3f",
+      "key_point_count": 3,
+      "paper_count": 1,
+      "question": "What efficiency comparison does the supplied evidence support for HippoRAG versus iterative retrieval, and what remains unestablished?",
+      "question_id": "sp02-new-02",
+      "source_question_ids": [
+        "sa02-formal-02"
+      ]
+    },
+    {
+      "categories": [
+        "cross_paper_comparison",
+        "evidence_incomplete"
+      ],
+      "claim_count": 8,
+      "evidence_count": 5,
+      "input_sha256": "a37818bb07696eacf42546c41ed06a090a3bd5f4b4efda840f5eeaee21752844",
+      "key_point_count": 3,
+      "paper_count": 3,
+      "question": "Which evaluation dimensions are explicitly defined across RGB, Ragas, and ARES, and where does the evidence stop short of separating retrieval from generation?",
+      "question_id": "sp02-new-03",
+      "source_question_ids": [
+        "sa02-formal-03",
+        "sa02-formal-04"
+      ]
+    },
+    {
+      "categories": [
+        "cross_paper_comparison",
+        "evidence_incomplete"
+      ],
+      "claim_count": 7,
+      "evidence_count": 5,
+      "input_sha256": "be156e666899670d3f7d758de3f7743d299657e3a0a5009ef96730f0850e707e",
+      "key_point_count": 3,
+      "paper_count": 3,
+      "question": "What security attack surfaces and mitigation limitations are supported for poisoned or adversarial retrieved documents?",
+      "question_id": "sp02-new-04",
+      "source_question_ids": [
+        "sa02-formal-05",
+        "sa02-formal-06"
+      ]
+    },
+    {
+      "categories": [
+        "ordinary_fact",
+        "condition_conclusion_conflict"
+      ],
+      "claim_count": 7,
+      "evidence_count": 7,
+      "input_sha256": "a3246e82e4e66d31a99170987cedf656f584cb3c4280b15f178dfac0e7ac039c",
+      "key_point_count": 3,
+      "paper_count": 2,
+      "question": "How do classifier or confidence signals map a query to no-retrieval, single-step, recursive, or multi-step retrieval?",
+      "question_id": "sp02-new-05",
+      "source_question_ids": [
+        "sa02-pilot-02"
+      ]
+    },
+    {
+      "categories": [
+        "cross_paper_comparison",
+        "condition_conclusion_conflict"
+      ],
+      "claim_count": 6,
+      "evidence_count": 6,
+      "input_sha256": "508287885af07e9b83f823845e11249e904c04b69943807eb48c96cff1a9b5c0",
+      "key_point_count": 3,
+      "paper_count": 3,
+      "question": "Across CRAG, HippoRAG, and LightRAG, which claims about correction, latency, adaptability, and resource trade-offs are actually supported?",
+      "question_id": "sp02-new-06",
+      "source_question_ids": [
+        "sa02-formal-08"
+      ]
+    },
+    {
+      "categories": [
+        "cross_paper_comparison"
+      ],
+      "claim_count": 6,
+      "evidence_count": 6,
+      "input_sha256": "fff8235b31165d2318f11b56ad8ce6089965bf2b3397ca2fe33ce26322a9f65a",
+      "key_point_count": 3,
+      "paper_count": 3,
+      "question": "Which graph construction and hybrid retrieval mechanisms are described for global, multi-hop, and entity-focused questions?",
+      "question_id": "sp02-new-07",
+      "source_question_ids": [
+        "sa02-formal-09"
+      ]
+    },
+    {
+      "categories": [
+        "evidence_incomplete",
+        "condition_conclusion_conflict"
+      ],
+      "claim_count": 3,
+      "evidence_count": 3,
+      "input_sha256": "59cf5d0da5831adaf81bc3cd7fb3afe2e57069116f5ecb8b6cd5e2b9c2ce284b",
+      "key_point_count": 3,
+      "paper_count": 3,
+      "question": "What resource or scalability limitations are explicitly evidenced for graph-enhanced retrieval systems?",
+      "question_id": "sp02-new-08",
+      "source_question_ids": [
+        "sa02-formal-10"
+      ]
+    }
+  ],
+  "resource_rules": {
+    "cost_basis": "recalculate from the selected provider and actual input sizes before any external request",
+    "maximum_specialized_rounds": 1,
+    "new_question_count": 8,
+    "report_requests_per_scheme": 8,
+    "strong_verifier_call_cap_for_candidate": 32,
+    "unknown_usage_policy": "stop and preserve the checkpoint; no automatic resend"
+  },
+  "schema_version": "1.0",
+  "source_manifest": "evaluation/seeds/sa_02_verification_ablation_manifest.json",
+  "source_tree_sha256": "e02e54068ab8d510507d25f4d92f6cc06c40c6f116eafe97436b92975a16d3d4",
+  "status": "frozen"
+}

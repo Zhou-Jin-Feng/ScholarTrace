@@ -188,6 +188,7 @@ class AblationExecutionManifest(AblationModel):
     reasoning_effort: ReasoningEffort | None = None
     provider_hostname: str | None = None
     structured_output_mode: str | None = None
+    streaming: bool = False
     request_timeout_seconds: float = Field(default=180, ge=1, allow_inf_nan=False)
     max_response_bytes: int = Field(default=1_000_000, ge=1024)
     dataset_fingerprint_sha256: str
@@ -211,6 +212,7 @@ class AblationExecutionManifest(AblationModel):
                 "reasoning_effort": self.reasoning_effort,
                 "provider_hostname": self.provider_hostname,
                 "structured_output_mode": self.structured_output_mode,
+                "streaming": self.streaming,
                 "request_timeout_seconds": self.request_timeout_seconds,
                 "max_response_bytes": self.max_response_bytes,
                 "budget": self.budget.model_dump(mode="json"),

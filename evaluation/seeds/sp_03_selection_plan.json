@@ -1,0 +1,92 @@
+{
+  "baseline_commit": "c63784a26a5e5ef527da8cb65a054913853ef78e",
+  "experiment_scope": "stage-two-selective-verification-candidate",
+  "formal_workflow_changed": false,
+  "model_calls": 0,
+  "notes": [
+    "Selection is deterministic and uses Claim metadata only; no model judgment is added.",
+    "The candidate is isolated from the formal M4 path and is not an adoption decision.",
+    "Every skipped Claim remains auditable and must remain unverified until a later explicit policy changes it."
+  ],
+  "private_plan": "agent/verification-ablation/SP-03/selection_plan.json",
+  "provider_api_calls": 0,
+  "purpose": "scholartrace-sp03-selection-plan",
+  "question_count": 8,
+  "question_set_fingerprint_sha256": "a309a94ddbad8669166289c04d21821c2e07112a0c573871d8b64c300ce03ab0",
+  "questions": [
+    {
+      "frozen_input_sha256": "4b81b159952cb0a383c57bd1ef1f7a7f171afa1ca5c9bd4b133133ed6f6fd02a",
+      "question_id": "sp02-new-01",
+      "selected_claim_count": 3,
+      "selection_ratio": 1.0,
+      "skipped_claim_count": 0,
+      "total_claim_count": 3
+    },
+    {
+      "frozen_input_sha256": "a5d2f47c40bd76510169f1092285f49c2355d08120d0950c58b1306726edba3f",
+      "question_id": "sp02-new-02",
+      "selected_claim_count": 2,
+      "selection_ratio": 1.0,
+      "skipped_claim_count": 0,
+      "total_claim_count": 2
+    },
+    {
+      "frozen_input_sha256": "a37818bb07696eacf42546c41ed06a090a3bd5f4b4efda840f5eeaee21752844",
+      "question_id": "sp02-new-03",
+      "selected_claim_count": 0,
+      "selection_ratio": 0.0,
+      "skipped_claim_count": 8,
+      "total_claim_count": 8
+    },
+    {
+      "frozen_input_sha256": "be156e666899670d3f7d758de3f7743d299657e3a0a5009ef96730f0850e707e",
+      "question_id": "sp02-new-04",
+      "selected_claim_count": 0,
+      "selection_ratio": 0.0,
+      "skipped_claim_count": 7,
+      "total_claim_count": 7
+    },
+    {
+      "frozen_input_sha256": "a3246e82e4e66d31a99170987cedf656f584cb3c4280b15f178dfac0e7ac039c",
+      "question_id": "sp02-new-05",
+      "selected_claim_count": 0,
+      "selection_ratio": 0.0,
+      "skipped_claim_count": 7,
+      "total_claim_count": 7
+    },
+    {
+      "frozen_input_sha256": "508287885af07e9b83f823845e11249e904c04b69943807eb48c96cff1a9b5c0",
+      "question_id": "sp02-new-06",
+      "selected_claim_count": 0,
+      "selection_ratio": 0.0,
+      "skipped_claim_count": 6,
+      "total_claim_count": 6
+    },
+    {
+      "frozen_input_sha256": "fff8235b31165d2318f11b56ad8ce6089965bf2b3397ca2fe33ce26322a9f65a",
+      "question_id": "sp02-new-07",
+      "selected_claim_count": 0,
+      "selection_ratio": 0.0,
+      "skipped_claim_count": 6,
+      "total_claim_count": 6
+    },
+    {
+      "frozen_input_sha256": "59cf5d0da5831adaf81bc3cd7fb3afe2e57069116f5ecb8b6cd5e2b9c2ce284b",
+      "question_id": "sp02-new-08",
+      "selected_claim_count": 0,
+      "selection_ratio": 0.0,
+      "skipped_claim_count": 3,
+      "total_claim_count": 3
+    }
+  ],
+  "rule_id": "sp03-selective-verification-v1",
+  "rule_sha256": "3ec54a63f32148b45e39cf0420ae38dd3bbb81ff66861ea07c1f6a89e4c448e8",
+  "schema_version": "1.0",
+  "selected_claim_count": 5,
+  "selected_claim_ratio": 0.119048,
+  "skipped_claim_count": 37,
+  "source_tree_sha256": "4840121d83cb2a1717f9801da6137d119b6c793c0142391590dc71ec9976ccf2",
+  "status": "candidate_only",
+  "total_claim_count": 42,
+  "unselected_state": "unverified"
+}

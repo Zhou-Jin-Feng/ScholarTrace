@@ -134,7 +134,8 @@ def test_retry_keeps_history_in_budget_and_usage(cost_cap, expected_dispatches) 
     assert any(a.attempt_id == failed.attempt_id for a in archive.attempts)
 
 
-def test_real_report_adapter_has_shared_pre_send_cost_reservation() -> None:
+@pytest.mark.parametrize("compact_context", [False, True])
+def test_real_report_adapter_has_shared_pre_send_cost_reservation(compact_context: bool) -> None:
     inputs = make_synthetic_inputs()
     # Reuse completed verifier results so only reports can make HTTP requests.
     initial = asyncio.run(
@@ -234,7 +235,12 @@ def test_real_report_adapter_has_shared_pre_send_cost_reservation() -> None:
                     )
                 }
             )
-            return await make_runner(reporter).run(
+            from scholartrace.verification_ablation.provider_context import (
+                CompactReportContextGenerator,
+            )
+
+            wrapped = CompactReportContextGenerator(reporter) if compact_context else reporter
+            return await make_runner(wrapped).run(
                 manifest=manifest,
                 inputs=inputs,
                 run_id="run:real-reservation",

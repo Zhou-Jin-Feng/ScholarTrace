@@ -1,0 +1,107 @@
+{
+  "claim_text_stored_publicly": false,
+  "comparison_role": "single-pass-synthesis-baseline",
+  "evidence_quotes_stored_publicly": false,
+  "manifest": {
+    "automatic_retry": false,
+    "baseline_commit": "c63784a26a5e5ef527da8cb65a054913853ef78e",
+    "dataset_fingerprint_sha256": "c2e017a11df5677d1363a27a10f3361f00d5478d8b7b6a8a52c878185b48dddf",
+    "execution_mode": "fixture",
+    "experiment_id": "scholartrace-sp01-simple-baseline-v1",
+    "max_context_characters": 40000,
+    "model_identifier": "fixture",
+    "model_profile": "fixture",
+    "provider_hostname": null,
+    "provider_protocol": "fixture",
+    "purpose": "scholartrace-sp01-simple-baseline-manifest",
+    "question_input_sha256": {
+      "sa02-pilot-01": "23a26c3d931a4390546831538978cd1b2da511ae26c5dc5c8455554601a17ce9",
+      "sa02-pilot-02": "c9e8b21d47f865e11d219e1e4a1b7cbcab071a1906ddb5e2d5c3e900df5ed14c"
+    },
+    "reasoning_effort": null,
+    "report_length_limit_chars": 5000,
+    "report_prompt_sha256": "287542a4999fad374dada7791bc7c313f4f46b73944078dab42121a48f198a41",
+    "report_schema_sha256": "0dd96ec5ee605da146a4d58c2ef3d5811ee3757251f721a0f3c089f1e74755a5",
+    "schema_version": "1.0",
+    "source_tree_sha256": "76ad94c074658224bedc5ba5c36f260ff2e2ca5ab190eca6cab12bae0cf29871",
+    "structured_output_mode": null
+  },
+  "manifest_sha256": "617ed3db44774ddf3de18541b3dea73253fbec410135011364176837423a75c2",
+  "notes": [
+    "The baseline reads the same frozen Evidence and Claim packet and performs one report request per question.",
+    "All baseline Claims retain the experiment-only unverified state.",
+    "This fixture run validates entry, input identity, accounting, and redaction; it does not establish quality."
+  ],
+  "purpose": "scholartrace-sp01-simple-baseline-sanitized-run",
+  "raw_reports_stored_publicly": false,
+  "runs": [
+    {
+      "baseline_id": "scholartrace-sp01-simple-baseline-v1",
+      "configuration_sha256": "916d69b4822a199ddf047c1a379c845fe3023be5d8bb5b82495f2b76a53bbd5a",
+      "disposition_counts": {
+        "unverified": 4
+      },
+      "duration_seconds": 0.0,
+      "error_code": null,
+      "error_diagnostics": null,
+      "error_stage": null,
+      "evidence_count": 3,
+      "evidence_identity_sha256": "88000987c014a1033e4c3afce359bbfad3f225f981989b38a24fd2a88455f53e",
+      "frozen_input_sha256": "23a26c3d931a4390546831538978cd1b2da511ae26c5dc5c8455554601a17ce9",
+      "included_claim_count": 4,
+      "input_tokens": 0,
+      "model_calls": 0,
+      "output_tokens": 0,
+      "prepared_context_sha256": "5b9209f9598266099d31034b77a05114aa969916a94622a95d01ce43b3135268",
+      "provider_api_calls": 0,
+      "question_id": "sa02-pilot-01",
+      "reference_cost_cny": 0.0,
+      "report_calls": 1,
+      "report_sha256": "cb7fa2edda5022110926ecad2a92129ea51a079b434980ab0673323e6907cf6a",
+      "run_id": "sp01-simple-baseline-fixture-20260922",
+      "schema_version": "1.0",
+      "split": "pilot",
+      "status": "succeeded",
+      "total_claim_count": 4
+    },
+    {
+      "baseline_id": "scholartrace-sp01-simple-baseline-v1",
+      "configuration_sha256": "916d69b4822a199ddf047c1a379c845fe3023be5d8bb5b82495f2b76a53bbd5a",
+      "disposition_counts": {
+        "unverified": 8
+      },
+      "duration_seconds": 0.0,
+      "error_code": null,
+      "error_diagnostics": null,
+      "error_stage": null,
+      "evidence_count": 8,
+      "evidence_identity_sha256": "5697291d475170d5a5255c61ce28af9a068a5ae2207cd23677b1c20cc8d6e83d",
+      "frozen_input_sha256": "c9e8b21d47f865e11d219e1e4a1b7cbcab071a1906ddb5e2d5c3e900df5ed14c",
+      "included_claim_count": 8,
+      "input_tokens": 0,
+      "model_calls": 0,
+      "output_tokens": 0,
+      "prepared_context_sha256": "49504f29e1b2fe579428c934a339c0a4b5ef7a3f96478972c677ef9df4a6531d",
+      "provider_api_calls": 0,
+      "question_id": "sa02-pilot-02",
+      "reference_cost_cny": 0.0,
+      "report_calls": 1,
+      "report_sha256": "55944846b361b577684ded4d67fa415a2ff018bec9577a8216b83bf6eca1c4da",
+      "run_id": "sp01-simple-baseline-fixture-20260922",
+      "schema_version": "1.0",
+      "split": "pilot",
+      "status": "succeeded",
+      "total_claim_count": 8
+    }
+  ],
+  "schema_version": "1.0",
+  "usage": {
+    "duration_seconds": 0.0,
+    "input_tokens": 0,
+    "model_calls": 0,
+    "output_tokens": 0,
+    "provider_api_calls": 0,
+    "reference_cost_cny": 0.0,
+    "report_calls": 2
+  }
+}

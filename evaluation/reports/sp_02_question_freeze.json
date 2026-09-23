@@ -1,0 +1,15 @@
+{
+  "claim_count": 42,
+  "evidence_count_sum": 37,
+  "hypothesis_frozen": true,
+  "model_calls": 0,
+  "passed": true,
+  "provider_api_calls": 0,
+  "purpose": "scholartrace-sp02-question-freeze-report",
+  "quality_rules_frozen": true,
+  "question_count": 8,
+  "question_set_fingerprint_sha256": "a309a94ddbad8669166289c04d21821c2e07112a0c573871d8b64c300ce03ab0",
+  "raw_inputs_public": false,
+  "resource_rules_frozen": true,
+  "schema_version": "1.0"
+}

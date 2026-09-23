@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import hashlib
 import json
 import time
@@ -24,6 +25,7 @@ from scholartrace.model_provider.settings import (
     resolved_structured_output_mode,
     uses_deepseek_chat_parameters,
 )
+from scholartrace.model_provider.streaming import collect_responses_sse
 from scholartrace.verification.models import SemanticVerificationDraft
 from scholartrace.verification.verifier import VerifierKind
 
@@ -75,6 +77,7 @@ class OpenAICompatibleSemanticVerifier:
         timeout_seconds: float = 180,
         max_response_bytes: int = 1_000_000,
         reasoning_effort: ReasoningEffort | None = None,
+        streaming: bool = False,
         on_reserve: Callable[[str, int, float], None] | None = None,
     ) -> None:
         if not settings.base_url.strip() or not settings.api_key.strip():
@@ -92,6 +95,7 @@ class OpenAICompatibleSemanticVerifier:
         self.timeout_seconds = timeout_seconds
         self.max_response_bytes = max_response_bytes
         self.reasoning_effort = reasoning_effort
+        self.streaming = streaming
         self.on_reserve = on_reserve
         self.records: list[VerifierCallRecord] = []
 
@@ -127,7 +131,16 @@ class OpenAICompatibleSemanticVerifier:
                 str(exc), diagnostics={"category": "request_not_sent"}
             ) from exc
         started = time.perf_counter()
-        body = await self._post(payload, idempotency_key=self._idempotency_key(claim, evidence))
+        if self.streaming and self.protocol != "responses":
+            raise ProviderInferenceError(
+                "streaming is supported only for the Responses protocol"
+            )
+        idempotency_key = self._idempotency_key(claim, evidence)
+        body = await (
+            self._post_stream(payload, idempotency_key=idempotency_key)
+            if self.streaming
+            else self._post(payload, idempotency_key=idempotency_key)
+        )
         duration_seconds = time.perf_counter() - started
         try:
             envelope = json.loads(body)
@@ -179,6 +192,8 @@ class OpenAICompatibleSemanticVerifier:
             }
             if self.reasoning_effort is not None:
                 response_payload["reasoning"] = {"effort": self.reasoning_effort}
+            if self.streaming:
+                response_payload["stream"] = True
             return response_payload
         structured_mode = resolved_structured_output_mode(self.settings)
         request_messages = messages
@@ -279,6 +294,49 @@ class OpenAICompatibleSemanticVerifier:
                 f"provider verifier request returned HTTP {response.status_code}"
             )
         return body
+
+    async def _post_stream(
+        self,
+        payload: dict[str, object],
+        *,
+        idempotency_key: str,
+    ) -> bytes:
+        endpoint = "responses"
+        base_url = self.settings.base_url.rstrip("/")
+        url = f"{base_url}/{endpoint}" if base_url.endswith("/v1") else f"{base_url}/v1/{endpoint}"
+        try:
+            async with self.client.stream(
+                "POST",
+                url,
+                headers={
+                    "Accept": "text/event-stream",
+                    "Authorization": f"Bearer {self.settings.api_key}",
+                    "Content-Type": "application/json",
+                    "Idempotency-Key": idempotency_key,
+                },
+                json=payload,
+                timeout=self.timeout_seconds,
+            ) as response:
+                if response.status_code in {404, 405, 501}:
+                    raise ProviderEndpointUnsupportedError(
+                        f"provider does not support streaming {self.protocol} endpoint"
+                    )
+                if not response.is_success:
+                    body = await response.aread()
+                    del body
+                    raise ProviderInferenceError(
+                        f"provider verifier request returned HTTP {response.status_code}"
+                    )
+                return await asyncio.wait_for(
+                    collect_responses_sse(
+                        response,
+                        model=self.model,
+                        max_response_bytes=self.max_response_bytes,
+                    ),
+                    timeout=self.timeout_seconds,
+                )
+        except httpx.HTTPError as exc:
+            raise ProviderInferenceError("provider verifier streaming request failed") from exc
 
     def _extract_text(self, envelope: dict[str, Any]) -> str:
         if self.protocol == "responses":

@@ -57,7 +57,7 @@ def _request() -> AblationReportRequest:
     )
 
 
-def _generator(handler):
+def _generator(handler, *, streaming: bool = False, timeout_seconds: float = 5):
     counter = ApiCallCounter(
         ApiCallBudget(
             max_calls=1,
@@ -82,7 +82,8 @@ def _generator(handler):
         model="test-model",
         protocol="responses",
         call_counter=counter,
-        timeout_seconds=5,
+        timeout_seconds=timeout_seconds,
+        streaming=streaming,
     )
     return client, generator, counter
 
@@ -136,6 +137,91 @@ def test_sa04_adapter_success_is_strict_and_metered() -> None:
     assert generated.provider_api_calls == 1
     assert counter.attempted_calls == 1
     assert counter.actual_reference_cost_cny > 0
+
+
+def test_sa04_adapter_collects_responses_sse_without_changing_contract() -> None:
+    request = _request()
+    expected = _response(request).json()
+    text = expected["output"][0]["content"][0]["text"]
+    midpoint = len(text) // 2
+    seen_payload: dict[str, object] = {}
+    first_delta = json.dumps(
+        {"type": "response.output_text.delta", "delta": text[:midpoint]}
+    )
+    second_delta = json.dumps(
+        {"type": "response.output_text.delta", "delta": text[midpoint:]}
+    )
+
+    async def handler(incoming: httpx.Request) -> httpx.Response:
+        seen_payload.update(json.loads(incoming.content))
+        events = "".join(
+            (
+                "event: response.output_text.delta\n",
+                f"data: {first_delta}\n\n",
+                "event: response.output_text.delta\n",
+                f"data: {second_delta}\n\n",
+                "event: response.completed\n",
+                "data: "
+                + json.dumps(
+                    {
+                        "type": "response.completed",
+                        "response": {
+                            "status": "completed",
+                            "model": "test-model",
+                            "usage": {"input_tokens": 100, "output_tokens": 50},
+                        },
+                    }
+                )
+                + "\n\n",
+            )
+        )
+        return httpx.Response(
+            200,
+            headers={"content-type": "text/event-stream"},
+            content=events.encode("utf-8"),
+        )
+
+    client, generator, counter = _generator(handler, streaming=True)
+    try:
+        generated = asyncio.run(generator.generate(request))
+    finally:
+        asyncio.run(client.aclose())
+    assert generated.status == "succeeded"
+    assert generated.input_tokens == 100
+    assert generated.output_tokens == 50
+    assert seen_payload["stream"] is True
+    assert counter.attempted_calls == 1
+
+
+def test_sa04_streaming_has_an_overall_wall_clock_deadline() -> None:
+    class HeartbeatStream(httpx.AsyncByteStream):
+        async def __aiter__(self):
+            while True:
+                await asyncio.sleep(0.005)
+                yield b": heartbeat\n\n"
+
+        async def aclose(self) -> None:
+            return None
+
+    async def handler(_request: httpx.Request) -> httpx.Response:
+        return httpx.Response(
+            200,
+            headers={"content-type": "text/event-stream"},
+            stream=HeartbeatStream(),
+        )
+
+    request = _request()
+    client, generator, counter = _generator(
+        handler,
+        streaming=True,
+        timeout_seconds=0.03,
+    )
+    try:
+        with pytest.raises(TimeoutError):
+            asyncio.run(generator.generate(request))
+    finally:
+        asyncio.run(client.aclose())
+    assert counter.attempted_calls == 1
 
 
 def test_sa04_adapter_rejects_status_drift_without_retry() -> None:

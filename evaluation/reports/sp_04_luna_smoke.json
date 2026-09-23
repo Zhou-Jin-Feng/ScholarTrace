@@ -1,0 +1,16 @@
+{
+  "cause_type": null,
+  "diagnostics": {
+    "category": "http",
+    "status_code": 524
+  },
+  "error_message": "provider report request returned HTTP 524",
+  "error_type": "ProviderInferenceError",
+  "notes": [
+    "No comparison requests were sent after this smoke failed."
+  ],
+  "passed": false,
+  "purpose": "scholartrace-sp04-luna-direct-report-smoke",
+  "raw_report_stored": false,
+  "schema_version": "1.0"
+}

@@ -11,12 +11,12 @@
   "reasoning_effort": "max",
   "results": [
     {
-      "duration_seconds": 2.44591,
+      "duration_seconds": 4.189258,
       "name": "plain",
-      "response_bytes": 23843,
+      "response_bytes": 23842,
       "response_json": true,
       "response_model": "gpt-5.6-luna",
-      "response_sha256": "94cc32f0255489b2115600f3da1f75c0493f35d02e74c80ff4a23097338f9fd2",
+      "response_sha256": "4364fe12b2a43c0907948528c211f1d61f05c20a90ef991ce44cc08f57840efe",
       "response_status": "completed",
       "status_code": 200,
       "usage": {
@@ -26,12 +26,12 @@
       }
     },
     {
-      "duration_seconds": 2.265731,
+      "duration_seconds": 2.400126,
       "name": "strict_json_schema",
       "response_bytes": 24133,
       "response_json": true,
       "response_model": "gpt-5.6-luna",
-      "response_sha256": "21577b954024afc9acef45beebcbac63647c713460a6c0207e5cf0391779e8c3",
+      "response_sha256": "376ab2d6459f1255cb555ede930fa85557101a117a596a9f2e19900c2c43a9d1",
       "response_status": "completed",
       "status_code": 200,
       "usage": {

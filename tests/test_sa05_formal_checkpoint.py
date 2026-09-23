@@ -201,6 +201,45 @@ def test_resume_reuses_report_saved_before_condition_row() -> None:
     assert len(recovered.rows) == 2
 
 
+def test_resume_does_not_treat_failed_row_as_completed() -> None:
+    inputs = make_synthetic_inputs()
+    manifest = _manifest(inputs)
+    generator = DeterministicFixtureAblationReportGenerator()
+    complete = asyncio.run(
+        VerificationAblationRunner(
+            report_generator=generator,
+            verifier_backend=DeterministicFixtureAblationVerifier(),
+            allow_fixture=True,
+        ).run(
+            manifest=manifest,
+            inputs=inputs,
+            run_id="run:test:failed-row-recovery",
+        )
+    )
+    failed = next(row for row in complete.rows if row.result.variant == "V-on").model_copy(
+        update={
+            "result": next(
+                row for row in complete.rows if row.result.variant == "V-on"
+            ).result.model_copy(update={"status": "failed", "error_code": "test_failure"})
+        }
+    )
+    report_generator = DeterministicFixtureAblationReportGenerator()
+    resumed = asyncio.run(
+        VerificationAblationRunner(
+            report_generator=report_generator,
+            verifier_backend=DeterministicFixtureAblationVerifier(),
+            allow_fixture=True,
+        ).run(
+            manifest=manifest,
+            inputs=inputs,
+            run_id="run:test:failed-row-recovery",
+            existing_rows=[failed],
+        )
+    )
+    assert len(resumed.rows) == 2
+    assert all(row.result.status == "succeeded" for row in resumed.rows)
+
+
 def test_budget_policy_migration_recomputes_and_validates_request_identity(
     tmp_path: Path,
 ) -> None:

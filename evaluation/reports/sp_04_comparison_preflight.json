@@ -1,0 +1,113 @@
+{
+  "authorization": {
+    "calls_requested": 71,
+    "no_calls_sent_by_this_preflight": true,
+    "reason": "This is a new external-call range for the stage-two three-scheme comparison.",
+    "reports": 24,
+    "required": true,
+    "strong_verifier_calls": 47
+  },
+  "baseline_commit": "c63784a26a5e5ef527da8cb65a054913853ef78e",
+  "budget": {
+    "automatic_resend": false,
+    "cost_status": "not_estimated_until_provider_rate_and_actual_token_limits_are_confirmed",
+    "reference_cost_cny": null,
+    "unknown_usage_policy": "stop_and_preserve_checkpoint"
+  },
+  "input_character_count_lower_bound": 7579,
+  "next_action": "Completed; use the final summary and source review for execution, quality-gate, adoption, and recovery-ledger status.",
+  "provider": {
+    "configuration_status": "smoke_passed",
+    "hostname": "share-api.top",
+    "model": "gpt-5.6-luna",
+    "price_status": "reference_only_provider_billing_unavailable",
+    "protocol": "responses",
+    "provider_id": "sub2api-1789904127847",
+    "reasoning_effort": "max",
+    "source": "cc-switch Codex provider",
+    "historical_planned_reasoning_effort": "max",
+    "final_reasoning_effort": "high",
+    "max_boundary": "A simple max report request returned HTTP 200, but a difficult request returned HTTP 524 and the streaming probe produced no terminal event. The formal three-scheme comparison therefore used reasoning=high and must not be described as a max run."
+  },
+  "provider_probe": {
+    "attempted": true,
+    "configuration_observed": {
+      "key_present": true,
+      "model": "gpt-5.6-luna",
+      "timeout_seconds": 20.0
+    },
+    "date": "2026-09-22",
+    "inference_calls_sent": 0,
+    "operation": "GET /v1/models",
+    "response_content_recorded": false,
+    "result": "failed",
+    "safe_error": "provider model catalog request failed"
+  },
+  "provider_smoke": {
+    "attempted": true,
+    "comparison_requests_sent": 0,
+    "input_tokens": 6309,
+    "model": "gpt-5.6-luna",
+    "output_tokens": 883,
+    "protocol": "responses",
+    "provider_billed_cost_cny": null,
+    "provider_hostname": "share-api.top",
+    "provider_id": "sub2api-1789904127847",
+    "provider_source": "cc-switch",
+    "reasoning_effort": "max",
+    "reference_cost_cny": 0.0174105,
+    "request_count": 1,
+    "result": "passed"
+  },
+  "purpose": "scholartrace-sp04-three-scheme-comparison-preflight",
+  "quality_scope": {
+    "audit_all_skipped_claims": true,
+    "formal_workflow_changed": false,
+    "primary_metric": "weighted_key_point_coverage"
+  },
+  "question_count": 8,
+  "schema_version": "1.0",
+  "schemes": [
+    {
+      "report_calls": 8,
+      "role": "single-pass-synthesis-baseline",
+      "run_id": "sp04-simple-baseline-production-v1",
+      "scheme_id": "simple-baseline",
+      "strong_verifier_calls": 0,
+      "total_provider_requests": 8
+    },
+    {
+      "report_calls": 8,
+      "role": "original-full-verification-scheme",
+      "run_id": "sp04-full-verification-production-v1",
+      "scheme_id": "full-verification",
+      "strong_verifier_calls": 42,
+      "total_provider_requests": 50
+    },
+    {
+      "report_calls": 8,
+      "role": "stage-two-candidate",
+      "run_id": "sp04-selective-verification-production-v1",
+      "scheme_id": "selective-verification",
+      "strong_verifier_calls": 5,
+      "total_provider_requests": 13
+    }
+  ],
+  "selected_claim_count": 5,
+  "skipped_claim_count": 37,
+  "source_tree_sha256": "4840121d83cb2a1717f9801da6137d119b6c793c0142391590dc71ec9976ccf2",
+  "status": "superseded_by_completed_run",
+  "total_claim_count": 42,
+  "total_provider_requests": 71,
+  "final_run": {
+    "status": "execution_completed_with_quality_gate_failure",
+    "model": "gpt-5.6-luna",
+    "provider_protocol": "responses",
+    "reasoning_effort": "high",
+    "streaming": false,
+    "compact_context": true,
+    "runtime_configuration_sha256": "b36dda9eb554805cdb091d19ca45dd3993c258aa8afacfda9a42a33dff80691b",
+    "summary_output": "evaluation/reports/sp_04_comparison_summary.json",
+    "review_output": "evaluation/reports/sp_04_three_scheme_review.json"
+  }
+}

@@ -1,0 +1,639 @@
+{
+  "actual_execution_reconciliation": {
+    "basis": "pre-recovery snapshot plus post-recovery archives",
+    "current_attempt_unknown_count": 0,
+    "current_attempt_unknown_count_by_scheme": {
+      "full_verification": 0,
+      "selective_verification": 0
+    },
+    "excluded_scope": "Provider diagnostics and max-configuration probes outside the fixed SP-04 run are recorded separately and are not included in this run total.",
+    "historical_known_reference_cost_cny": 0.29304,
+    "historical_replay_duplicate_requests": 35,
+    "historical_successful_provider_requests": 35,
+    "historical_unknown_requests": 1,
+    "known_plus_unknown_reserve_cny": 1.1577525,
+    "known_reference_cost_cny": 1.0947525,
+    "post_recovery_known_reference_cost_cny": 0.8017125,
+    "post_recovery_successful_provider_requests": 71,
+    "provider_actual_billing": "unknown",
+    "reconciliation_note": "The recovery wrapper omitted existing attempts before this run, so the recovery re-issued all full-verification requests, reused historical attempt IDs in the post-recovery archive, and overwrote the earlier success records. The immutable snapshot preserves 35 historical successes, one unknown request, and their known or reserved reference amounts. Those amounts and the 35 replayed requests are counted separately here; the wrapper is now covered by regression tests.",
+    "recovery_identity_collision_count": 1,
+    "successful_provider_requests": 106,
+    "total_attempted_provider_requests": 107,
+    "unknown_reserved_reference_cost_cny": 0.063
+  },
+  "artifact_sha256": {
+    "frozen_inputs": "b57e3d04bba5a894bce39e24aca2125a4c8087c376c9e02bbb141b7d1c0aa063",
+    "full_verification": "b6635d109279c453af4c1898deae7ce8d90b3e82e22cd64fb202dfc3c16cce5b",
+    "human_reference": "5dbcb4480941327f2e9008d8e6269bcc21e19af5ecbb81d7cff84379f3dec7b1",
+    "pre_recovery_snapshot": "aeda71dceff3325228ab4d8ef83a889c306d1a7225be2a760abcc3571252fcbd",
+    "selection_plan": "012712939cd75037931c13bbb232d0de5eb135a51a0c4d4864d2af5b09f52599",
+    "selective_verification": "0dfb140dc68d6297dba9a65da36d9fea0ce3d94047c2ca57035855e66e7c404e",
+    "simple_baseline": "a056900171529addc071ad2ff8caef710f6229031382259c279f2e6597fa2421"
+  },
+  "audit_coverage": {
+    "claims": 42,
+    "generated_reports": 24,
+    "key_points_per_scheme": 24,
+    "questions": 8,
+    "skipped_claims_reviewed": 37
+  },
+  "candidate_guardrails": {
+    "candidate_passed": false,
+    "coverage_drop": 0.0,
+    "coverage_drop_limit": 0.05,
+    "coverage_guardrail_passed": true,
+    "skipped_claim_state_integrity": true,
+    "unsupported_delta_limit": 1,
+    "unsupported_finding_delta": 2,
+    "unsupported_guardrail_passed": false
+  },
+  "claim_audit": {
+    "all_claim_labels": {
+      "partially_supported": 7,
+      "supported": 33,
+      "unsupported": 2
+    },
+    "selected_claim_labels": {
+      "indeterminate": 0,
+      "partially_supported": 0,
+      "supported": 5,
+      "unsupported": 0
+    },
+    "skipped_claim_labels": {
+      "indeterminate": 0,
+      "partially_supported": 7,
+      "supported": 28,
+      "unsupported": 2
+    },
+    "unsupported_selected": 0,
+    "unsupported_skipped": 2
+  },
+  "configuration": {
+    "automatic_retry": false,
+    "compact_context": true,
+    "context_transform_id": "sp04-provider-context-compact-v1",
+    "fingerprint_sha256": "b36dda9eb554805cdb091d19ca45dd3993c258aa8afacfda9a42a33dff80691b",
+    "identity_source": "frozen_manifest_plus_historical_entrypoint",
+    "max_response_bytes": 1000000,
+    "model_identifier": "gpt-5.6-luna",
+    "model_profile": "api-strong",
+    "provider_hostname": "share-api.top",
+    "provider_id": "sub2api-1789904127847",
+    "provider_protocol": "responses",
+    "reasoning_effort": "high",
+    "report_max_output_tokens": 4000,
+    "request_timeout_seconds": 180.0,
+    "schema_version": "1.0",
+    "streaming": false,
+    "structured_output_mode": "json_schema",
+    "verifier_max_output_tokens": 2000
+  },
+  "decision": {
+    "complex_path_boundary": "Useful when weak Evidence bindings can introduce unsupported findings, but it adds substantial calls and can remove a correct packet-level absence statement.",
+    "formal_path": "retain_full_verification",
+    "reason": "The selective candidate preserved weighted key-point coverage and state integrity but left two unsupported bibliography-derived findings in the reports, exceeding the frozen +1 guardrail.",
+    "selective_candidate": "experimental_only",
+    "simple_baseline_boundary": "Suitable for direct descriptive synthesis when every Claim remains visibly unverified and the user accepts source review; it is not a replacement for strong verification on evidence-incomplete or adversarial packets."
+  },
+  "limitations": [
+    "This is one fixed run over eight questions; no repeated-generation variance was measured.",
+    "The review is an author source review and was not blinded or independently replicated.",
+    "Judgments are limited to supplied excerpts rather than full-paper review.",
+    "The formal run used reasoning=high; max probe failures and unknown stream termination are separate compatibility evidence.",
+    "Costs are local reference estimates; Provider actual billing is unavailable.",
+    "The baseline has aggregate successful usage but no request-level attempt journal.",
+    "The historical unknown record was overwritten in place during recovery by a successful record with the same attempt ID. The immutable pre-recovery snapshot and final archive preserve the historical unknown and the recovery success, but the archive has no distinct successor attempt ID or parent link; the missing relationship cannot be reconstructed retrospectively."
+  ],
+  "logical_resources": {
+    "full_verification": {
+      "duration_seconds": 361.836806,
+      "input_tokens": 252053,
+      "output_tokens": 11732,
+      "provider_requests": 50,
+      "reference_cost_cny": 0.4836675,
+      "total_tokens": 263785
+    },
+    "selective_verification": {
+      "duration_seconds": 191.249786,
+      "input_tokens": 75855,
+      "output_tokens": 7179,
+      "provider_requests": 13,
+      "reference_cost_cny": 0.1783935,
+      "total_tokens": 83034
+    },
+    "simple_baseline": {
+      "duration_seconds": 300.773989,
+      "input_tokens": 51941,
+      "output_tokens": 6860,
+      "provider_requests": 8,
+      "reference_cost_cny": 0.1396515,
+      "total_tokens": 58801
+    }
+  },
+  "logical_resources_by_group": {
+    "difficult": {
+      "full_verification": {
+        "duration_seconds": 216.110275,
+        "input_tokens": 155969,
+        "output_tokens": 7083,
+        "provider_requests": 31,
+        "reference_cost_cny": 0.2977005,
+        "total_tokens": 163052
+      },
+      "selective_verification": {
+        "duration_seconds": 94.529052,
+        "input_tokens": 27316,
+        "output_tokens": 4251,
+        "provider_requests": 4,
+        "reference_cost_cny": 0.079233,
+        "total_tokens": 31567
+      },
+      "simple_baseline": {
+        "duration_seconds": 197.30236,
+        "input_tokens": 27316,
+        "output_tokens": 4293,
+        "provider_requests": 4,
+        "reference_cost_cny": 0.079611,
+        "total_tokens": 31609
+      }
+    },
+    "ordinary": {
+      "full_verification": {
+        "duration_seconds": 145.726531,
+        "input_tokens": 96084,
+        "output_tokens": 4649,
+        "provider_requests": 19,
+        "reference_cost_cny": 0.185967,
+        "total_tokens": 100733
+      },
+      "selective_verification": {
+        "duration_seconds": 96.720734,
+        "input_tokens": 48539,
+        "output_tokens": 2928,
+        "provider_requests": 9,
+        "reference_cost_cny": 0.0991605,
+        "total_tokens": 51467
+      },
+      "simple_baseline": {
+        "duration_seconds": 103.471629,
+        "input_tokens": 24625,
+        "output_tokens": 2567,
+        "provider_requests": 4,
+        "reference_cost_cny": 0.0600405,
+        "total_tokens": 27192
+      }
+    }
+  },
+  "purpose": "scholartrace-sp04-three-scheme-source-review",
+  "quality": {
+    "full_verification": {
+      "finding_count": 39,
+      "finding_labels": {
+        "indeterminate": 0,
+        "partially_supported": 6,
+        "supported": 33,
+        "unsupported": 0
+      },
+      "key_point_count": 24,
+      "key_point_coverage": {
+        "covered": 21,
+        "missing": 0,
+        "partially_covered": 3
+      },
+      "unsupported": {
+        "denominator": 39,
+        "numerator": 0
+      },
+      "weighted_key_point_coverage": 0.9375
+    },
+    "selective_verification": {
+      "finding_count": 42,
+      "finding_labels": {
+        "indeterminate": 0,
+        "partially_supported": 7,
+        "supported": 33,
+        "unsupported": 2
+      },
+      "key_point_count": 24,
+      "key_point_coverage": {
+        "covered": 21,
+        "missing": 0,
+        "partially_covered": 3
+      },
+      "unsupported": {
+        "denominator": 42,
+        "numerator": 2
+      },
+      "weighted_key_point_coverage": 0.9375
+    },
+    "simple_baseline": {
+      "finding_count": 42,
+      "finding_labels": {
+        "indeterminate": 0,
+        "partially_supported": 7,
+        "supported": 33,
+        "unsupported": 2
+      },
+      "key_point_count": 24,
+      "key_point_coverage": {
+        "covered": 20,
+        "missing": 0,
+        "partially_covered": 4
+      },
+      "unsupported": {
+        "denominator": 42,
+        "numerator": 2
+      },
+      "weighted_key_point_coverage": 0.916667
+    }
+  },
+  "quality_by_group": {
+    "difficult": {
+      "full_verification": {
+        "finding_count": 25,
+        "finding_labels": {
+          "indeterminate": 0,
+          "partially_supported": 2,
+          "supported": 23,
+          "unsupported": 0
+        },
+        "key_point_count": 12,
+        "key_point_coverage": {
+          "covered": 11,
+          "missing": 0,
+          "partially_covered": 1
+        },
+        "unsupported": {
+          "denominator": 25,
+          "numerator": 0
+        },
+        "weighted_key_point_coverage": 0.958333
+      },
+      "selective_verification": {
+        "finding_count": 27,
+        "finding_labels": {
+          "indeterminate": 0,
+          "partially_supported": 3,
+          "supported": 22,
+          "unsupported": 2
+        },
+        "key_point_count": 12,
+        "key_point_coverage": {
+          "covered": 11,
+          "missing": 0,
+          "partially_covered": 1
+        },
+        "unsupported": {
+          "denominator": 27,
+          "numerator": 2
+        },
+        "weighted_key_point_coverage": 0.958333
+      },
+      "simple_baseline": {
+        "finding_count": 27,
+        "finding_labels": {
+          "indeterminate": 0,
+          "partially_supported": 3,
+          "supported": 22,
+          "unsupported": 2
+        },
+        "key_point_count": 12,
+        "key_point_coverage": {
+          "covered": 11,
+          "missing": 0,
+          "partially_covered": 1
+        },
+        "unsupported": {
+          "denominator": 27,
+          "numerator": 2
+        },
+        "weighted_key_point_coverage": 0.958333
+      }
+    },
+    "ordinary": {
+      "full_verification": {
+        "finding_count": 14,
+        "finding_labels": {
+          "indeterminate": 0,
+          "partially_supported": 4,
+          "supported": 10,
+          "unsupported": 0
+        },
+        "key_point_count": 12,
+        "key_point_coverage": {
+          "covered": 10,
+          "missing": 0,
+          "partially_covered": 2
+        },
+        "unsupported": {
+          "denominator": 14,
+          "numerator": 0
+        },
+        "weighted_key_point_coverage": 0.916667
+      },
+      "selective_verification": {
+        "finding_count": 15,
+        "finding_labels": {
+          "indeterminate": 0,
+          "partially_supported": 4,
+          "supported": 11,
+          "unsupported": 0
+        },
+        "key_point_count": 12,
+        "key_point_coverage": {
+          "covered": 10,
+          "missing": 0,
+          "partially_covered": 2
+        },
+        "unsupported": {
+          "denominator": 15,
+          "numerator": 0
+        },
+        "weighted_key_point_coverage": 0.916667
+      },
+      "simple_baseline": {
+        "finding_count": 15,
+        "finding_labels": {
+          "indeterminate": 0,
+          "partially_supported": 4,
+          "supported": 11,
+          "unsupported": 0
+        },
+        "key_point_count": 12,
+        "key_point_coverage": {
+          "covered": 9,
+          "missing": 0,
+          "partially_covered": 3
+        },
+        "unsupported": {
+          "denominator": 15,
+          "numerator": 0
+        },
+        "weighted_key_point_coverage": 0.875
+      }
+    }
+  },
+  "question_groups": {
+    "difficult": [
+      "sp02-new-03",
+      "sp02-new-04",
+      "sp02-new-06",
+      "sp02-new-07"
+    ],
+    "ordinary": [
+      "sp02-new-01",
+      "sp02-new-02",
+      "sp02-new-05",
+      "sp02-new-08"
+    ],
+    "rule": "Questions tagged cross_paper_comparison are difficult; the others are ordinary."
+  },
+  "recovery_ledger": {
+    "baseline_request_journal": {
+      "available": false,
+      "reason": "The simple baseline archive stores one report request per question and aggregate usage, but it does not store request-level intent/dispatch/result records. Recovery and cost summaries must not claim baseline request-level traceability.",
+      "scope": "aggregate_archive_only"
+    },
+    "current_run_new_collisions": 0,
+    "historical_intent_count": 10,
+    "historical_known_reference_cost_cny": 0.29304,
+    "historical_sent_count": 36,
+    "historical_success_aggregate_count": 35,
+    "historical_success_records_available": false,
+    "historical_unknown_count": 1,
+    "historical_unknown_count_by_scheme": {
+      "full_verification": 1,
+      "selective_verification": 0
+    },
+    "historical_unknown_records": [
+      {
+        "attempt_id": "sp04-full:20260922T161810Z:sp02-new-07:V-on:verifier:claim:sp02-new-07:03:attempt-1",
+        "historical_attempted_calls": 1,
+        "historical_reserved_reference_cost_cny": 0.063,
+        "historical_scheme": "full_verification",
+        "historical_snapshot_source": "agent/provider-review-20260923/checkpoint-summary.json",
+        "historical_state": "dispatched",
+        "historical_success_records_available": false,
+        "identity_reused": true,
+        "limitation": "The historical unknown record was overwritten in place during recovery by a successful record with the same attempt ID. The immutable pre-recovery snapshot and final archive preserve the historical unknown and the recovery success, but the archive has no distinct successor attempt ID or parent link; the missing relationship cannot be reconstructed retrospectively.",
+        "operation": "verifier",
+        "parent_link_preserved": false,
+        "post_recovery_actual_reference_cost_cny": 0.00823649999999998,
+        "post_recovery_attempted_calls": 1,
+        "post_recovery_state": "succeeded",
+        "question_id": "sp02-new-07",
+        "successor_attempt_id": null
+      }
+    ],
+    "identity_collision_count": 1
+  },
+  "removal_audit": {
+    "full_verification": {
+      "false_interceptions": {
+        "denominator": 40,
+        "numerator": 1
+      },
+      "removed_claims": [
+        {
+          "claim_id": "claim:sp02-new-04:06",
+          "label": "unsupported",
+          "question_id": "sp02-new-04"
+        },
+        {
+          "claim_id": "claim:sp02-new-04:07",
+          "label": "unsupported",
+          "question_id": "sp02-new-04"
+        },
+        {
+          "claim_id": "claim:sp02-new-08:01",
+          "label": "supported",
+          "question_id": "sp02-new-08"
+        }
+      ],
+      "removed_finding_count": 3,
+      "removed_labels": {
+        "indeterminate": 0,
+        "partially_supported": 0,
+        "supported": 1,
+        "unsupported": 2
+      }
+    },
+    "selective_verification": {
+      "false_interceptions": {
+        "denominator": 40,
+        "numerator": 0
+      },
+      "removed_claims": [],
+      "removed_finding_count": 0,
+      "removed_labels": {
+        "indeterminate": 0,
+        "partially_supported": 0,
+        "supported": 0,
+        "unsupported": 0
+      }
+    }
+  },
+  "resource_accounting": {
+    "basis": "logical_resources for the two verification schemes contain only the V-on condition; their shared V-off report rows are represented once as the simple baseline. Standalone costs add that baseline to each scheme.",
+    "condition_specific_incremental_cost_cny": {
+      "full_verification": 0.4836675,
+      "selective_verification": 0.1783935
+    },
+    "shared_baseline_cost_cny": 0.1396515,
+    "standalone_scheme_cost_cny": {
+      "full_verification": 0.623319,
+      "selective_verification": 0.318045,
+      "simple_baseline": 0.1396515
+    }
+  },
+  "resource_scopes": {
+    "actual_execution_ledger": {
+      "basis": "pre-recovery snapshot plus post-recovery archives",
+      "current_attempt_unknown_count": 0,
+      "current_attempt_unknown_count_by_scheme": {
+        "full_verification": 0,
+        "selective_verification": 0
+      },
+      "excluded_scope": "Provider diagnostics and max-configuration probes outside the fixed SP-04 run are recorded separately and are not included in this run total.",
+      "historical_known_reference_cost_cny": 0.29304,
+      "historical_replay_duplicate_requests": 35,
+      "historical_successful_provider_requests": 35,
+      "historical_unknown_requests": 1,
+      "known_plus_unknown_reserve_cny": 1.1577525,
+      "known_reference_cost_cny": 1.0947525,
+      "post_recovery_known_reference_cost_cny": 0.8017125,
+      "post_recovery_successful_provider_requests": 71,
+      "provider_actual_billing": "unknown",
+      "reconciliation_note": "The recovery wrapper omitted existing attempts before this run, so the recovery re-issued all full-verification requests, reused historical attempt IDs in the post-recovery archive, and overwrote the earlier success records. The immutable snapshot preserves 35 historical successes, one unknown request, and their known or reserved reference amounts. Those amounts and the 35 replayed requests are counted separately here; the wrapper is now covered by regression tests.",
+      "recovery_identity_collision_count": 1,
+      "successful_provider_requests": 106,
+      "total_attempted_provider_requests": 107,
+      "unknown_reserved_reference_cost_cny": 0.063
+    },
+    "basis": "Logical scheme resources describe the compared schemes; the actual execution ledger includes historical replay, unknown reserve, and baseline sharing.",
+    "logical_scheme_resources": {
+      "full_verification": {
+        "duration_seconds": 361.836806,
+        "input_tokens": 252053,
+        "output_tokens": 11732,
+        "provider_requests": 50,
+        "reference_cost_cny": 0.4836675,
+        "total_tokens": 263785
+      },
+      "selective_verification": {
+        "duration_seconds": 191.249786,
+        "input_tokens": 75855,
+        "output_tokens": 7179,
+        "provider_requests": 13,
+        "reference_cost_cny": 0.1783935,
+        "total_tokens": 83034
+      },
+      "simple_baseline": {
+        "duration_seconds": 300.773989,
+        "input_tokens": 51941,
+        "output_tokens": 6860,
+        "provider_requests": 8,
+        "reference_cost_cny": 0.1396515,
+        "total_tokens": 58801
+      }
+    }
+  },
+  "review_method": {
+    "blinded": false,
+    "mode": "assistant-assisted-source-audit",
+    "reviewed_at": "2026-09-23T11:41:03+08:00",
+    "reviewer_identity": "Codex; not an independent human reviewer",
+    "scope": "Supplied Evidence excerpts, frozen Claims, all three generated reports, and all skipped Claims."
+  },
+  "run_id": "20260922T161810Z",
+  "runtime_configuration": {
+    "automatic_retry": false,
+    "compact_context": true,
+    "context_transform_id": "sp04-provider-context-compact-v1",
+    "fingerprint_sha256": "b36dda9eb554805cdb091d19ca45dd3993c258aa8afacfda9a42a33dff80691b",
+    "identity_source": "frozen_manifest_plus_historical_entrypoint",
+    "max_response_bytes": 1000000,
+    "model_identifier": "gpt-5.6-luna",
+    "model_profile": "api-strong",
+    "provider_hostname": "share-api.top",
+    "provider_id": "sub2api-1789904127847",
+    "provider_protocol": "responses",
+    "reasoning_effort": "high",
+    "report_max_output_tokens": 4000,
+    "request_timeout_seconds": 180.0,
+    "schema_version": "1.0",
+    "streaming": false,
+    "structured_output_mode": "json_schema",
+    "verifier_max_output_tokens": 2000
+  },
+  "runtime_configuration_sha256": "b36dda9eb554805cdb091d19ca45dd3993c258aa8afacfda9a42a33dff80691b",
+  "schema_version": "1.0",
+  "selection_audit": {
+    "interpretation": "5 selected Claims (5 ordinary, 0 difficult) occur across 2 questions (2 ordinary and 0 difficult); 37 skipped Claims (10 ordinary, 27 difficult) occur across 6 questions (2 ordinary and 4 difficult). This concentration limits the candidate's demonstrated coverage of difficult inputs.",
+    "selected_by_question": {
+      "sp02-new-01": {
+        "selected": 3,
+        "skipped": 0
+      },
+      "sp02-new-02": {
+        "selected": 2,
+        "skipped": 0
+      },
+      "sp02-new-03": {
+        "selected": 0,
+        "skipped": 8
+      },
+      "sp02-new-04": {
+        "selected": 0,
+        "skipped": 7
+      },
+      "sp02-new-05": {
+        "selected": 0,
+        "skipped": 7
+      },
+      "sp02-new-06": {
+        "selected": 0,
+        "skipped": 6
+      },
+      "sp02-new-07": {
+        "selected": 0,
+        "skipped": 6
+      },
+      "sp02-new-08": {
+        "selected": 0,
+        "skipped": 3
+      }
+    },
+    "selected_claim_count_by_question_group": {
+      "difficult": 0,
+      "ordinary": 5
+    },
+    "skipped_claim_count_by_question_group": {
+      "difficult": 27,
+      "ordinary": 10
+    }
+  },
+  "status": "verified_with_limitations",
+  "status_semantics": {
+    "current_attempt_unknown_count": 0,
+    "current_attempt_unknown_count_by_scheme": {
+      "full_verification": 0,
+      "selective_verification": 0
+    },
+    "current_run_execution_complete": true,
+    "formal_path": "full_verification",
+    "formal_path_changed": false,
+    "historical_replay_count": 35,
+    "historical_unknown_count": 1,
+    "historical_unknown_count_by_scheme": {
+      "full_verification": 1,
+      "selective_verification": 0
+    },
+    "interpretation": "unknown_count is the unresolved count in current attempt records. Historical unknown requests are reported separately and remain part of the unresolved ledger history. Execution completion, quality-gate outcome, adoption, and unknown-ledger state must not be collapsed into a single passed flag.",
+    "ledger_resolved_without_unknown": false,
+    "selective_candidate_adopted": false,
+    "selective_candidate_quality_gate_passed": false,
+    "unknown_count": 0
+  }
+}

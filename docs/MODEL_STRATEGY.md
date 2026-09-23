@@ -123,7 +123,7 @@ RunManifest 至少记录：
 
 ### api-strong
 
-- 当前候选固定为 `gpt-5.6-terra`，Provider 为 `https://www.mxou.ai`；Key 仅存本地未跟踪 `.env`；
+- 历史候选 `gpt-5.6-terra` 曾通过自定义 Provider 完成兼容性检查；该 Provider 已停用，不能视为当前运行配置；
 - 2026-08-30 Responses 严格结构化 smoke 一次成功，无重试/回退，输入 5,005、输出 406 Token，耗时 20.161 秒；
 - 按官方 Terra $2/$12 每百万输入/输出 Token 和 7.5 规划汇率估算 0.111615 CNY；Provider 响应未返回实际账单或倍率，因此该数值不是账单；
 - `OpenAICompatiblePlanGenerator` 只允许模型生成计划草稿；任务身份、截止日期、Budget 和审批状态由确定性代码注入；

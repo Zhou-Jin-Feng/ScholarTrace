@@ -1,0 +1,310 @@
+{
+  "baseline": {
+    "adopted": false,
+    "execution_complete": true,
+    "model_calls": 8,
+    "passed": true,
+    "quality_gate_status": "not_applicable_within_run",
+    "reference_cost_cny": 0.13965149999999998,
+    "report_calls": 8,
+    "run_id": "sp04-simple-baseline:20260922T161810Z",
+    "unknown_count": 0
+  },
+  "baseline_request_journal": {
+    "available": false,
+    "scope": "aggregate_archive_only"
+  },
+  "checkpoint_budget_migration": {
+    "full_verification": {
+      "applied": true,
+      "reason": "The checkpoint budget policy differed from the current manifest and was migrated after execution identity validation.",
+      "required": true,
+      "status": "applied"
+    },
+    "selective_verification": {
+      "applied": false,
+      "reason": "The checkpoint manifest already matched the current budget policy; no migration was required or performed.",
+      "required": false,
+      "status": "not_required"
+    }
+  },
+  "claim_count": 42,
+  "compact_context": true,
+  "cost_allocations_cny": {
+    "baseline": 2.0,
+    "full_verification": 5.0,
+    "selective_verification": 3.0
+  },
+  "deduplicated_upper_bound_cny": 6.0,
+  "full_verification": {
+    "adopted": true,
+    "checkpoint": "agent/verification-ablation/SP-04-comparison/20260922T161810Z/full-verification/formal_checkpoint.json",
+    "current_attempt_unknown_count": 0,
+    "execution_complete": true,
+    "historical_unknown_count": 1,
+    "passed": true,
+    "public_output": "evaluation/reports/sp_04_full_verification_20260922T161810Z.json",
+    "quality_gate_status": "not_applicable_within_run",
+    "rows": 16,
+    "run_id": "sp04-full:20260922T161810Z",
+    "scheme": "full-verification",
+    "unknown_count": 0,
+    "usage": {
+      "V-off": {
+        "duration_seconds": 300.77398919999905,
+        "input_tokens": 51941,
+        "model_calls": 8,
+        "output_tokens": 6860,
+        "provider_api_calls": 8,
+        "reference_cost_cny": 0.13965149999999998,
+        "report_calls": 8,
+        "unknown_attempts": 0,
+        "unknown_reserved_reference_cost_cny": 0.0,
+        "verifier_attempted_calls": 0,
+        "verifier_calls": 0,
+        "verifier_duration_seconds": 0.0,
+        "verifier_input_tokens": 0,
+        "verifier_output_tokens": 0,
+        "verifier_reference_cost_cny": 0.0,
+        "verifier_reserved_reference_cost_cny": 0.0
+      },
+      "V-on": {
+        "duration_seconds": 152.85264059999463,
+        "input_tokens": 51574,
+        "model_calls": 8,
+        "output_tokens": 6654,
+        "provider_api_calls": 8,
+        "reference_cost_cny": 0.137247,
+        "report_calls": 8,
+        "unknown_attempts": 0,
+        "unknown_reserved_reference_cost_cny": 0.0,
+        "verifier_attempted_calls": 42,
+        "verifier_calls": 42,
+        "verifier_duration_seconds": 208.98416559999168,
+        "verifier_input_tokens": 200479,
+        "verifier_output_tokens": 5078,
+        "verifier_reference_cost_cny": 0.3464205000000001,
+        "verifier_reserved_reference_cost_cny": 0.8904975
+      }
+    }
+  },
+  "human_review_required": true,
+  "legacy_status": "completed",
+  "limitations": [
+    "One fixed run over eight questions; repeated-generation variance was not measured.",
+    "The source review is assistant-assisted and is not an independent human review.",
+    "Costs are local reference estimates; Provider actual billing is unavailable.",
+    "The formal run used reasoning=high; max evidence remains separate.",
+    "The baseline has aggregate usage but no request-level attempt journal.",
+    "The historical unknown record was overwritten in place during recovery by a successful record with the same attempt ID. The immutable pre-recovery snapshot and final archive preserve the historical unknown and the recovery success, but the archive has no distinct successor attempt ID or parent link; the missing relationship cannot be reconstructed retrospectively."
+  ],
+  "model": "gpt-5.6-luna",
+  "provider_hostname": "share-api.top",
+  "provider_id": "sub2api-1789904127847",
+  "provider_source": "cc-switch",
+  "purpose": "scholartrace-sp04-three-scheme-comparison",
+  "question_count": 8,
+  "reasoning_effort": "high",
+  "recovery": {
+    "baseline_current_source_tree_sha256": "1be95703cbc49b6a5e188802ed133b1220caac5631ad2ebfc17cb4eb174b3f1b",
+    "baseline_migration_note": "baseline archive reused after source-tree change; original manifest retained",
+    "baseline_reused": true,
+    "baseline_source_tree_sha256": "e524ac0a0bdad45607a49910c36b84861d808dd6285fff2962ad29d11b466da5",
+    "full_checkpoint_budget_migrated": true,
+    "resume_dir": "agent/verification-ablation/SP-04-comparison/20260922T161810Z",
+    "retry_unknown": true,
+    "selective_checkpoint_budget_migrated": false
+  },
+  "recovery_ledger": {
+    "baseline_request_journal": {
+      "available": false,
+      "reason": "The simple baseline archive stores one report request per question and aggregate usage, but it does not store request-level intent/dispatch/result records. Recovery and cost summaries must not claim baseline request-level traceability.",
+      "scope": "aggregate_archive_only"
+    },
+    "current_run_new_collisions": 0,
+    "historical_intent_count": 10,
+    "historical_known_reference_cost_cny": 0.29304,
+    "historical_sent_count": 36,
+    "historical_success_aggregate_count": 35,
+    "historical_success_records_available": false,
+    "historical_unknown_count": 1,
+    "historical_unknown_count_by_scheme": {
+      "full_verification": 1,
+      "selective_verification": 0
+    },
+    "historical_unknown_records": [
+      {
+        "attempt_id": "sp04-full:20260922T161810Z:sp02-new-07:V-on:verifier:claim:sp02-new-07:03:attempt-1",
+        "historical_attempted_calls": 1,
+        "historical_reserved_reference_cost_cny": 0.063,
+        "historical_scheme": "full_verification",
+        "historical_snapshot_source": "agent/provider-review-20260923/checkpoint-summary.json",
+        "historical_state": "dispatched",
+        "historical_success_records_available": false,
+        "identity_reused": true,
+        "limitation": "The historical unknown record was overwritten in place during recovery by a successful record with the same attempt ID. The immutable pre-recovery snapshot and final archive preserve the historical unknown and the recovery success, but the archive has no distinct successor attempt ID or parent link; the missing relationship cannot be reconstructed retrospectively.",
+        "operation": "verifier",
+        "parent_link_preserved": false,
+        "post_recovery_actual_reference_cost_cny": 0.00823649999999998,
+        "post_recovery_attempted_calls": 1,
+        "post_recovery_state": "succeeded",
+        "question_id": "sp02-new-07",
+        "successor_attempt_id": null
+      }
+    ],
+    "identity_collision_count": 1
+  },
+  "reference_cost_cap_cny": 10.0,
+  "resource_scopes": {
+    "actual_execution_ledger": {
+      "basis": "pre-recovery snapshot plus post-recovery archives",
+      "current_attempt_unknown_count": 0,
+      "current_attempt_unknown_count_by_scheme": {
+        "full_verification": 0,
+        "selective_verification": 0
+      },
+      "excluded_scope": "Provider diagnostics and max-configuration probes outside the fixed SP-04 run are recorded separately and are not included in this run total.",
+      "historical_known_reference_cost_cny": 0.29304,
+      "historical_replay_duplicate_requests": 35,
+      "historical_successful_provider_requests": 35,
+      "historical_unknown_requests": 1,
+      "known_plus_unknown_reserve_cny": 1.1577525,
+      "known_reference_cost_cny": 1.0947525,
+      "post_recovery_known_reference_cost_cny": 0.8017125,
+      "post_recovery_successful_provider_requests": 71,
+      "provider_actual_billing": "unknown",
+      "reconciliation_note": "The recovery wrapper omitted existing attempts before this run, so the recovery re-issued all full-verification requests, reused historical attempt IDs in the post-recovery archive, and overwrote the earlier success records. The immutable snapshot preserves 35 historical successes, one unknown request, and their known or reserved reference amounts. Those amounts and the 35 replayed requests are counted separately here; the wrapper is now covered by regression tests.",
+      "recovery_identity_collision_count": 1,
+      "successful_provider_requests": 106,
+      "total_attempted_provider_requests": 107,
+      "unknown_reserved_reference_cost_cny": 0.063
+    },
+    "basis": "Logical scheme resources describe the compared schemes; the actual execution ledger includes historical replay, unknown reserve, and baseline sharing.",
+    "logical_scheme_resources": {
+      "full_verification": {
+        "duration_seconds": 361.836806,
+        "input_tokens": 252053,
+        "output_tokens": 11732,
+        "provider_requests": 50,
+        "reference_cost_cny": 0.4836675,
+        "total_tokens": 263785
+      },
+      "selective_verification": {
+        "duration_seconds": 191.249786,
+        "input_tokens": 75855,
+        "output_tokens": 7179,
+        "provider_requests": 13,
+        "reference_cost_cny": 0.1783935,
+        "total_tokens": 83034
+      },
+      "simple_baseline": {
+        "duration_seconds": 300.773989,
+        "input_tokens": 51941,
+        "output_tokens": 6860,
+        "provider_requests": 8,
+        "reference_cost_cny": 0.1396515,
+        "total_tokens": 58801
+      }
+    }
+  },
+  "review_output": "evaluation/reports/sp_04_three_scheme_review.json",
+  "runtime_configuration": {
+    "automatic_retry": false,
+    "compact_context": true,
+    "context_transform_id": "sp04-provider-context-compact-v1",
+    "fingerprint_sha256": "b36dda9eb554805cdb091d19ca45dd3993c258aa8afacfda9a42a33dff80691b",
+    "identity_source": "frozen_manifest_plus_historical_entrypoint",
+    "max_response_bytes": 1000000,
+    "model_identifier": "gpt-5.6-luna",
+    "model_profile": "api-strong",
+    "provider_hostname": "share-api.top",
+    "provider_id": "sub2api-1789904127847",
+    "provider_protocol": "responses",
+    "reasoning_effort": "high",
+    "report_max_output_tokens": 4000,
+    "request_timeout_seconds": 180.0,
+    "schema_version": "1.0",
+    "streaming": false,
+    "structured_output_mode": "json_schema",
+    "verifier_max_output_tokens": 2000
+  },
+  "runtime_configuration_sha256": "b36dda9eb554805cdb091d19ca45dd3993c258aa8afacfda9a42a33dff80691b",
+  "schema_version": "1.0",
+  "selected_claim_count": 5,
+  "selective_verification": {
+    "adopted": false,
+    "checkpoint": "agent/verification-ablation/SP-04-comparison/20260922T161810Z/selective-verification/formal_checkpoint.json",
+    "current_attempt_unknown_count": 0,
+    "execution_complete": true,
+    "historical_unknown_count": 0,
+    "passed": true,
+    "public_output": "evaluation/reports/sp_04_selective_verification_20260922T161810Z.json",
+    "quality_gate_status": "failed",
+    "rows": 16,
+    "run_id": "sp04-selective:20260922T161810Z",
+    "scheme": "selective-verification",
+    "unknown_count": 0,
+    "usage": {
+      "V-off": {
+        "duration_seconds": 300.77398919999905,
+        "input_tokens": 51941,
+        "model_calls": 8,
+        "output_tokens": 6860,
+        "provider_api_calls": 8,
+        "reference_cost_cny": 0.13965149999999998,
+        "report_calls": 8,
+        "unknown_attempts": 0,
+        "unknown_reserved_reference_cost_cny": 0.0,
+        "verifier_attempted_calls": 0,
+        "verifier_calls": 0,
+        "verifier_duration_seconds": 0.0,
+        "verifier_input_tokens": 0,
+        "verifier_output_tokens": 0,
+        "verifier_reference_cost_cny": 0.0,
+        "verifier_reserved_reference_cost_cny": 0.0
+      },
+      "V-on": {
+        "duration_seconds": 170.89957539999887,
+        "input_tokens": 51921,
+        "model_calls": 8,
+        "output_tokens": 6704,
+        "provider_api_calls": 8,
+        "reference_cost_cny": 0.13821750000000002,
+        "report_calls": 8,
+        "unknown_attempts": 0,
+        "unknown_reserved_reference_cost_cny": 0.0,
+        "verifier_attempted_calls": 5,
+        "verifier_calls": 5,
+        "verifier_duration_seconds": 20.350210100004915,
+        "verifier_input_tokens": 23934,
+        "verifier_output_tokens": 475,
+        "verifier_reference_cost_cny": 0.040175999999999996,
+        "verifier_reserved_reference_cost_cny": 0.106188
+      }
+    }
+  },
+  "skipped_claim_audit_required": true,
+  "status": "execution_completed_with_quality_gate_failure",
+  "status_semantics": {
+    "current_attempt_unknown_count": 0,
+    "current_attempt_unknown_count_by_scheme": {
+      "full_verification": 0,
+      "selective_verification": 0
+    },
+    "current_run_execution_complete": true,
+    "formal_path": "full_verification",
+    "formal_path_changed": false,
+    "historical_replay_count": 35,
+    "historical_unknown_count": 1,
+    "historical_unknown_count_by_scheme": {
+      "full_verification": 1,
+      "selective_verification": 0
+    },
+    "interpretation": "unknown_count is the unresolved count in current attempt records. Historical unknown requests are reported separately and remain part of the unresolved ledger history. Execution completion, quality-gate outcome, adoption, and unknown-ledger state must not be collapsed into a single passed flag.",
+    "ledger_resolved_without_unknown": false,
+    "selective_candidate_adopted": false,
+    "selective_candidate_quality_gate_passed": false,
+    "unknown_count": 0
+  },
+  "stream_responses": false
+}

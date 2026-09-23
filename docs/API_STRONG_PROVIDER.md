@@ -4,17 +4,17 @@
 
 ScholarTrace 已实现 OpenAI-compatible `PlanGenerator`，并完成一次 `gpt-5.6-terra` 有界在线兼容性 smoke。生产 `api-strong` Profile 仍保持关闭：本次只证明 Responses 与严格结构化输出兼容，不证明规划质量，也没有取得 Provider 实际账单或倍率。M6 确定性 Demo 不需要 Key，也不会调用该 Provider。
 
-已确认的自定义 Provider 信息：
+历史 Provider 配置记录（2026-08-30）：
 
 | 项目 | 值 | 证据 |
 |---|---|---|
-| Provider | mxou.ai | 用户提供的自定义 OpenAI-compatible Provider |
-| Base URL | `https://www.mxou.ai` | 项目根 `.env`（Key 不记录） |
-| 模型列表端点 | `GET https://www.mxou.ai/v1/models` | 2026-08-30 使用本地 Key 成功 |
-| OpenAPI 文档 | 未确认 | 早期旧域名 `/openapi.json` 匿名请求返回 HTTP 404 |
-| 公开模型页 | `https://www.mxou.ai/models` | 当前域名，未在本轮重新核对 |
+| Provider | 旧自定义 OpenAI-compatible 配置，已停用 | 2026-08-30 历史运行记录 |
+| Base URL | 已停用；不在公开文档中保留地址 | 当时的本机 `.env` |
+| 模型列表端点 | 历史只读查询成功；当前不可用 | 2026-08-30 记录 |
+| OpenAPI 文档 | 未确认 | 历史匿名请求返回 HTTP 404 |
+| 公开模型页 | 未确认 | 未作为当前运行入口 |
 
-项目早期对 `https://sui-xiang.com/v1/models` 的匿名请求返回 401；当前配置已切换到 `https://www.mxou.ai`，带 Key 的只读请求成功。项目新增的 `scripts/list_custom_provider_models.py` 只执行该 GET 请求，错误信息不包含响应正文或 Key。
+该历史配置后续出现连接失败，现已退出活动 Provider 配置。`scripts/list_custom_provider_models.py` 可对用户当前配置且获准使用的 OpenAI-compatible endpoint 执行只读查询；错误信息不包含响应正文或 Key。
 
 ## 账户目录快照
 
@@ -42,6 +42,15 @@ gpt-image-2
 
 该响应没有返回 `owned_by`、创建时间、上下文窗口、价格或能力字段；因此这只是“账户可见模型清单”，不是能力或成本验证。
 
+
+## 2026-09-22 Provider 连通性诊断与恢复记录
+
+项目配置中的旧 Provider 端点在当日诊断中连接失败。随后通过当时的 cc-switch Luna 配置完成受限报告 smoke；该配置标识和主机属于本机环境，不代表当前活动配置。项目新增 `scholartrace.model_provider.ccswitch.load_ccswitch_codex_settings`，只读取本机 Provider 配置，不打印或写入 Key。
+
+在 `gpt-5.6-luna`、Responses、reasoning=`max` 下完成 1 次受限报告 smoke，HTTP 200，输入 6,309 tokens，输出 883 tokens，参考成本 0.0174105 CNY。该结果仅证明当日所选 Provider 的接口和结构化报告合同可用，不代表当前配置或研究质量结论；Provider 实际账单和倍率仍不可见。后续困难题在 `max` 下出现 HTTP 524，流式路径未获得终止事件；阶段二正式对照使用 `high`，两类结果不得混合表述。
+
+后续阶段二真实运行使用 cc-switch 配置，不修改 `.env` 写入凭据；未知请求继续保持停止且不自动重发。
+
 ## 无密钥准备
 
 复制 `.env.example` 的变量到项目根目录的未跟踪 `.env`，或只放在当前进程环境中。探针的配置优先级是 CLI 参数 > 进程环境变量 > `.env` > 默认值；Key 不会打印，也不会写入报告：
@@ -56,7 +65,7 @@ uv run python scripts/list_custom_provider_models.py
 
 ```powershell
 $env:SCHOLARTRACE_API_KEY = Read-Host "Enter provider API key"
-uv run python scripts/list_custom_provider_models.py --base-url "https://www.mxou.ai"
+uv run python scripts/list_custom_provider_models.py --base-url "<authorized-provider-base-url>"
 ```
 
 该脚本会把根地址规范化为 `/v1/models`；如果传入的地址已经以 `/v1` 结尾，不会重复拼接。没有 Key 时脚本直接退出，不发出网络请求。`.env` 只支持简单的 `KEY=VALUE` 和可选引号，不做变量插值；格式错误会 fail closed。

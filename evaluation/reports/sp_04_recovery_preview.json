@@ -1,0 +1,64 @@
+{
+  "allocations_cny": {
+    "baseline": 2.0,
+    "full_verification": 5.0,
+    "selective_verification": 3.0
+  },
+  "baseline": {
+    "compatible": false,
+    "error": "baseline resume identity mismatch: provider_hostname",
+    "exists": true
+  },
+  "compact_context": true,
+  "deduplicated_upper_bound_cny": 6.0,
+  "full_verification": {
+    "compatible": false,
+    "error": "formal checkpoint manifest hash mismatch",
+    "exists": true
+  },
+  "hard_cap_cny": 10.0,
+  "historical_snapshot_context": {
+    "available": true,
+    "historical_sent_count": 36,
+    "historical_success_count": 35,
+    "historical_unknown_count": 1,
+    "note": "The current checkpoint may show recovered success records; the immutable pre-recovery snapshot remains authoritative for historical unknown and replay counts.",
+    "snapshot_path": "agent/provider-review-20260923/checkpoint-summary.json"
+  },
+  "model": "gpt-5.6-luna",
+  "network_requests_sent": 0,
+  "output": "evaluation/reports/sp_04_recovery_preview.json",
+  "provider_hostname": "beiluoxi.top",
+  "provider_id": "7638eac7-5fad-4e13-89bf-7254044fce07",
+  "purpose": "scholartrace-sp04-recovery-preview",
+  "reasoning_effort": "high",
+  "resume_dir": "agent/verification-ablation/SP-04-comparison/20260922T161810Z",
+  "runtime_configuration": {
+    "automatic_retry": false,
+    "compact_context": true,
+    "context_transform_id": "sp04-provider-context-compact-v1",
+    "fingerprint_sha256": "7649ae221c90be00ccda53a4199660a6ad445d7565774d74d6475caba777eb39",
+    "max_response_bytes": 1000000,
+    "model_identifier": "gpt-5.6-luna",
+    "model_profile": "api-strong",
+    "provider_hostname": "beiluoxi.top",
+    "provider_id": "7638eac7-5fad-4e13-89bf-7254044fce07",
+    "provider_protocol": "responses",
+    "reasoning_effort": "high",
+    "report_max_output_tokens": 4000,
+    "request_timeout_seconds": 180.0,
+    "schema_version": "1.0",
+    "streaming": false,
+    "structured_output_mode": "json_schema",
+    "verifier_max_output_tokens": 2000
+  },
+  "runtime_configuration_sha256": "7649ae221c90be00ccda53a4199660a6ad445d7565774d74d6475caba777eb39",
+  "schema_version": "1.0",
+  "selective_verification": {
+    "compatible": false,
+    "error": "formal checkpoint manifest hash mismatch",
+    "exists": true
+  },
+  "status": "preview_only",
+  "stream_responses": false
+}

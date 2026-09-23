@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import hashlib
 import json
 import time
@@ -23,6 +24,7 @@ from scholartrace.model_provider.settings import (
     resolved_structured_output_mode,
     uses_deepseek_chat_parameters,
 )
+from scholartrace.model_provider.streaming import collect_responses_sse
 
 from .models import (
     ABLATION_REPORT_SCHEMA_SHA256,
@@ -131,6 +133,7 @@ class OpenAICompatibleAblationReportGenerator:
         max_response_bytes: int = 1_000_000,
         reasoning_effort: ReasoningEffort | None = None,
         max_output_tokens: int = 1_200,
+        streaming: bool = False,
         on_reserve: Callable[[str, str, int, float], None] | None = None,
     ) -> None:
         if not settings.base_url.strip() or not settings.api_key.strip():
@@ -149,6 +152,7 @@ class OpenAICompatibleAblationReportGenerator:
         self.max_response_bytes = max_response_bytes
         self.reasoning_effort = reasoning_effort
         self.max_output_tokens = max_output_tokens
+        self.streaming = streaming
         self.on_reserve = on_reserve
 
     async def generate(self, request: AblationReportRequest) -> AblationGeneratedReport:
@@ -177,9 +181,15 @@ class OpenAICompatibleAblationReportGenerator:
                 str(exc), diagnostics={"category": "request_not_sent"}
             ) from exc
         started = time.perf_counter()
-        body = await self._post(
-            payload,
-            idempotency_key=self._idempotency_key(request),
+        if self.streaming and self.provider_protocol != "responses":
+            raise ProviderInferenceError(
+                "streaming is supported only for the Responses protocol",
+                diagnostics={"category": "configuration"},
+            )
+        body = await (
+            self._post_stream(payload, idempotency_key=self._idempotency_key(request))
+            if self.streaming
+            else self._post(payload, idempotency_key=self._idempotency_key(request))
         )
         duration = time.perf_counter() - started
         envelope = self._parse_json(body)
@@ -272,6 +282,8 @@ class OpenAICompatibleAblationReportGenerator:
                     }
                 },
             }
+            if self.streaming:
+                response_payload["stream"] = True
             if self.reasoning_effort is not None:
                 response_payload["reasoning"] = {"effort": self.reasoning_effort}
             return response_payload
@@ -342,6 +354,53 @@ class OpenAICompatibleAblationReportGenerator:
                 diagnostics={"category": "http", "status_code": response.status_code},
             )
         return body
+
+    async def _post_stream(
+        self,
+        payload: dict[str, object],
+        *,
+        idempotency_key: str,
+    ) -> bytes:
+        endpoint = "responses"
+        base_url = self.settings.base_url.rstrip("/")
+        url = f"{base_url}/{endpoint}" if base_url.endswith("/v1") else f"{base_url}/v1/{endpoint}"
+        try:
+            async with self.client.stream(
+                "POST",
+                url,
+                headers={
+                    "Accept": "text/event-stream",
+                    "Authorization": f"Bearer {self.settings.api_key}",
+                    "Content-Type": "application/json",
+                    "Idempotency-Key": idempotency_key,
+                },
+                json=payload,
+                timeout=self.timeout_seconds,
+            ) as response:
+                if response.status_code in {404, 405, 501}:
+                    raise ProviderEndpointUnsupportedError(
+                        "provider streaming endpoint is unsupported",
+                        diagnostics={"category": "http", "status_code": response.status_code},
+                    )
+                if not response.is_success:
+                    body = await response.aread()
+                    del body
+                    raise ProviderInferenceError(
+                        f"provider report request returned HTTP {response.status_code}",
+                        diagnostics={"category": "http", "status_code": response.status_code},
+                    )
+                return await asyncio.wait_for(
+                    collect_responses_sse(
+                        response,
+                        model=self.model_identifier,
+                        max_response_bytes=self.max_response_bytes,
+                    ),
+                    timeout=self.timeout_seconds,
+                )
+        except httpx.TimeoutException as exc:
+            raise TimeoutError("provider report streaming request timed out") from exc
+        except httpx.HTTPError as exc:
+            raise ProviderInferenceError("provider report streaming request failed") from exc
 
     @staticmethod
     def _parse_json(body: bytes) -> dict[str, Any]:

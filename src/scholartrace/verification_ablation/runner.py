@@ -42,6 +42,7 @@ from .models import (
 from .provider import MeteredReportError
 
 VARIANTS: tuple[AblationVariant, AblationVariant] = ("V-on", "V-off")
+VerificationSelector = Callable[[AblationFrozenInput, Claim], bool]
 
 
 def evidence_identity_sha256(evidence: Sequence[Evidence]) -> str:
@@ -393,11 +394,13 @@ class VerificationAblationRunner:
         verifier_backend: SemanticVerifierBackend | None = None,
         verifier_policy: Any | None = None,
         allow_fixture: bool = False,
+        verification_selector: VerificationSelector | None = None,
     ) -> None:
         self.report_generator = report_generator
         self.verifier_backend = verifier_backend
         self.verifier_policy = verifier_policy
         self.allow_fixture = allow_fixture
+        self.verification_selector = verification_selector
 
     async def run(
         self,
@@ -483,6 +486,8 @@ class VerificationAblationRunner:
                     }
                     cached_ids = {item.claim_id for item in cached}
                     for claim in sorted(frozen.claims, key=lambda item: item.claim_id):
+                        if not self._should_verify(frozen, claim):
+                            continue
                         validation = validations[claim.claim_id]
                         if not validation.passed or claim.claim_id in cached_ids:
                             continue
@@ -699,6 +704,11 @@ class VerificationAblationRunner:
             attempts=attempts,
         )
 
+    def _should_verify(self, frozen: AblationFrozenInput, claim: Claim) -> bool:
+        if self.verification_selector is None:
+            return True
+        return self.verification_selector(frozen, claim)
+
     def _preflight(
         self,
         manifest: AblationExecutionManifest,
@@ -741,19 +751,25 @@ class VerificationAblationRunner:
         run_id: str,
     ) -> dict[tuple[str, AblationVariant], AblationPrivateRow]:
         indexed: dict[tuple[str, AblationVariant], AblationPrivateRow] = {}
+        seen: set[tuple[str, AblationVariant]] = set()
         config_hash = manifest.configuration_sha256()
         for row in rows:
             result = row.result
             key = (result.question_id, result.variant)
-            if key in indexed or result.question_id not in inputs:
+            if key in seen or result.question_id not in inputs:
                 raise AblationError("existing row has duplicate or unknown identity")
+            seen.add(key)
             if (
                 result.run_id != run_id
                 or result.configuration_sha256 != config_hash
                 or result.frozen_input_sha256 != inputs[result.question_id].input_sha256
             ):
                 raise AblationError("existing row drifted from the manifest")
-            indexed[key] = row
+            # Failed/timeout rows are historical evidence, not completed work. Their
+            # request ledger remains available to recover successful subrequests or
+            # to block an unsafe resend of an unknown request.
+            if result.status in {"succeeded", "degraded"}:
+                indexed[key] = row
         return indexed
 
     @staticmethod
@@ -996,16 +1012,27 @@ class VerificationAblationRunner:
                         "V-on requires a semantic verifier backend",
                     )
                 verifier_before = _snapshot(self.verifier_backend)
+                selected_claims = [
+                    claim
+                    for claim in frozen.claims
+                    if self._should_verify(frozen, claim)
+                ]
+                claim_by_id = {claim.claim_id: claim for claim in frozen.claims}
+                selected_cached_verifications = [
+                    item
+                    for item in (cached_verifications or [])
+                    if self._should_verify(frozen, claim_by_id[item.claim_id])
+                ]
                 verifications = await VerifierRunner(
                     backend=self.verifier_backend,
                     policy=self.verifier_policy,
                     allow_fixture=self.allow_fixture,
                 ).verify(
-                    claims=frozen.claims,
+                    claims=selected_claims,
                     evidence=frozen.evidence,
                     validations=frozen.deterministic_validation.results,
                     verified_at=datetime.now(UTC),
-                    existing=cached_verifications,
+                    existing=selected_cached_verifications,
                     on_dispatch=on_verifier_dispatch,
                     on_result=on_verifier_result,
                 )
@@ -1045,9 +1072,19 @@ class VerificationAblationRunner:
                         _metric_float(metrics, "duration_seconds"),
                     ]
                 )
-                dispositions = _from_verifications(
-                    frozen.claims,
-                    {item.claim_id: item for item in verifications},
+                verified_by_id = {item.claim_id: item for item in verifications}
+                selected_dispositions = _from_verifications(
+                    selected_claims,
+                    verified_by_id,
+                )
+                skipped_dispositions = _unverified(
+                    [claim for claim in frozen.claims if claim.claim_id not in verified_by_id]
+                )
+                dispositions = tuple(
+                    sorted(
+                        (*selected_dispositions, *skipped_dispositions),
+                        key=lambda item: item.claim_id,
+                    )
                 )
             else:
                 dispositions = _unverified(frozen.claims)

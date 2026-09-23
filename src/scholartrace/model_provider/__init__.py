@@ -5,6 +5,11 @@ from scholartrace.model_provider.catalog import (
     ProviderCatalogError,
     ProviderModel,
 )
+from scholartrace.model_provider.ccswitch import (
+    DEFAULT_CCSWITCH_DB,
+    DEFAULT_CCSWITCH_LUNA_PROVIDER_ID,
+    load_ccswitch_codex_settings,
+)
 from scholartrace.model_provider.plan_generator import (
     ApiCallBudget,
     ApiCallCounter,
@@ -32,6 +37,8 @@ from scholartrace.model_provider.verifier import (
 )
 
 __all__ = [
+    "DEFAULT_CCSWITCH_DB",
+    "DEFAULT_CCSWITCH_LUNA_PROVIDER_ID",
     "OpenAICompatibleCatalogClient",
     "OpenAICompatiblePlanGenerator",
     "OpenAICompatibleReportGenerator",
@@ -52,4 +59,5 @@ __all__ = [
     "VerifierCallRecord",
     "read_dotenv",
     "resolve_provider_settings",
+    "load_ccswitch_codex_settings",
 ]
